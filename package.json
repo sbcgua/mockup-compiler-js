@@ -1,0 +1,17 @@
+{
+  "name": "mockload-compiler",
+  "version": "1.0.0",
+  "description": "Tool to convert Excel unit test data to text and archive it",
+  "main": "mockarch.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Alexander Tsybulsky",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^2.1.1",
+    "chalk": "^2.4.1",
+    "commander": "^2.17.1",
+    "xlsx": "^0.13.3"
+  }
+}
