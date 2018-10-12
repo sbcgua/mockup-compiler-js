@@ -3,9 +3,17 @@
   "version": "1.0.0",
   "description": "Tool to convert Excel unit test data to text and archive it",
   "main": "mockarch.js",
-  "scripts": {
-    "test": "jest"
+  "bin": {
+    "mock-compiler": "./mockarch.js"
   },
+  "scripts": {
+    "test": "./node_modules/.bin/jest"
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/sbcgua/mockup-compiler-js.git"
+  },
+  "private": false,
   "author": "Alexander Tsybulsky",
   "license": "ISC",
   "dependencies": {
@@ -13,5 +21,8 @@
     "chalk": "^2.4.1",
     "commander": "^2.17.1",
     "xlsx": "^0.13.3"
+  },
+  "devDependencies": {
+    "jest": "^23.6.0"
   }
 }

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const App = require('./lib/app');
 const { readConfig } = require('./lib/config');
 const commander = require('./lib/patched-commander');
