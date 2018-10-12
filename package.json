@@ -1,6 +1,6 @@
 {
   "name": "mockload-compiler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tool to convert Excel unit test data to text and archive it",
   "main": "mockarch.js",
   "bin": {
@@ -10,8 +10,8 @@
     "test": "./node_modules/.bin/jest"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/sbcgua/mockup-compiler-js.git"
+    "type": "git",
+    "url": "https://github.com/sbcgua/mockup-compiler-js.git"
   },
   "private": false,
   "author": "Alexander Tsybulsky",
