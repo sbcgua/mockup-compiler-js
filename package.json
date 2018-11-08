@@ -17,10 +17,10 @@
   "author": "Alexander Tsybulsky",
   "license": "ISC",
   "dependencies": {
-    "archiver": "^2.1.1",
+    "archiver": "^3.0.0",
     "chalk": "^2.4.1",
-    "commander": "^2.17.1",
-    "xlsx": "^0.13.3"
+    "commander": "^2.19.0",
+    "xlsx": "^0.14.0"
   },
   "devDependencies": {
     "jest": "^23.6.0"
