@@ -8,11 +8,17 @@ const chalk = require('chalk');
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
 function argsToConfig(args) {
+    if (args.eol && !/^(lf|crlf)$/i.test(args.eol)) {
+        console.error('EOL must be "lf" or "crlf"');
+        process.exit(1);
+    }
+
     const config = {
         sourceDir: args.source,
         destDir:   args.destination,
         zipPath:   args.zip,
         includes:  args.include && [args.include],
+        eol:       args.eol,
     };
     for (let k of Object.keys(config)) if (!config[k]) delete config[k];
     return config;
@@ -39,6 +45,7 @@ async function main(args) {
     ['-d, --destination <path>', 'destination uncompressed dir'],
     ['-z, --zip <path>', 'path to zip file to build'],
     ['-i, --include <path>', 'path to include'],
+    ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
 ].forEach(opt => commander.option(...opt));
 commander.parse(process.argv);
 

@@ -45,6 +45,7 @@ The setting can be given in config. By default the programs looks for the config
 ```json
 {
     "sourceDir": ".",
+    "eol": "lf", // lf or crlf
     "destDir": "_dest",
     "zipPath": "_dest/build.zip",
     "includes": [
