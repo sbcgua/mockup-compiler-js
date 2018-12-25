@@ -1,0 +1,17 @@
+Abap mockup compiler for node.js
+================================
+
+Legend
+------
+* : fixed
+! : changed
++ : added
+- : removed
+
+v1.0.4, 2018-12-25
+------------------
++ support files with no _contents
+
+v1.0.1, 2018-10-12
+------------------
++ working code deployed

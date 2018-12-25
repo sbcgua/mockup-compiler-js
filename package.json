@@ -7,7 +7,7 @@
     "mockup-compiler": "./mockarch.js"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jest"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
