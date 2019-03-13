@@ -5,9 +5,10 @@ Converts set of excels in a given directory to a set of tab-delimited text-files
 ## How it works
 
 1. Finds all `*.xlsx` in the given directory.
-2. In each file, searches for `_contents` sheet with 2 columns. The first is a name of another sheet in the workbook, the second includes the sheet into conversion if not empty. See example `test.xlsx` in the repo root. If `_contents` **not found** all sheets will be converted.
+2. In each file, searches for `_contents` sheet with 2 columns. The first is a name of another sheet in the workbook, the second includes the sheet into conversion if not empty. See example `test.xlsx` in the repo root. If `_contents` **not found** all sheets will be converted. If `_contents` sheet was not found - just convert all existing sheetes.
 3. All the listed sheets are converted into tab-delimited text files in UTF8.
     - each sheet should contain data, staring in A1 cell
+    - if A1 contains `#` at the beginning this row is skipped (it is for comments) and the header is read from B1
     - `_` prefixed columns at the beginning are ignored, can be used for some meta data
     - columns after the first empty columns are ignored
     - rows after the first empty rows are ignored
