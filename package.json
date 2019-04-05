@@ -23,6 +23,7 @@
     "xlsx": "^0.14.2"
   },
   "devDependencies": {
+    "eslint": "^5.16.0",
     "jest": "^24.7.1"
   }
 }
