@@ -7,7 +7,9 @@
     "mockup-compiler": "./mockarch.js"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "testrun": "node mockarch.js -c test-sample/.mock-config.json",
+    "lint": "eslint mockarch.js lib"
   },
   "repository": {
     "type": "git",

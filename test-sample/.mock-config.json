@@ -1,0 +1,9 @@
+{
+    "sourceDir": ".",
+    "eol": "crlf",
+    "destDir": "../_dest",
+    "zipPath": "../_dest/build.zip",
+    "includes": [
+        "./includes"
+    ]
+}
