@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/sbcgua/mockup-compiler-js.svg?branch=master)](https://travis-ci.com/sbcgua/mockup-compiler-js)
+
 # Mockup compiler for node js
 
 Converts set of excels in a given directory to a set of tab-delimited text-files and zip them. Generally intended for [ABAP Mockup loader](https://github.com/sbcgua/mockup_loader) and as a faster alternative of [ABAP Mockup compiler](https://github.com/sbcgua/mockup_compiler) but probably can be used elsewhere. 
