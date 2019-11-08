@@ -19,13 +19,13 @@
   "author": "Alexander Tsybulsky",
   "license": "ISC",
   "dependencies": {
-    "archiver": "^3.0.0",
+    "archiver": "^3.1.1",
     "chalk": "^2.4.2",
-    "commander": "^2.20.0",
-    "xlsx": "^0.14.2"
+    "commander": "^4.0.0",
+    "xlsx": "^0.15.1"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "jest": "^24.7.1"
+    "eslint": "^6.6.0",
+    "jest": "^24.9.0"
   }
 }
