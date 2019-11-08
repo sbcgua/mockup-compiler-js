@@ -8,6 +8,22 @@ Legend
 + : added
 - : removed
 
+v1.0.9, 2019-??
+------------------
+* update packages
+
+v1.0.8, 2019-10-14
+------------------
++ support "_exclude" sheet to remove specific excel sheets from processing
+
+v1.0.7, 2019-07-15
+------------------
+* minor refactorings
+
+v1.0.6, 2019-03-26
+------------------
++ support comments at the beginning of the excel sheet
+
 v1.0.4, 2018-12-25
 ------------------
 + support files with no _contents
