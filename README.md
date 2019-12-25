@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/sbcgua/mockup-compiler-js.svg?branch=master)](https://travis-ci.com/sbcgua/mockup-compiler-js)
+[![npm version](https://badge.fury.io/js/mockup-compiler-js.svg)](https://badge.fury.io/js/mockup-compiler-js)
 
 # Mockup compiler for node js
 
