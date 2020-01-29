@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.com/sbcgua/mockup-compiler-js.svg?branch=master)](https://travis-ci.com/sbcgua/mockup-compiler-js)
 [![npm version](https://badge.fury.io/js/mockup-compiler-js.svg)](https://badge.fury.io/js/mockup-compiler-js)
+[![Known Vulnerabilities](https://snyk.io/test/github/sbcgua/mockup-compiler-js/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sbcgua/mockup-compiler-js?targetFile=package.json)
 
 # Mockup compiler for node js
 
