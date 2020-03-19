@@ -1,6 +1,6 @@
 {
   "name": "mockup-compiler-js",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Tool to convert Excel unit test data to text and archive it",
   "main": "mockarch.js",
   "bin": {
