@@ -1,0 +1,63 @@
+name: Main workflow
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test-and-lint:
+    name: Test and lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: npm run test
+      - run: npm run lint
+  auto-tag:
+    name: Add a tag on new version
+    needs: test-and-lint
+    runs-on: ubuntu-latest
+    # ORIGINAL REPO, to avoid running for forks
+    if: github.ref == 'refs/heads/master' && github.repository == 'sbcgua/mockup-compiler-js'
+    steps:
+      - uses: actions/checkout@v2
+      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - name: Detect version change
+        id: detect_version_change
+        run: |
+          LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          LAST_TAG=${LAST_TAG#v}
+          CURRENT_VERSION=$(jq -r -c .version package.json)
+          echo "Last tag: ${LAST_TAG}, Current version: ${CURRENT_VERSION}"
+          if [ "${LAST_TAG}" = "${CURRENT_VERSION}" ]; then
+            echo "Version change was not detected, exiting..."
+          else
+            echo "Version change detected"
+            echo "::set-output name=VERSION_CHANGED::yes"
+            echo "::set-output name=NEW_VERSION::$CURRENT_VERSION"
+          fi
+      - name: Create new tag
+        if: success() && steps.detect_version_change.outputs.VERSION_CHANGED == 'yes'
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
+        run: |
+          if [ -z "${GITHUB_TOKEN}" ]; then
+            echo "GITHUB_TOKEN is undefined"
+            exit 1
+          fi
+          AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
+          API_ENDPOINT="https://api.github.com/repos/${GITHUB_REPOSITORY}/git/refs"
+          API_REQUEST="{ \"ref\": \"refs/tags/v${{ steps.detect_version_change.outputs.NEW_VERSION }}\", \"sha\": \"${GITHUB_SHA}\" }"
+          echo "Api endpoint: ${API_ENDPOINT}"
+          echo "Api request:  ${API_REQUEST}"
+          HTTP_CODE=$(curl -s -X POST "$API_ENDPOINT" -H "$AUTH_HEADER" -d "$API_REQUEST" -w "%{http_code}\n" -o /tmp/response.json)
+          echo "Http code:    ${HTTP_CODE}"
+          cat /tmp/response.json
+          [ $HTTP_CODE == 2* ]
