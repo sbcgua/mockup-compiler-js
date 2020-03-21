@@ -1,0 +1,23 @@
+name: On new version tag
+
+on:
+  push:
+    tags:
+      - v* # Version tags
+
+jobs:
+  npm-publish:
+    name: Publish NPM package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Prepare
+        run: |
+          npm install
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: npm publish --access public

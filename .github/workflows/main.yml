@@ -60,4 +60,4 @@ jobs:
           HTTP_CODE=$(curl -s -X POST "$API_ENDPOINT" -H "$AUTH_HEADER" -d "$API_REQUEST" -w "%{http_code}\n" -o /tmp/response.json)
           echo "Http code:    ${HTTP_CODE}"
           cat /tmp/response.json
-          [ $HTTP_CODE == 2* ]
+          [[ $HTTP_CODE == 2* ]]
