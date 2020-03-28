@@ -10,6 +10,7 @@ Legend
 
 v1.0.11, 2020-0?-??
 ------------------
+! lowercase whole mock path (breaking!)
 + quiet operation param
 
 v1.0.10, 2020-03-21
