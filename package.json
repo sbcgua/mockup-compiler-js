@@ -2,14 +2,14 @@
   "name": "mockup-compiler-js",
   "version": "1.0.10",
   "description": "Tool to convert Excel unit test data to text and archive it",
-  "main": "mockarch.js",
+  "main": "index.js",
   "bin": {
-    "mockup-compiler": "./mockarch.js"
+    "mockup-compiler": "./index.js"
   },
   "scripts": {
     "test": "jest",
-    "testrun": "node mockarch.js -c test-sample/.mock-config.json",
-    "lint": "eslint mockarch.js lib"
+    "testrun": "node index.js -c test-sample/.mock-config.json",
+    "lint": "eslint index.js lib"
   },
   "repository": {
     "type": "git",
