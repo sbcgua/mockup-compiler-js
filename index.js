@@ -2,7 +2,7 @@
 
 const App = require('./lib/app');
 const { readConfig } = require('./lib/config');
-const commander = require('./lib/patched-commander');
+const commander = require('commander');
 const chalk = require('chalk');
 
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
@@ -53,4 +53,4 @@ process.on('unhandledRejection', (reason) => {
     console.log('CRASH! unhandledRejection:', reason);
     process.exit(1);
 });
-main(commander.collectAllOpts());
+main(commander.opts());
