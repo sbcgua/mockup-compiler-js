@@ -8,11 +8,14 @@ Legend
 + : added
 - : removed
 
-v1.0.11, 2020-0?-??
-------------------
+v1.0.11, 2020-05-22
+-------------------
 ! lowercase whole mock path (breaking!)
 + quiet operation param
 + ignore sheets starting from '-'
++ better exception handling: inform about file/sheet/cell/cell_value
+* fix handling of empty date cells
+* update deps
 
 v1.0.10, 2020-03-21
 ------------------
