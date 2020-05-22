@@ -39,6 +39,7 @@ async function main(args) {
     } catch (error) {
         console.error(chalk.redBright(error.message));
         if (error._file) console.error(`  @file: ${error._file}`);
+        if (error._sheet) console.error(`  @sheet: ${error._sheet}`);
         console.error(error.stack);
     }
 }
