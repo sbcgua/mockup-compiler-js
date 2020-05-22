@@ -22,15 +22,15 @@
   "author": "Alexander Tsybulsky",
   "license": "ISC",
   "dependencies": {
-    "archiver": "^3.1.1",
-    "chalk": "^3.0.0",
+    "archiver": "^4.0.1",
+    "chalk": "^4.0.0",
     "commander": "^5.1.0",
-    "xlsx": "^0.16.0"
+    "xlsx": "^0.16.1"
   },
   "devDependencies": {
-    "eslint": "^6.8.0",
-    "jest": "^25.1.0",
-    "snyk": "^1.316.1"
+    "eslint": "^7.0.0",
+    "jest": "^26.0.1",
+    "snyk": "^1.324.0"
   },
   "snyk": true
 }
