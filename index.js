@@ -40,6 +40,7 @@ async function main(args) {
         console.error(chalk.redBright(error.message));
         if (error._file) console.error(`  @file: ${error._file}`);
         if (error._sheet) console.error(`  @sheet: ${error._sheet}`);
+        if (error._loc) console.error(`  @loc: ${error._loc}`);
         console.error(error.stack);
     }
 }
