@@ -37,7 +37,8 @@ async function main(args) {
         const app = new App(config, args.watch);
         await app.run();
     } catch (error) {
-        console.error(chalk.redBright(error.message + (error._loc ? ` @${error._loc}` : '')));
+        console.error(chalk.redBright(error.message));
+        if (error._file) console.error(`  @file: ${error._file}`);
         console.error(error.stack);
     }
 }
