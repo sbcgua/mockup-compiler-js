@@ -5,6 +5,8 @@ const { readConfig } = require('./lib/config');
 const commander = require('commander');
 const chalk = require('chalk');
 const Logger = require('./lib/logger');
+const path = require('path');
+const packageJson = require(path.resolve(__dirname, 'package.json'));
 
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
@@ -56,6 +58,7 @@ async function main(args) {
     ['-i, --include <path>', 'path to include'],
     ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
 ].forEach(opt => commander.option(...opt));
+commander.version(packageJson.version);
 commander.parse(process.argv);
 
 process.on('unhandledRejection', (reason) => {
