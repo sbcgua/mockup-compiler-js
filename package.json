@@ -28,6 +28,7 @@
     "xlsx": "^0.17.0"
   },
   "devDependencies": {
+    "deep-freeze": "0.0.1",
     "eslint": "^7.0.0",
     "jest": "^27.0.3",
     "snyk": "^1.324.0"
