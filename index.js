@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 
-const App = require('./lib/app');
-const { readConfig } = require('./lib/config');
-const commander = require('commander');
-const chalk = require('chalk');
-const Logger = require('./lib/logger');
 const path = require('path');
 const packageJson = require(path.resolve(__dirname, 'package.json'));
+
+const App = require('./lib/app');
+const commander = require('commander');
+const chalk = require('chalk');
+const { readConfig } = require('./lib/config');
+const Logger = require('./lib/utils/logger');
 
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
