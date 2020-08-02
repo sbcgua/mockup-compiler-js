@@ -22,7 +22,7 @@
   "author": "Alexander Tsybulsky",
   "license": "ISC",
   "dependencies": {
-    "archiver": "^4.0.1",
+    "archiver": "^4.0.2",
     "chalk": "^4.1.0",
     "commander": "^5.1.0",
     "xlsx": "^0.16.3"
