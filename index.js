@@ -11,6 +11,18 @@ const Logger = require('./lib/utils/logger');
 
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
+const argOptions = [
+    ['-b, --no-color', 'suppress colors'],
+    ['-q, --quiet', 'show no output'],
+    ['-w, --watch', 'keep watching the files and re-render when changed'],
+    ['-c, --config <path>', 'read config from this file'],
+    ['-s, --source <path>', 'source directory'],
+    ['-d, --destination <path>', 'destination uncompressed dir'],
+    ['-z, --zip <path>', 'path to zip file to build'],
+    ['-i, --include <path>', 'path to include'],
+    ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
+];
+
 function argsToConfig(args) {
     if (args.eol && !/^(lf|crlf)$/i.test(args.eol)) {
         console.error('EOL must be "lf" or "crlf"');
@@ -48,17 +60,7 @@ async function main(args) {
     }
 }
 
-[
-    ['-b, --no-color', 'suppress colors'],
-    ['-q, --quiet', 'show no output'],
-    ['-w, --watch', 'keep watching the files and re-render when changed'],
-    ['-c, --config <path>', 'read config from this file'],
-    ['-s, --source <path>', 'source directory'],
-    ['-d, --destination <path>', 'destination uncompressed dir'],
-    ['-z, --zip <path>', 'path to zip file to build'],
-    ['-i, --include <path>', 'path to include'],
-    ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
-].forEach(opt => commander.option(...opt));
+argOptions.forEach(opt => commander.option(...opt));
 commander.version(packageJson.version);
 commander.parse(process.argv);
 
