@@ -21,6 +21,7 @@ const argOptions = [
     ['-z, --zip <path>', 'path to zip file to build'],
     ['-i, --include <path>', 'path to include'],
     ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
+    ['-m, --with-meta', 'calculate meta file (with source file hashes)'],
 ];
 
 function argsToConfig(args) {
@@ -36,6 +37,7 @@ function argsToConfig(args) {
         includes:  args.include && [args.include],
         eol:       args.eol,
         quiet:     args.quiet,
+        withMeta:  args.withMeta,
     };
     for (let k of Object.keys(config)) {
         if (!config[k]) delete config[k];
@@ -49,7 +51,7 @@ async function main(args) {
     config.logger = new Logger({quiet: config.quiet});
 
     if (config.include && config.include.length > 0) {
-        //TODO
+        throw Error('Multiple includes is not supported curently, please log an issue if needed');
     }
 
     try {
