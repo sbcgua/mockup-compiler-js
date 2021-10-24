@@ -48,6 +48,10 @@ async function main(args) {
     if (!args.color) chalk.enabled = false;
     config.logger = new Logger({quiet: config.quiet});
 
+    if (config.include && config.include.length > 0) {
+        //TODO
+    }
+
     try {
         const app = new App(config, args.watch);
         await app.run();
