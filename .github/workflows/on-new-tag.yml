@@ -1,9 +1,9 @@
 name: On new version tag
 
-on:
-  push:
-    tags:
-      - v* # Version tags
+# on:
+#   push:
+#     tags:
+#       - v* # Version tags
 
 jobs:
   npm-publish:
