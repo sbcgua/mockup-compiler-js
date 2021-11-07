@@ -1,14 +1,14 @@
 {
   "root": true,
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module"
-  },
   "env": {
     "node": true,
     "jest": true,
-    "es6": true
+    "es2021": true
   },
+  "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+  },  
   "extends": [
     "eslint:recommended"
   ],

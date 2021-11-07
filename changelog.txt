@@ -8,6 +8,17 @@ Legend
 + : added
 - : removed
 
+v1.1.0, 2021-11-??
+-------------------
+! BREAKING: cut support of multiple include dirs, due to some technical reasons. Please log an issue if you need this feature
+! BREAKING: default eol is 'lf'
++ Create .meta/src_files with SHA1 of source files, to be compatible with abap version
++ watcher now watches include dirs as well
++ included files are listed in the output
++ skipFieldStartingWith config param, to control a fields-prefix to ignore
++ cleanDestDirOnStart config param
+* multiple refactoring
+
 v1.0.11, 2020-05-22
 -------------------
 ! lowercase whole mock path (breaking!)
