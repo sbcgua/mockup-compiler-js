@@ -17,6 +17,7 @@ v1.1.0, 2021-11-??
 + included files are listed in the output
 + skipFieldStartingWith config param, to control a fields-prefix to ignore
 + cleanDestDirOnStart config param
++ --no-zip command line param
 * multiple refactoring
 
 v1.0.11, 2020-05-22
