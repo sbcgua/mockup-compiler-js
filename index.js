@@ -28,6 +28,7 @@ async function main(args) {
         if (error._sheet) console.error(`  @sheet: ${error._sheet}`);
         if (error._loc) console.error(`  @loc: ${error._loc}`);
         console.error(error.stack);
+        process.exit(1);
     }
 }
 
