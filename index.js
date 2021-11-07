@@ -2,57 +2,22 @@
 
 const path = require('path');
 const packageJson = require(path.resolve(__dirname, 'package.json'));
+const chalk = require('chalk');
+const { Command } = require('commander');
 
 const App = require('./lib/app');
-const commander = require('commander');
-const chalk = require('chalk');
 const { readConfig } = require('./lib/config');
 const Logger = require('./lib/utils/logger');
+const { argOptions, argsToConfig } = require('./lib/args');
 
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
-const argOptions = [
-    ['-b, --no-color', 'suppress colors'],
-    ['-q, --quiet', 'show no output'],
-    ['-w, --watch', 'keep watching the files and re-render when changed'],
-    ['-c, --config <path>', 'read config from this file'],
-    ['-s, --source <path>', 'source directory'],
-    ['-d, --destination <path>', 'destination uncompressed dir'],
-    ['-z, --zip <path>', 'path to zip file to build'],
-    ['-i, --include <path>', 'path to include'],
-    ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
-    ['-m, --with-meta', 'calculate meta file (with source file hashes)'],
-];
-
-function argsToConfig(args) {
-    if (args.eol && !/^(lf|crlf)$/i.test(args.eol)) {
-        console.error('EOL must be "lf" or "crlf"');
-        process.exit(1);
-    }
-
-    const config = {
-        sourceDir: args.source,
-        destDir:   args.destination,
-        zipPath:   args.zip,
-        includes:  args.include && [args.include],
-        eol:       args.eol,
-        quiet:     args.quiet,
-        withMeta:  args.withMeta,
-    };
-    for (let k of Object.keys(config)) {
-        if (!config[k]) delete config[k];
-    }
-    return config;
-}
-
 async function main(args) {
-    const config = readConfig(args.config || CONFIG_DEFAULT_PATH, argsToConfig(args));
+    const configPath = args.config || CONFIG_DEFAULT_PATH;
+    const overloadsFromArgs = argsToConfig(args);
+    const config = readConfig(configPath, overloadsFromArgs);
     if (!args.color) chalk.enabled = false;
     config.logger = new Logger({quiet: config.quiet});
-
-    if (config.include && config.include.length > 0) {
-        throw Error('Multiple includes is not supported curently, please log an issue if needed');
-    }
 
     try {
         const app = new App(config, args.watch);
@@ -66,12 +31,13 @@ async function main(args) {
     }
 }
 
+process.on('unhandledRejection', (reason) => {
+    if (!commander.opts().quiet) console.error('CRASH! unhandledRejection:', reason);
+    process.exit(1);
+});
+
+const commander = new Command();
 argOptions.forEach(opt => commander.option(...opt));
 commander.version(packageJson.version);
 commander.parse(process.argv);
-
-process.on('unhandledRejection', (reason) => {
-    if (!commander.quiet) console.error('CRASH! unhandledRejection:', reason);
-    process.exit(1);
-});
 main(commander.opts());
