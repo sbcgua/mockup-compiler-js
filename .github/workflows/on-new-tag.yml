@@ -1,12 +1,13 @@
 name: On new version tag
 
-# on:
-#   push:
-#     tags:
-#       - v* # Version tags
+on:
+  push:
+    tags:
+      - v* # Version tags
 
 jobs:
   npm-publish:
+    if: false # disable for now
     name: Publish NPM package
     runs-on: ubuntu-latest
     steps:
