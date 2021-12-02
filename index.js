@@ -10,16 +10,13 @@ const { readConfig } = require('./lib/config');
 const Logger = require('./lib/utils/logger');
 const { argOptions, argsToConfig } = require('./lib/args');
 
-const CONFIG_DEFAULT_PATH = './.mock-config.json';
-
 async function main(args) {
-    const configPath = args.config || CONFIG_DEFAULT_PATH;
-    const overloadsFromArgs = argsToConfig(args);
-    const config = readConfig(configPath, overloadsFromArgs);
     if (!args.color) chalk.level = 0;
-    config.logger = new Logger({quiet: config.quiet});
 
     try {
+        const overloadsFromArgs = argsToConfig(args);
+        const config = readConfig(args.config, overloadsFromArgs);
+        config.logger = new Logger({quiet: config.quiet});
         const app = new App(config, args.watch);
         await app.run();
     } catch (error) {
@@ -27,7 +24,7 @@ async function main(args) {
         if (error._file) console.error(`  @file: ${error._file}`);
         if (error._sheet) console.error(`  @sheet: ${error._sheet}`);
         if (error._loc) console.error(`  @loc: ${error._loc}`);
-        console.error(error.stack);
+        if (args.verbose) console.error(error.stack);
         process.exit(1);
     }
 }
