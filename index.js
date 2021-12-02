@@ -16,7 +16,7 @@ async function main(args) {
     const configPath = args.config || CONFIG_DEFAULT_PATH;
     const overloadsFromArgs = argsToConfig(args);
     const config = readConfig(configPath, overloadsFromArgs);
-    if (!args.color) chalk.enabled = false;
+    if (!args.color) chalk.level = 0;
     config.logger = new Logger({quiet: config.quiet});
 
     try {
