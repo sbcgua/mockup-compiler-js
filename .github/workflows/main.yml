@@ -30,12 +30,12 @@ jobs:
       - run: npm ci
       - run: npm run test -- --reporters="github-actions"
       - run: |
-        npm run testrun
-        test -d _dest && echo dest OK
-        test -f _dest/build.zip && echo build.zip OK
-        test `find _dest | wc -l` = "9" && echo file count OK
-        test -f _dest/.meta/src_files && echo src_files OK
-        test `cat _dest/.meta/src_files | wc -l` = "3" && echo src_files line count OK
+          npm run testrun
+          test -d _dest && echo dest OK
+          test -f _dest/build.zip && echo build.zip OK
+          test `find _dest | wc -l` = "9" && echo file count OK
+          test -f _dest/.meta/src_files && echo src_files OK
+          test `cat _dest/.meta/src_files | wc -l` = "3" && echo src_files line count OK
 
   auto-tag:
     name: Add a tag on new version
