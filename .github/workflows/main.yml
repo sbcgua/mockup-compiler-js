@@ -13,12 +13,12 @@ jobs:
     name: Test and lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: '14'
-      - uses: actions/checkout@v2
+          node-version: 'lts/*'
+      - uses: actions/checkout@v3
       - run: npm install
-      - run: npm run test
+      - run: npm run test -- --reporters="github-actions"
       - run: npm run lint
   auto-tag:
     name: Add a tag on new version
