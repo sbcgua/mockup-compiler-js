@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 
-const path = require('path');
-const packageJson = require(path.resolve(__dirname, 'package.json'));
-const chalk = require('chalk');
-const { Command } = require('commander');
+import packageJson from './package.json' assert { type: 'json' };
+import chalk from 'chalk';
+import { Command } from 'commander';
 
-const App = require('./lib/app');
-const { readConfig } = require('./lib/config');
-const Logger = require('./lib/utils/logger');
-const { argOptions, argsToConfig } = require('./lib/args');
+import App from './lib/app.js';
+import { readConfig } from './lib/config.js';
+import Logger from './lib/utils/logger.js';
+import { argOptions, argsToConfig } from './lib/args.js';
 
 async function main(args) {
     if (!args.color) chalk.level = 0;

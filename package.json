@@ -2,13 +2,14 @@
   "name": "mockup-compiler-js",
   "version": "1.1.2",
   "description": "Tool to convert Excel unit test data to text and archive it",
-  "main": "index.js",
+  "type": "module",
+  "module": "index.js",
   "bin": {
     "mockup-compiler": "./index.js"
   },
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
+    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest NODE_NO_WARNINGS=1 --watch",
     "testrun": "node index.js -c test-sample/.mock-config.json",
     "lint": "eslint index.js lib"
   },
@@ -23,10 +24,11 @@
     "archiver": "^6.0.1",
     "chalk": "^5.3.0",
     "commander": "^11.0.0",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "deep-freeze": "0.0.1",
     "eslint": "^8.48.0",
     "jest": "^29.6.4",
