@@ -20,7 +20,7 @@
   "author": "Alexander Tsybulsky",
   "license": "ISC",
   "dependencies": {
-    "archiver": "^5.3.1",
+    "archiver": "^7.0.0",
     "chalk": "^4.1.2",
     "commander": "^8.3.0",
     "lodash": "^4.17.21",
