@@ -1,4 +1,4 @@
-import { parseWorkbook } from '../workbook-parser';
+import { parseWorkbook } from './workbook-parser';
 
 test('basic test', () => {
     const act = parseWorkbook({

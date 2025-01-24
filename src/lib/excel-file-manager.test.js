@@ -1,4 +1,4 @@
-import ExcelFileManager from '../excel-file-manager';
+import ExcelFileManager from './excel-file-manager';
 import { fs, vol } from 'memfs';
 import { jest } from '@jest/globals';
 

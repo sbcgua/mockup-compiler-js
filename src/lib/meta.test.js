@@ -1,4 +1,4 @@
-import MetaCalculator from '../meta';
+import MetaCalculator from './meta';
 import { fs, vol } from 'memfs';
 
 // jest.mock('fs', () => fs);

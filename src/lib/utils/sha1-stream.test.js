@@ -1,4 +1,4 @@
-import SimpleSha1Stream from '../sha1-stream';
+import SimpleSha1Stream from './sha1-stream';
 import { PassThrough } from 'stream';
 
 test('should calculate sha1', () => {

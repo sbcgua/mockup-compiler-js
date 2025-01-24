@@ -2,7 +2,7 @@ import { fs, vol } from 'memfs';
 import { jest } from '@jest/globals';
 // jest.mock('fs', () => fs);
 
-import IncludeFileManager from '../include-file-manager';
+import IncludeFileManager from './include-file-manager';
 
 beforeEach(() => {
     vol.reset();

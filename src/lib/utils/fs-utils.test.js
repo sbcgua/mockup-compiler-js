@@ -1,4 +1,4 @@
-import { slash, findCommonPath } from '../fs-utils';
+import { slash, findCommonPath } from './fs-utils';
 
 // jest.mock('fs', () => require('memfs').fs);
 // const { vol } = require('memfs');

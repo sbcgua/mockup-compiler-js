@@ -1,5 +1,5 @@
 import deepFreeze from 'deep-freeze';
-import { parseExcelIntoMocks, createMockProcessor } from '../mock-processings';
+import { parseExcelIntoMocks, createMockProcessor } from './mock-processings';
 import { jest } from '@jest/globals';
 
 // jest.mock('xlsx', () => ({
@@ -20,7 +20,7 @@ jest.unstable_mockModule('../workbook-parser', () => {
 
 test('should parseExcelIntoMocks', () => {
     const xlsx = require('xlsx');
-    const { _setParseWorkbookResult } = require('../workbook-parser');
+    const { _setParseWorkbookResult } = require('./workbook-parser');
 
     const expMocks = deepFreeze({
         sheet1: Object.assign([

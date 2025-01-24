@@ -1,4 +1,4 @@
-import { stringifyWithTabs } from '../tabbed';
+import { stringifyWithTabs } from './tabbed';
 
 const MOCK = [
     { A: 'Vasya', B: '01.09.2018', c: '15.00' },

@@ -3,9 +3,8 @@
   "version": "1.1.2",
   "description": "Tool to convert Excel unit test data to text and archive it",
   "type": "module",
-  "module": "index.js",
   "bin": {
-    "mockup-compiler": "./index.js"
+    "mockup-compiler": "./src/index.js"
   },
   "scripts": {
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
@@ -22,16 +21,16 @@
   "license": "ISC",
   "dependencies": {
     "archiver": "^7.0.1",
-    "chalk": "^5.3.0",
-    "commander": "^12.0.0",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
     "lodash-es": "^4.17.21",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "cross-env": "^7.0.3",
+    "@eslint/js": "^9.18.0",
     "deep-freeze": "0.0.1",
-    "eslint": "^9.0.0",
-    "jest": "^29.7.0",
-    "memfs": "^4.8.1"
+    "eslint": "^9.18.0",
+    "globals": "^15.14.0",
+    "memfs": "^4.17.0"
   }
 }
