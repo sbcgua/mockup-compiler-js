@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import packageJson from './package.json' assert { type: 'json' };
 import chalk from 'chalk';
 import { Command } from 'commander';
 
@@ -8,6 +7,15 @@ import App from './lib/app.js';
 import { readConfig } from './lib/config.js';
 import Logger from './lib/utils/logger.js';
 import { argOptions, argsToConfig } from './lib/args.js';
+
+import { readFileSync } from 'node:fs';
+try {
+    const packageInfo = JSON.parse( readFileSync(new URL('./package.json', import.meta.url)) );
+    var { version } = packageInfo;
+} catch (error) {
+    console.error(chalk.redBright('Cannot read package info (version)'));
+    process.exit(1);    
+}
 
 async function main(args) {
     if (!args.color) chalk.level = 0;
@@ -29,12 +37,14 @@ async function main(args) {
 }
 
 process.on('unhandledRejection', (reason) => {
-    if (!commander.opts().quiet) console.error('CRASH! unhandledRejection:', reason);
+    if (!commander.opts().quiet) {
+        console.error('[CRASH] unhandledRejection:', reason);
+    }
     process.exit(1);
 });
 
 const commander = new Command();
 argOptions.forEach(opt => commander.option(...opt));
-commander.version(packageJson.version);
+commander.version(version);
 commander.parse(process.argv);
 main(commander.opts());

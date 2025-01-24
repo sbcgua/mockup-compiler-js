@@ -1,0 +1,7 @@
+☐ move all to src
+☐ review esm code
+☐ Fix UTs
+☐ update modules
+☐ migrate to new eslint
+☐ build sea or pkg
+☐ build installer (NSIS or MSI)
