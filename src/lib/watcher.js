@@ -102,12 +102,13 @@ export default class Watcher {
 
         const normilizedDirList = this.#watchedDirs.map(slash);
         const commonPath = findCommonPath(normilizedDirList);
+
         if (normilizedDirList.length > 1 && commonPath) {
-            this.#logger.log(chalk.grey`  ${commonPath}:`);
+            this.#logger.log(chalk.grey(`  ${commonPath}:`));
             for (const d of normilizedDirList)
-                this.#logger.log(chalk.grey`   ${d.replace(commonPath, '') || '.'}`);
+                this.#logger.log(chalk.grey(`   ${d.replace(commonPath, '') || '.'}`));
         } else {
-            for (const d of normilizedDirList) this.#logger.log(chalk.grey`  ${d}`);
+            for (const d of normilizedDirList) this.#logger.log(chalk.grey(`  ${d}`));
         }
 
         if (process.stdout.isTTY) {
