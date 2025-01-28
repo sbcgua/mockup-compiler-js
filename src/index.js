@@ -8,7 +8,12 @@ import { readFileSync } from 'node:fs';
 
 function readVersion() {
     try {
-        const packageInfo = JSON.parse( readFileSync(new URL('./package.json', import.meta.url)) );
+        let packageInfo;
+        try {
+            packageInfo = JSON.parse(readFileSync('./package.json'));
+        } catch {
+            packageInfo = JSON.parse(readFileSync('../package.json'));
+        }
         return packageInfo.version;
     } catch {
         console.error(chalk.redBright('Cannot read package info (version)'));

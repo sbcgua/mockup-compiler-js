@@ -1,7 +1,8 @@
-☐ move all to src
-☐ review esm code
-☐ Fix UTs
-☐ update modules
-☐ migrate to new eslint
-☐ build sea or pkg
-☐ build installer (NSIS or MSI)
+✔ move all to src @done(25-01-28 11:55)
+✔ review esm code @done(25-01-28 11:55)
+✔ Fix UTs @done(25-01-28 11:55)
+✔ update modules @done(25-01-28 11:55)
+✔ migrate to new eslint @done(25-01-28 11:55)
+☐ build sea or pkg or esbuild
+☐ run from current dir
+☐ build installer (NSIS or MSI) ?

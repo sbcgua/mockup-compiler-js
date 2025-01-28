@@ -94,7 +94,7 @@ export default class App {
     }
 
     async run() {
-        this.#processFiles();
+        await this.#processFiles();
         this.#printStats();
 
         if (this.#metaCalculator) {
