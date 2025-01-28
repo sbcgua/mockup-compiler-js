@@ -1,18 +1,19 @@
 import chalk from 'chalk';
 import { Command } from 'commander';
-
 import App from './lib/app.js';
 import { readConfig } from './lib/config.js';
 import Logger from './lib/utils/logger.js';
 import { argOptions, argsToConfig } from './lib/args.js';
-
 import { readFileSync } from 'node:fs';
-try {
-    const packageInfo = JSON.parse( readFileSync(new URL('./package.json', import.meta.url)) );
-    var { version } = packageInfo;
-} catch (error) {
-    console.error(chalk.redBright('Cannot read package info (version)'));
-    process.exit(1);    
+
+function readVersion() {
+    try {
+        const packageInfo = JSON.parse( readFileSync(new URL('./package.json', import.meta.url)) );
+        return packageInfo.version;
+    } catch {
+        console.error(chalk.redBright('Cannot read package info (version)'));
+        process.exit(1);
+    }
 }
 
 async function main(args) {
@@ -43,6 +44,6 @@ process.on('unhandledRejection', (reason) => {
 
 const commander = new Command();
 argOptions.forEach(opt => commander.option(...opt));
-commander.version(version);
+commander.version(readVersion());
 commander.parse(process.argv);
 main(commander.opts());

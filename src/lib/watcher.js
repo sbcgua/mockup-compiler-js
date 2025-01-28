@@ -33,28 +33,28 @@ export default class Watcher {
     }
 
     #initWatchers() {
-        const mockDir = this.#excelFileManager.srcDir;
-        this.#watchers.push(fs.watch(mockDir, this.#createEventHandler(mockDir, { isExcel: true })));
+        const mockDir = this.#excelFileManager.srcDirs[0]; // Always one dir for excel
+        this.#watchers.push(fs.watch(mockDir, this.#createEventHandler(mockDir, this.#excelFileManager, /\.xlsx$/)));
         this.#watchedDirs.push(mockDir);
 
         if (this.#includeFileManager) {
-            for (const iDir of this.#includeFileManager.includeDirs) {
-                this.#watchers.push(fs.watch(iDir, this.#createEventHandler(iDir, { isExcel: false })));
-                this.#watchedDirs.push(iDir);
+            for (const dir of this.#includeFileManager.srcDirs) {
+                this.#watchers.push(fs.watch(dir, this.#createEventHandler(dir, this.#includeFileManager)));
+                this.#watchedDirs.push(dir);
             }
         }
     }
 
-    #createEventHandler(dir, {isExcel}) {
+    #createEventHandler(dir, fileManager, filenameRe = null) {
         let lastChange = 0;
         let lastHandlerComplete = true;
         return async (eventType, filename) => {
             if (eventType !== 'change') return;
             if (filename.startsWith('~')) return;
-            if (isExcel && !/\.xlsx$/.test(filename)) return;
+            if (filenameRe && !filenameRe.test(filename)) return;
             try {
                 if (fs.lstatSync(path.join(dir, filename)).isDirectory()) return;
-            } catch (error) {
+            } catch {
                 // Excel saves create locked temp files, so ignore failed stats
                 return;
             }
@@ -64,7 +64,7 @@ export default class Watcher {
                 lastHandlerComplete = false;
                 lastChange = now;
                 this.#reportChange(now, filename);
-                await this.#handleChange(dir, filename, isExcel);
+                await this.#handleChange(dir, filename, fileManager);
                 lastHandlerComplete = true;
             }
         };
@@ -72,24 +72,20 @@ export default class Watcher {
 
     #reportChange(now, filename) {
         this.#logger.log();
-        const nowFormatted = (new Date(now)).toISOString().substr(0, 19).replace('T', ' ');
+        const nowFormatted = (new Date(now)).toISOString().substring(0, 19).replace('T', ' ');
         this.#logger.log(chalk.blueBright(`[${nowFormatted}]`), chalk.grey('Change detected:'), `${filename}`);
     }
 
-    async #handleChange(dir, filename, isExcel) {
+    async #handleChange(dir, filename, fileManager) {
         const filepath = path.join(dir, filename);
-        if (isExcel) {
-            await this.#excelFileManager.processOneFile(filepath);
-        } else {
-            await this.#includeFileManager.includeOneFile(filepath);
-        }
+        await fileManager.processOneFile(filepath);
         if (this.#metaCalculator) {
             this.#metaCalculator.buildAndSave();
         }
         if (this.#zipper) {
             const archSize = await this.#zipper.zipAsync([
-                ...this.#excelFileManager.mockList,
-                ...(this.#includeFileManager ? this.#includeFileManager.copiedFileList : []),
+                ...this.#excelFileManager.testObjectList,
+                ...(this.#includeFileManager ? this.#includeFileManager.testObjectList : []),
                 ...(this.#metaCalculator ? [this.#metaCalculator.metaSrcFileName] : []),
             ]);
             this.#logger.log(chalk.green('  [>>]'), `Archiving complete. File size = ${archSize} bytes`);

@@ -1,11 +1,11 @@
 import fs from 'node:fs';
 import chalk from 'chalk';
 import Watcher from './watcher.js';
-import MetaCalculator from './meta.js';
+import MetaCalculator from './proc/meta.js';
 import { Zipper } from './utils/zip.js';
-import ExcelFileManager from './excel-file-manager.js';
-import IncludeFileManager from './include-file-manager.js';
-import { createMockProcessor, parseExcelIntoMocks } from './mock-processings.js';
+import ExcelFileManager from './proc/file-manager-excel.js';
+import IncludeFileManager from './proc/file-manager-includes.js';
+import { createMockProcessor, parseWokbookIntoMocks } from './proc/mock-processings.js';
 
 export default class App {
     #excelFileManager;
@@ -23,21 +23,23 @@ export default class App {
     constructor(config, withWatcher) {
         this.#withWatcher = withWatcher;
         this.#srcDir      = config.sourceDir;
-        this.#destDir     = config.destDir; // needed as attr?
+        this.#destDir     = config.destDir;
         this.#zipPath     = config.zipPath;
         this.#includes    = config.includes;
         this.#logger      = config.logger;
         this.#withMeta    = config.withMeta;
 
-        this.initDestDir({ cleanDestDirOnStart: config.cleanDestDirOnStart });
-        this.#excelFileManager = this.#setupExcelFileManager(config.eol, config.skipFieldsStartingWith);
+        this.#initDestDir({ cleanDestDirOnStart: config.cleanDestDirOnStart });
+        this.#excelFileManager = this.#setupExcelFileManager({
+            eol: config.eol,
+            skipFieldsStartingWith: config.skipFieldsStartingWith,
+        });
         this.#includeFileManager = this.#setupIncludeFileManager();
         this.#metaCalculator = this.#withMeta && new MetaCalculator({
             excelFileManager: this.#excelFileManager,
             includeFileManager: this.#includeFileManager,
             destDir: this.#destDir,
             eol: config.eol,
-            fs,
         });
         this.#zipper = this.#zipPath && !config.suppressZip && new Zipper({
             destDir: this.#destDir,
@@ -45,7 +47,7 @@ export default class App {
         });
     }
 
-    initDestDir({cleanDestDirOnStart}) {
+    #initDestDir({cleanDestDirOnStart}) {
         if (fs.existsSync(this.#destDir)) {
             if (cleanDestDirOnStart) {
                 this.#logger.log(chalk.grey('Removing dest dir'), this.#destDir);
@@ -57,19 +59,18 @@ export default class App {
         }
     }
 
-    #setupExcelFileManager(eol, skipFieldsStartingWith) {
+    #setupExcelFileManager({eol, skipFieldsStartingWith}) {
         const fileProcessor = new ExcelFileManager({
             srcDir: this.#srcDir,
             destDir: this.#destDir,
-            fileParser: parseExcelIntoMocks,
+            mockExtractor: parseWokbookIntoMocks,
             mockProcessor: createMockProcessor(eol, skipFieldsStartingWith),
             withHashing: this.#withMeta,
-            fs,
         });
         fileProcessor.on('start-of-file-processing', ({name}) => {
             this.#logger.log(chalk.grey('Processing:'), `${name}`);
         });
-        fileProcessor.on('mock-processed', ({name, rowCount}) => {
+        fileProcessor.on('item-processed', ({name, rowCount}) => {
             this.#logger.log(chalk.green('  [OK]'), `${name} (${rowCount} rows)`);
         });
         return fileProcessor;
@@ -85,21 +86,15 @@ export default class App {
             includeDir: this.#includes[0],
             destDir: this.#destDir,
             withHashing: this.#withMeta,
-            fs,
         });
-        includeManager.on('include-processed', ({ name }) => {
+        includeManager.on('item-processed', ({ name }) => {
             this.#logger.log(chalk.green('  [OK]'), `${name}`);
         });
         return includeManager;
     }
 
     async run() {
-        await this.#excelFileManager.processDir();
-        if (this.#includeFileManager) {
-            this.#logger.log(chalk.grey('\nProcessing:'), 'Includes');
-            await this.#includeFileManager.processDir();
-        }
-
+        this.#processFiles();
         this.#printStats();
 
         if (this.#metaCalculator) {
@@ -107,32 +102,48 @@ export default class App {
         }
 
         if (this.#zipper) {
-            this.#zipper.deleteZipFile();
-            const archSize = await this.#zipper.zipAsync([
-                ...this.#excelFileManager.mockList,
-                ...(this.#includeFileManager ? this.#includeFileManager.copiedFileList : []),
-                ...(this.#withMeta ? [this.#metaCalculator.metaSrcFileName] : []),
-            ]);
-            this.#logger.log(`\nArchiving complete. File size = ${archSize} bytes`);
+            await this.#zipMocks();
         }
 
         if (this.#withWatcher) {
-            const watcher = new Watcher({
-                logger: this.#logger,
-                excelFileManager: this.#excelFileManager,
-                includeFileManager: this.#includeFileManager,
-                metaCalculator: this.#metaCalculator,
-                zipper: this.#zipper,
-            });
-            watcher.start();
+            this.#startWatcher();
         }
+    }
+
+    async #processFiles() {
+        await this.#excelFileManager.processAll();
+        if (this.#includeFileManager) {
+            this.#logger.log(chalk.grey('\nProcessing:'), 'Includes');
+            await this.#includeFileManager.processAll();
+        }
+    }
+
+    async #zipMocks() {
+        this.#zipper.deleteZipFile();
+        const archSize = await this.#zipper.zipAsync([
+            ...this.#excelFileManager.testObjectList,
+            ...(this.#includeFileManager ? this.#includeFileManager.testObjectList : []),
+            ...(this.#withMeta ? [this.#metaCalculator.metaSrcFileName] : []),
+        ]);
+        this.#logger.log(`\nArchiving complete. File size = ${archSize} bytes`);
+    }
+
+    #startWatcher() {
+        const watcher = new Watcher({
+            logger: this.#logger,
+            excelFileManager: this.#excelFileManager,
+            includeFileManager: this.#includeFileManager,
+            metaCalculator: this.#metaCalculator,
+            zipper: this.#zipper,
+        });
+        watcher.start();
     }
 
     #printStats() {
         this.#logger.log();
         this.#logger.log('-----------------------');
         this.#logger.log(chalk.grey('Processed files: '), `${this.#excelFileManager.fileHashMap.size}`);
-        this.#logger.log(chalk.grey('Processed sheets:'), `${this.#excelFileManager.mockList.length}`);
+        this.#logger.log(chalk.grey('Processed sheets:'), `${this.#excelFileManager.testObjectList.length}`);
         if (this.#includeFileManager) {
             this.#logger.log(chalk.grey('Added assets:    '), `${this.#includeFileManager.fileHashMap.size}`);
         }

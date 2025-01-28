@@ -1,6 +1,16 @@
 // Reading converters
-import XLSX from 'xlsx';
-import { num2date } from './date-helpers.js';
+import { utils as XLSXUtils } from 'xlsx';
+
+// Internal constants
+const EXCEL_DATE_MULT  = 24 * 60 * 60 * 1000;
+const EXCEL_DATE_EPOCH = Date.UTC(1899, 11, 30); // (new Date(Date.UTC(1899, 11, 30))).valueOf()
+
+export function num2date(v) {
+    if (!v) return null;
+    if (typeof v === 'number') return new Date(v * EXCEL_DATE_MULT + EXCEL_DATE_EPOCH);
+    if (typeof v.toString === 'function') return v.toString();
+    return null;
+}
 
 const CONVERTERS = {
     'd': {
@@ -15,8 +25,8 @@ const CONVERTERS = {
 
 function isFirstRowCommented(sheet, range, commentChar) {
     if (typeof commentChar !== 'string' || commentChar.length !== 1) return false;
-    const rowRef = XLSX.utils.encode_row(range.s.r);
-    const colRef = XLSX.utils.encode_col(range.s.c);
+    const rowRef = XLSXUtils.encode_row(range.s.r);
+    const colRef = XLSXUtils.encode_col(range.s.c);
     const cell = sheet[colRef + rowRef];
     return cell.t === 's' && cell.v[0] === commentChar;
 }
@@ -24,10 +34,10 @@ function isFirstRowCommented(sheet, range, commentChar) {
 function buildColumns(sheet, range, opts) {
     const { renameMap, convMap, lowerCaseColumns } = opts || {};
     const numcols    = range.e.c - range.s.c + 1;
-    const headRowRef = XLSX.utils.encode_row(range.s.r);
+    const headRowRef = XLSXUtils.encode_row(range.s.r);
 
     const columns = Array.from(Array(numcols), (_, i) => ({
-        ref: XLSX.utils.encode_col(range.s.c + i),
+        ref: XLSXUtils.encode_col(range.s.c + i),
         default: '',
     }));
 
@@ -37,7 +47,7 @@ function buildColumns(sheet, range, opts) {
         const cell = sheet[colSpec.ref + headRowRef];
 
         if(cell) {
-            let colName    = XLSX.utils.format_cell(cell);
+            let colName    = XLSXUtils.format_cell(cell);
             colSpec.nameOrig = colName;
             if (lowerCaseColumns) colName = colName.toLowerCase();
             colSpec.name     = renameMap && renameMap[colName] || colName; // rename columns
@@ -70,7 +80,7 @@ export function sheetToJson(sheet, opts){
     if(sheet === null || sheet['!ref'] === null) return [];
 
     const { formatters, keepEmptyRows, skipIfFirstColumnEmpty, firstRowCommentChar, trimOnEmptyHeader } = opts || {};
-    const range = XLSX.utils.decode_range(sheet['!ref']);
+    const range = XLSXUtils.decode_range(sheet['!ref']);
 
     if (firstRowCommentChar && isFirstRowCommented(sheet, range, firstRowCommentChar)) {
         range.s.r += 1;
@@ -88,7 +98,7 @@ export function sheetToJson(sheet, opts){
     let r, c, rowRef, column, cell;
     try {
         for (r = range.s.r + 1; r <= range.e.r; r++) {
-            rowRef = XLSX.utils.encode_row(r);
+            rowRef = XLSXUtils.encode_row(r);
             const row    = {};
             let isEmpty  = true;
             let firstColEmpty = false;

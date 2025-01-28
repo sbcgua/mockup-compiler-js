@@ -34,6 +34,7 @@ function postProcessConfig(config) {
 export function validateConfig(config) {
     if (!config.sourceDir) throw Error('Config or params must have sourceDir');
     if (!config.destDir) throw Error('Config or params must have destDir');
+    // TODO validate complete shape
 }
 
 export function readConfig(confPath, overloads = null) {

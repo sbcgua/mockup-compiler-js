@@ -1,7 +1,8 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import { sortBy } from 'lodash-es';
-import { stringifyWithTabs } from './utils/tabbed.js';
-import { slash } from './utils/fs-utils.js';
+import { stringifyWithTabs } from '../utils/tabbed.js';
+import { slash } from '../utils/fs-utils.js';
 
 export default class MetaCalculator {
     #excelFileManager;
@@ -9,15 +10,13 @@ export default class MetaCalculator {
     #eol;
     #metaDir;
     #metaFilePath;
-    #fs;
 
-    constructor({excelFileManager, includeFileManager, eol, destDir, fs}) {
+    constructor({excelFileManager, includeFileManager, eol, destDir}) {
         this.#excelFileManager = excelFileManager;
         this.#includeFileManager = includeFileManager;
         this.#eol = eol;
-        this.#fs = fs;
 
-        if (!this.#fs.existsSync(destDir)) throw Error('Destination dir does not exist');
+        if (!fs.existsSync(destDir)) throw Error('Destination dir does not exist');
         this.#metaDir = path.join(destDir, this.metaDirName);
         this.#metaFilePath = path.join(destDir, this.metaSrcFileName);
     }
@@ -25,9 +24,9 @@ export default class MetaCalculator {
     get metaDirName() { return '.meta' }
 
     buildAndSave() {
-        if (!this.#fs.existsSync(this.#metaDir)) this.#fs.mkdirSync(this.#metaDir);
+        if (!fs.existsSync(this.#metaDir)) fs.mkdirSync(this.#metaDir);
         const metaData = this.#getSrcFilesMeta();
-        this.#fs.writeFileSync(this.#metaFilePath, metaData);
+        fs.writeFileSync(this.#metaFilePath, metaData);
     }
 
     #getSrcFilesMeta() {
