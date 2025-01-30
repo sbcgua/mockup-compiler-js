@@ -10,7 +10,9 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "testrun": "node src/index.js -c test-sample/.mock-config.json",
-    "lint": "eslint"
+    "lint": "eslint",
+    "build:sea": "bin/build-sea.sh",
+    "build:bundle": "esbuild --format=cjs --platform=node --bundle --outfile=_build/bundle.js src/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,7 @@
   },
   "private": false,
   "author": "Alexander Tsybulsky",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "archiver": "^7.0.1",
     "chalk": "^5.4.1",
@@ -29,9 +31,11 @@
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "deep-freeze": "0.0.1",
+    "esbuild": "^0.24.2",
     "eslint": "^9.18.0",
     "globals": "^15.14.0",
     "memfs": "^4.17.0",
+    "postject": "^1.0.0-alpha.6",
     "vitest": "^3.0.4"
   }
 }

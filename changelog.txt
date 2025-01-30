@@ -8,12 +8,11 @@ Legend
 + : added
 - : removed
 
-v1.2.0, 2024-09-??
+v1.2.0, 2025-02-??
 -------------------
 ! update to ESM
 ! deps update
 ! nodejs single executable
-! standalone installer
 
 v1.1.2, 2023-02-07
 -------------------
