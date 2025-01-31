@@ -11,7 +11,7 @@
     "test:watch": "vitest watch",
     "testrun": "node src/index.js -c test-sample/.mock-config.json",
     "lint": "eslint",
-    "build:sea": "bin/build-sea.sh",
+    "build:sea": "bash bin/build-sea.sh",
     "build:bundle": "esbuild --format=cjs --platform=node --bundle --outfile=_build/bundle.js src/index.js"
   },
   "repository": {

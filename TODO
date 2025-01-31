@@ -4,14 +4,21 @@
 ✔ update modules @done(25-01-28 11:55)
 ✔ migrate to new eslint @done(25-01-28 11:55)
 ☐ build sea or pkg or esbuild
-    ☐ detect SEA and properly report version
-    ☐ Fail on missing config
-    ☐ better signature logic
+    ✘ build installer (NSIS or MSI) ? @cancelled(25-01-30 10:19)
+    ✔ detect SEA and properly report version @done(25-01-30 20:26)
+    ☐ Fail on missing config + GracefulError
+    ☐ better signature logic ?
+        why bother if it self-signed?
+        or need to publish certificate
     ☐ change icon
     ☐ add dev notes
-☐ run from current dir
-✘ build installer (NSIS or MSI) ? @cancelled(25-01-30 10:19)
-☐ update readme
-☐ release to github
-☐ release to npm
+☐ run from current dir (test)
 ☐ new mock file format
+    - utf8 only
+    - force sorting
+    - format validator?
+☐ Release
+    ☐ update readme
+    ☐ bump version
+    ☐ release to github
+    ☐ release to npm
