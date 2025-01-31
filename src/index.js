@@ -1,19 +1,27 @@
-import chalk from 'chalk';
+import { readFileSync } from 'node:fs';
+import { isSea, getAsset } from 'node:sea';
 import { Command } from 'commander';
+import chalk from 'chalk';
+
 import App from './lib/app.js';
 import { readConfig } from './lib/config.js';
 import Logger from './lib/utils/logger.js';
 import { argOptions, argsToConfig } from './lib/args.js';
-import { readFileSync } from 'node:fs';
 
 function readVersion() {
     try {
-        let packageInfo;
-        try {
-            packageInfo = JSON.parse(readFileSync('./package.json'));
-        } catch {
-            packageInfo = JSON.parse(readFileSync('../package.json'));
+        let packageBlob;
+        if (isSea()) {
+            packageBlob = getAsset('package.json', 'utf-8');
+        } else {
+            try {
+                packageBlob = readFileSync('./package.json');
+            } catch {
+                packageBlob = readFileSync('../package.json');
+            }
         }
+        const packageInfo = JSON.parse(packageBlob);
+        if (packageInfo.name !== 'mockup-compiler-js') throw new Error('Invalid package.json');
         return packageInfo.version;
     } catch {
         console.error(chalk.redBright('Cannot read package info (version)'));

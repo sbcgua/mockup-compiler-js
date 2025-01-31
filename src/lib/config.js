@@ -10,11 +10,15 @@ function assignDefaults(config) {
 }
 
 function readConfigFile(confPath) {
-    confPath = path.resolve(confPath);
-    let config = fs.readFileSync(confPath, 'utf8');
-    config = JSON.parse(config);
-    config.rootDir = path.dirname(confPath);
-    return config;
+    try {
+        confPath = path.resolve(confPath);
+        const configData = fs.readFileSync(confPath, 'utf8');
+        const config = JSON.parse(configData);
+        config.rootDir = path.dirname(confPath);
+        return config;
+    } catch {
+        throw Error(`Could not read the config file: ${confPath}`);
+    }
 }
 
 function postProcessConfig(config) {
@@ -42,10 +46,10 @@ const configScheme = {
     properties: {
         rootDir:             { check: 'String' },
         sourceDir:           { check: 'String' },
+        includes:            { check: 'ArrayOfStrings' },
         destDir:             { check: 'String' },
         zipPath:             { check: 'String' },
         suppressZip:         { check: 'Boolean' },
-        includes:            { check: 'ArrayOfStrings' },
         eol:                 { check: 'eol', mustBe: '"lf" or "crlf"' },
         quiet:               { check: 'Boolean' },
         withMeta:            { check: 'Boolean' },
@@ -53,6 +57,8 @@ const configScheme = {
     },
     required: ['rootDir', 'sourceDir', 'destDir'],
 };
+
+// TODO: rootDir not needed?
 
 export function validateConfig(config) {
     // Validate required params
@@ -73,22 +79,8 @@ export function validateConfig(config) {
 }
 
 export function readConfig(confPath, overloads = null) {
-    let config;
-    if (confPath) {
-        try {
-            config = readConfigFile(confPath);
-            config.rootDir = path.dirname(confPath);
-        } catch {
-            throw Error(`Could not read the config file: ${confPath}`);
-        }
-    } else {
-        try {
-            config = readConfigFile(CONFIG_DEFAULT_PATH);
-            config.rootDir = path.dirname(CONFIG_DEFAULT_PATH);
-        } catch {
-            config = { rootDir: process.cwd() };
-        }
-    }
+    if (!confPath) confPath = CONFIG_DEFAULT_PATH;
+    let config = readConfigFile(confPath);
     config = { ...config, ...overloads };
     assignDefaults(config);
     postProcessConfig(config);
