@@ -3,6 +3,8 @@
     - utf8 only
     - force sorting (how? xl[+mocks], includes(with path))
 
+!! - fields cannot start from !
+
 !!MOCKUP-LOADER-FORMAT 1.0
 !!TOC
 /xyz/123.txt 5

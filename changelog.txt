@@ -12,7 +12,8 @@ v1.2.0, 2025-02-??
 -------------------
 ! update to ESM
 ! deps update
-! nodejs single executable
+! config is not defaulted anymore, it must be either pointed with a param, or lay in the current dir, or be specified with args (destDir and sourceDir are mandatory)
++ nodejs single executable, to be able to exec without node installation
 
 v1.1.2, 2023-02-07
 -------------------
