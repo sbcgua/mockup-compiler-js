@@ -29,6 +29,9 @@ function postProcessConfig(config, rootDir) {
     if (config.includes) {
         config.includes = config.includes.map(absolutize);
     }
+    if (config.eol) {
+        config.eol = config.eol.toLowerCase();
+    }
 }
 
 const CHECKS = {
