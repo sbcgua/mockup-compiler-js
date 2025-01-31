@@ -36,6 +36,7 @@
     "globals": "^15.14.0",
     "memfs": "^4.17.0",
     "postject": "^1.0.0-alpha.6",
+    "resedit-cli": "^2.0.1",
     "vitest": "^3.0.4"
   }
 }

@@ -6,12 +6,13 @@
 ☐ build sea or pkg or esbuild
     ✘ build installer (NSIS or MSI) ? @cancelled(25-01-30 10:19)
     ✔ detect SEA and properly report version @done(25-01-30 20:26)
-    ☐ Fail on missing config + GracefulError
+    ✔ Fail on missing config + GracefulError @done(25-01-31 12:55)
+    ✔ Add icon @done(25-01-31 12:32)
+    ✔ add dev notes @done(25-01-31 12:40)
     ☐ better signature logic ?
         why bother if it self-signed?
         or need to publish certificate
-    ☐ change icon
-    ☐ add dev notes
+    ☐ improve icon
 ☐ run from current dir (test)
 ☐ new mock file format
     - utf8 only

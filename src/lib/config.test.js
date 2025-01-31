@@ -13,7 +13,6 @@ describe('Config Module', () => {
         const mockConfig = {
             sourceDir: '/mock/source',
             destDir: '/mock/dest',
-            eol: 'lf',
         };
 
         test('should read and parse config file', () => {
@@ -22,17 +21,6 @@ describe('Config Module', () => {
             const config = readConfig(configPath);
             expect(config).toEqual({
                 ...mockConfig,
-                rootDir: '/mock',
-            });
-        });
-
-        test.skip('should assign defaults if config file is missing', () => {
-            fs.readFileSync.mockImplementation(() => { throw new Error('File not found') });
-            const config = readConfig(); // Missing file!
-            expect(config).toEqual({
-                rootDir: process.cwd(),
-                sourceDir: '.',
-                destDir: './_mock_build_temp',
                 eol: 'lf',
             });
         });
@@ -44,7 +32,7 @@ describe('Config Module', () => {
             const config = readConfig(configPath, overloads);
             expect(config).toEqual({
                 ...mockConfig,
-                rootDir: '/mock',
+                eol: 'lf',
                 quiet: true,
             });
         });
@@ -52,13 +40,12 @@ describe('Config Module', () => {
         test('should throw error if config file cannot be read', () => {
             const configPath = '/mock/config.json';
             fs.readFileSync.mockImplementation(() => { throw new Error('File not found') });
-            expect(() => readConfig(configPath)).toThrowError(`Could not read the config file: ${configPath}`);
+            expect(() => readConfig(configPath)).toThrowError(/Could not read the config file:.*config\.json/);
         });
     });
 
     describe('validateConfig', () => {
         const mockCompleteConfig = {
-            rootDir: '/mock/root',
             sourceDir: '/mock/source',
             destDir: '/mock/dest',
             eol: 'lf',

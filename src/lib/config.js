@@ -4,31 +4,27 @@ import path from 'node:path';
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
 function assignDefaults(config) {
-    if (!config.sourceDir) config.sourceDir = '.';
-    if (!config.destDir) config.destDir = './_mock_build_temp';
-    if (!config.eol || !['crlf','lf'].includes(config.eol)) config.eol = 'lf';
+    if (!config.eol) config.eol = 'lf';
 }
 
-function readConfigFile(confPath) {
+function readConfigFile(confPath, optional = false) {
     try {
         confPath = path.resolve(confPath);
         const configData = fs.readFileSync(confPath, 'utf8');
         const config = JSON.parse(configData);
-        config.rootDir = path.dirname(confPath);
         return config;
     } catch {
-        throw Error(`Could not read the config file: ${confPath}`);
+        if (!optional) throw Error(`Could not read the config file: ${confPath}`);
     }
 }
 
-function postProcessConfig(config) {
-    const rootDir = config.rootDir;
+function postProcessConfig(config, rootDir) {
     const absolutize = p => path.isAbsolute(p) ? p : path.join(rootDir, p);
-    const absolutizeParam = dir => { if (config[dir]) config[dir] = absolutize(config[dir]); };
+    const absolutizePath = dir => { if (config[dir]) config[dir] = absolutize(config[dir]); };
 
-    absolutizeParam('sourceDir');
-    absolutizeParam('destDir');
-    absolutizeParam('zipPath');
+    absolutizePath('sourceDir');
+    absolutizePath('destDir');
+    absolutizePath('zipPath');
 
     if (config.includes) {
         config.includes = config.includes.map(absolutize);
@@ -44,21 +40,19 @@ const CHECKS = {
 };
 const configScheme = {
     properties: {
-        rootDir:             { check: 'String' },
         sourceDir:           { check: 'String' },
-        includes:            { check: 'ArrayOfStrings' },
         destDir:             { check: 'String' },
+        includes:            { check: 'ArrayOfStrings' },
         zipPath:             { check: 'String' },
         suppressZip:         { check: 'Boolean' },
         eol:                 { check: 'eol', mustBe: '"lf" or "crlf"' },
         quiet:               { check: 'Boolean' },
         withMeta:            { check: 'Boolean' },
         cleanDestDirOnStart: { check: 'Boolean' },
+        skipFieldsStartingWith: { check: 'String' },
     },
-    required: ['rootDir', 'sourceDir', 'destDir'],
+    required: ['sourceDir', 'destDir', 'eol'],
 };
-
-// TODO: rootDir not needed?
 
 export function validateConfig(config) {
     // Validate required params
@@ -80,10 +74,12 @@ export function validateConfig(config) {
 
 export function readConfig(confPath, overloads = null) {
     if (!confPath) confPath = CONFIG_DEFAULT_PATH;
-    let config = readConfigFile(confPath);
+    const rootDir = path.dirname(confPath);
+
+    let config = readConfigFile(confPath, Boolean(overloads));
     config = { ...config, ...overloads };
     assignDefaults(config);
-    postProcessConfig(config);
+    postProcessConfig(config, rootDir);
     validateConfig(config);
     return config;
 }
