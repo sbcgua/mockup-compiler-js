@@ -28,7 +28,7 @@ Converts set of excels in a given directory to a set of tab-delimited text-files
 
 ### Text format (experimental)
 
-Since version 1.2.0, there is an expremental feature to build the resulting file in text, not zip. The motvation is keep the resulting file readable in git repositories. Obviosuly, the data is not copressed in this case. Importantly, only text file includes are currently supported, and only in utf-8 encoding (please post an issue if this feature is required, our team does not use binary includes at the time being, however, the implementation is definitely possible though with the base64 encoding).
+Since version 1.2.0, there is an expremental feature to build the resulting file in text, not zip. The motvation is keep the resulting file readable and "diffable" in git repositories. Obviosuly, the data is not copressed in this case. Importantly, only text file includes are currently supported, and only in utf-8 encoding (please post an issue if this feature is required, our team does not use binary includes at the time being, however, the implementation is definitely possible though with the base64 encoding).
 
 ```text
 !!MOCKUP-LOADER-FORMAT 1.0
