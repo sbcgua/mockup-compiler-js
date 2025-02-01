@@ -10,15 +10,15 @@ export default class Watcher {
     #trottleLimit;
     #watchers = [];
     #watchedDirs = [];
-    #zipper;
+    #bundler;
     #metaCalculator;
 
-    constructor({ logger, excelFileManager, includeFileManager, zipper, metaCalculator }) {
+    constructor({ logger, excelFileManager, includeFileManager, bundler, metaCalculator }) {
         this.#logger = logger;
         this.#excelFileManager = excelFileManager;
         this.#includeFileManager = includeFileManager;
         this.#metaCalculator = metaCalculator;
-        this.#zipper = zipper;
+        this.#bundler = bundler;
         this.#trottleLimit = 1000;
     }
 
@@ -82,8 +82,8 @@ export default class Watcher {
         if (this.#metaCalculator) {
             this.#metaCalculator.buildAndSave();
         }
-        if (this.#zipper) {
-            const archSize = await this.#zipper.zipAsync([
+        if (this.#bundler) {
+            const archSize = await this.#bundler.bundle([
                 ...this.#excelFileManager.testObjectList,
                 ...(this.#includeFileManager ? this.#includeFileManager.testObjectList : []),
                 ...(this.#metaCalculator ? [this.#metaCalculator.metaSrcFileName] : []),

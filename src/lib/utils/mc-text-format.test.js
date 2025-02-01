@@ -26,11 +26,14 @@ describe('mc-text-format: buildTextBundle', () => {
 
         const expectedContent = [
             '!!MOCKUP-LOADER-FORMAT 1.0',
+            '',
             '!!FILE file1.txt text 2',
             'Content 1',
             '2nd line',
+            '',
             '!!FILE file2.txt text 1',
             'Content 2',
+            '',
             '!!FILE file3.txt text 1',
             'Content 3',
         ].join('\n');

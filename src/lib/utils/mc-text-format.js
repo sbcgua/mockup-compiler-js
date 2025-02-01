@@ -49,7 +49,7 @@ class TextBundler {
         const dataLines = lines.length;
         if (!last) lines.push(''); // add a blank line at the end
 
-        // os.write('\n'); // ??
+        os.write('\n');
         os.write(`!!FILE ${name} text ${dataLines}\n`);
         os.write(lines.join('\n'));
     }

@@ -5,6 +5,7 @@ const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
 function assignDefaults(config) {
     if (!config.eol) config.eol = 'lf';
+    if (!config.bundleFormat) config.bundleFormat = 'zip';
 }
 
 function readConfigFile(confPath, optional = false) {
@@ -40,6 +41,7 @@ const CHECKS = {
     Array: v => Array.isArray(v),
     ArrayOfStrings: v => Array.isArray(v) && (!v.length || v.every(x => typeof x === 'string')),
     eol: v => v === 'lf' || v === 'crlf',
+    bundleFormat: v => v === 'text' || v === 'zip',
 };
 const configScheme = {
     properties: {
@@ -49,6 +51,7 @@ const configScheme = {
         zipPath:             { check: 'String' },
         suppressZip:         { check: 'Boolean' },
         eol:                 { check: 'eol', mustBe: '"lf" or "crlf"' },
+        bundleFormat:        { check: 'bundleFormat', mustBe: '"text" or "zip"' },
         quiet:               { check: 'Boolean' },
         withMeta:            { check: 'Boolean' },
         cleanDestDirOnStart: { check: 'Boolean' },

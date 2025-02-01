@@ -1,8 +1,8 @@
-import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import archiver from 'archiver';
-import { zipFiles, Zipper } from './zip.js';
+import { zipFiles } from './zip.js';
 
 vi.mock('node:fs');
 vi.mock('node:path');
@@ -69,49 +69,5 @@ describe('zipFiles', () => {
         });
 
         await expect(zipFiles(rootDir, fileList, zipPath)).rejects.toMatchObject({ message: 'error', _loc: 'zipFiles error' });
-    });
-});
-
-describe('Zipper', () => {
-    let zipper;
-    const destDir = '/root';
-    const zipPath = '/root/archive.zip';
-
-    beforeEach(() => {
-        zipper = new Zipper({ destDir, zipPath });
-    });
-
-    afterEach(() => {
-        vi.clearAllMocks();
-    });
-
-    test('deleteZipFile should delete zip file if it exists', () => {
-        fs.existsSync.mockReturnValue(true);
-
-        zipper.deleteZipFile();
-
-        expect(fs.existsSync).toHaveBeenCalledWith(zipPath);
-        expect(fs.rmSync).toHaveBeenCalledWith(zipPath);
-    });
-
-    test('deleteZipFile should not delete zip file if it does not exist', () => {
-        fs.existsSync.mockReturnValue(false);
-
-        zipper.deleteZipFile();
-
-        expect(fs.existsSync).toHaveBeenCalledWith(zipPath);
-        expect(fs.rmSync).not.toHaveBeenCalled();
-    });
-
-    test.skip('zipAsync should call zipFiles with correct arguments', async () => {
-        const files = ['file1.txt', 'file2.txt'];
-        // const zipFilesMock = vi.fn().mockResolvedValue(123);
-        // vi.spyOn(zipFiles, 'zipFiles').mockImplementation(zipFilesMock);
-        // vi.mock('./zip.js', { spy: true });
-
-        const result = await zipper.zipAsync(files);
-
-        expect(result).toBe(123);
-        expect(zipFiles).toHaveBeenCalledWith(destDir, files, zipPath);
     });
 });

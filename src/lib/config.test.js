@@ -21,6 +21,7 @@ describe('Config Module', () => {
             const config = readConfig(configPath);
             expect(config).toEqual({
                 ...mockConfig,
+                bundleFormat: 'zip',
                 eol: 'lf',
             });
         });
@@ -32,6 +33,7 @@ describe('Config Module', () => {
             const config = readConfig(configPath, overloads);
             expect(config).toEqual({
                 ...mockConfig,
+                bundleFormat: 'zip',
                 eol: 'lf',
                 quiet: true,
             });

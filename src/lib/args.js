@@ -12,6 +12,7 @@ export const argOptions = [
     ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
     ['-m, --with-meta', 'calculate meta file (with source file hashes)'],
     ['-v, --verbose', 'verbose errors'],
+    ['--bundle-format <format>', 'bundle format: text or zip (default)'],
 ];
 
 export function argsToConfig(args) {
@@ -30,6 +31,7 @@ export function argsToConfig(args) {
         quiet:     args.quiet,
         withMeta:  args.withMeta,
         cleanDestDirOnStart: args.cleanDest,
+        bundleFormat: args.bundleFormat,
     };
     for (let k of Object.keys(config)) {
         if (config[k] == undefined) delete config[k];

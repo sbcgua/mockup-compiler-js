@@ -15,7 +15,7 @@
     ☐ improve icon
 ✔ run from current dir (test) @done(25-01-31 13:03)
 ☐ new mock file format
-    - force sorting
+    ✔ force sorting @done(25-02-01 19:33)
     - utf8 only (or add binary format)
     - format validator?
 ☐ Release

@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import chalk from 'chalk';
 import Watcher from './watcher.js';
 import MetaCalculator from './proc/meta.js';
-import { Zipper } from './utils/zip.js';
+import { Bundler } from './utils/bundler.js';
+import { zipFiles } from './utils/zip.js';
+import { buildTextBundle } from './utils/mc-text-format.js';
 import ExcelFileManager from './proc/file-manager-excel.js';
 import IncludeFileManager from './proc/file-manager-includes.js';
 import { createMockProcessor, parseWokbookIntoMocks } from './proc/mock-processings.js';
@@ -18,7 +20,7 @@ export default class App {
     #logger;
     #withMeta;
     #metaCalculator;
-    #zipper;
+    #bundler;
 
     constructor(config, withWatcher) {
         this.#withWatcher = withWatcher;
@@ -41,9 +43,10 @@ export default class App {
             destDir: this.#destDir,
             eol: config.eol,
         });
-        this.#zipper = this.#zipPath && !config.suppressZip && new Zipper({
-            destDir: this.#destDir,
-            zipPath: this.#zipPath
+        this.#bundler = this.#zipPath && !config.suppressZip && new Bundler({
+            uncompressedDir: this.#destDir,
+            bundlePath: this.#zipPath,
+            bundlerFn: config.bundleFormat === 'text' ? buildTextBundle : zipFiles,
         });
     }
 
@@ -101,8 +104,8 @@ export default class App {
             this.#metaCalculator.buildAndSave();
         }
 
-        if (this.#zipper) {
-            await this.#zipMocks();
+        if (this.#bundler) {
+            await this.#createBundle();
         }
 
         if (this.#withWatcher) {
@@ -118,9 +121,8 @@ export default class App {
         }
     }
 
-    async #zipMocks() {
-        this.#zipper.deleteZipFile();
-        const archSize = await this.#zipper.zipAsync([
+    async #createBundle() {
+        const archSize = await this.#bundler.bundle([
             ...this.#excelFileManager.testObjectList,
             ...(this.#includeFileManager ? this.#includeFileManager.testObjectList : []),
             ...(this.#withMeta ? [this.#metaCalculator.metaSrcFileName] : []),
@@ -134,7 +136,7 @@ export default class App {
             excelFileManager: this.#excelFileManager,
             includeFileManager: this.#includeFileManager,
             metaCalculator: this.#metaCalculator,
-            zipper: this.#zipper,
+            bundler: this.#bundler,
         });
         watcher.start();
     }
