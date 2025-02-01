@@ -28,7 +28,7 @@ Converts set of excels in a given directory to a set of tab-delimited text-files
 
 ### Text format (experimental)
 
-Since version 1.2.0, there is an expremental feature to build the resulting file in text, not zip. The motvation is keep the resulting file readable and "diffable" in git repositories. Obviosuly, the data is not copressed in this case. Importantly, only text file includes are currently supported, and only in utf-8 encoding (please post an issue if this feature is required, our team does not use binary includes at the time being, however, the implementation is definitely possible though with the base64 encoding).
+Since version 1.2.0, there is an expremental feature to build the resulting file in text, not zip. The motivation is keep the resulting file readable and "diffable" in git repositories. Obviosuly, the data is not copressed in this case. Importantly, only text file includes are currently supported, and only in utf-8 encoding (please post an issue if this feature is required, our team does not use binary includes at the time being, however, the implementation is definitely possible though with the base64 encoding).
 
 ```text
 !!MOCKUP-LOADER-FORMAT 1.0
@@ -79,7 +79,8 @@ The setting can be given in a config. By default the programs looks for the conf
     "sourceDir": ".",
     "eol": "lf", // lf or crlf
     "destDir": "_dest",
-    "zipPath": "_dest/build.zip",
+    "bundlePath": "_dest/build.zip",
+    "bundleFormat": "zip",
     "includes": [
         "_dest/_inc"
     ],
@@ -102,3 +103,8 @@ mockup-compiler -c ./my-mock-config.json
 - `withMeta` instructs the compiler to create `.meta/src_files` with SHA1 hashes of source files (for integrity and compatibility with abap version of the tool)
 - `cleanDestDirOnStart` deletes the destination dir before file processing. Importantly, it does not cleans the dir in watch mode, so changes are written on top of the existing files structure. Thus, e.g., deleting a sheet in excel will **not** delete it's already compiled representation.
 - `skipFieldsStartingWith` - skips fields which start from the given symbol, by default it is `'-'`
+
+**CHANGES** since v1.2.0
+
+- a new parameter is introduced - `bundleFormat` - which can be `zip` (the default, if empty) or `text`, which controls the output file format
+- prefer using `bundlePath` paramater instead of `zipPath`. The latter is deprecated and will be removed in future releases
