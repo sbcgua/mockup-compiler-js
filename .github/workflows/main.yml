@@ -17,6 +17,9 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+      - run: git describe --tags `git rev-list --tags --max-count=1`
       - run: npm ci
       - run: npm run lint
   test:
@@ -27,6 +30,9 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+      - run: git describe --tags `git rev-list --tags --max-count=1`
       - run: npm ci
       - run: npm run test
       - run: |
