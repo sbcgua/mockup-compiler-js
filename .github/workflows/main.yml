@@ -17,9 +17,6 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v4
-        with:
-          fetch-tags: true
-      - run: git describe --tags `git rev-list --tags --max-count=1`
       - run: npm ci
       - run: npm run lint
   test:
@@ -30,9 +27,6 @@ jobs:
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v4
-        with:
-          fetch-tags: true
-      - run: git describe --tags `git rev-list --tags --max-count=1`
       - run: npm ci
       - run: npm run test
       - run: |
@@ -53,9 +47,7 @@ jobs:
     if: github.ref == 'refs/heads/master' && github.repository == 'sbcgua/mockup-compiler-js'
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-tags: true
-      # - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+      - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Detect version change
         id: detect_version_change
         run: |
