@@ -6,6 +6,10 @@ const CONFIG_DEFAULT_PATH = './.mock-config.json';
 function assignDefaults(config) {
     if (!config.eol) config.eol = 'lf';
     if (!config.bundleFormat) config.bundleFormat = 'zip';
+    if (config.zipPath && !config.bundlePath) {
+        config.bundlePath = config.zipPath;
+        config.zipPath = undefined;
+    }
 }
 
 function readConfigFile(confPath, optional = false) {
@@ -25,7 +29,7 @@ function postProcessConfig(config, rootDir) {
 
     absolutizePath('sourceDir');
     absolutizePath('destDir');
-    absolutizePath('zipPath');
+    absolutizePath('bundlePath');
 
     if (config.includes) {
         config.includes = config.includes.map(absolutize);
@@ -49,6 +53,7 @@ const configScheme = {
         destDir:             { check: 'String' },
         includes:            { check: 'ArrayOfStrings' },
         zipPath:             { check: 'String' },
+        bundlePath:          { check: 'String' },
         suppressZip:         { check: 'Boolean' },
         eol:                 { check: 'eol', mustBe: '"lf" or "crlf"' },
         bundleFormat:        { check: 'bundleFormat', mustBe: '"text" or "zip"' },

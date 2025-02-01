@@ -15,7 +15,7 @@ export default class App {
     #withWatcher;
     #srcDir;
     #destDir;
-    #zipPath;
+    #bundlePath;
     #includes;
     #logger;
     #withMeta;
@@ -26,7 +26,7 @@ export default class App {
         this.#withWatcher = withWatcher;
         this.#srcDir      = config.sourceDir;
         this.#destDir     = config.destDir;
-        this.#zipPath     = config.zipPath;
+        this.#bundlePath  = config.bundlePath;
         this.#includes    = config.includes;
         this.#logger      = config.logger;
         this.#withMeta    = config.withMeta;
@@ -43,9 +43,9 @@ export default class App {
             destDir: this.#destDir,
             eol: config.eol,
         });
-        this.#bundler = this.#zipPath && !config.suppressZip && new Bundler({
+        this.#bundler = this.#bundlePath && !config.suppressZip && new Bundler({
             uncompressedDir: this.#destDir,
-            bundlePath: this.#zipPath,
+            bundlePath: this.#bundlePath,
             bundlerFn: config.bundleFormat === 'text' ? buildTextBundle : zipFiles,
         });
     }

@@ -7,7 +7,7 @@ export const argOptions = [
     ['-d, --destination <path>', 'destination uncompressed dir'],
     ['-n, --clean-dest', 'clean dest dir on startup'],
     ['-z, --zip-path <path>', 'path to zip file to build'],
-    ['-Z, --no-zip', 'suppress zip file (which may be enabled in config)'],
+    ['-Z, --no-zip', 'suppress zip/bundle file (which may be enabled in config)'],
     ['-i, --include <path>', 'path to include'],
     ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
     ['-m, --with-meta', 'calculate meta file (with source file hashes)'],
@@ -24,7 +24,7 @@ export function argsToConfig(args) {
     const config = {
         sourceDir: args.source,
         destDir:   args.destination,
-        zipPath:   args.zipPath,
+        bundlePath:  args.zipPath,
         suppressZip: args.zip === false,
         includes:  args.include && [args.include],
         eol:       args.eol,
