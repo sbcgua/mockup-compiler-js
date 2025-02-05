@@ -23,3 +23,8 @@
     ☐ bump version
     ☐ release to github
     ☐ release to npm
+
+Ecosystem:
+    ☐ implement in ML itself
+    ☐ implement in ABAP compiler
+    ☐ try for UAVAT
