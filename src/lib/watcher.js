@@ -72,7 +72,15 @@ export default class Watcher {
 
     #reportChange(now, filename) {
         this.#logger.log();
-        const nowFormatted = (new Date(now)).toISOString().substring(0, 19).replace('T', ' ');
+        const nowFormatted = new Date(now).toLocaleString(undefined, {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }).replace(',', '');
         this.#logger.log(chalk.blueBright(`[${nowFormatted}]`), chalk.grey('Change detected:'), `${filename}`);
     }
 
