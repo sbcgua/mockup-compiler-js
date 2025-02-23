@@ -16,4 +16,5 @@ export class Bundler {
         this.#deleteZipFile();
         return this.#bundlerFn(this.#uncompressedDir, files, this.#bundlePath);
     }
+    get destination() { return this.#bundlePath }
 }

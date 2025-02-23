@@ -92,7 +92,7 @@ export default class IncludeFileManager extends FileManagerBase {
             const sha1s = this.#withHashing ? new SimpleSHA1Stream() : null;
             const rs = fs.createReadStream(srcPath);
             rs.on('error', reject);
-            var ws = fs.createWriteStream(dstPath);
+            const ws = fs.createWriteStream(dstPath);
             ws.on('error', reject);
             ws.on('finish', () => resolve(sha1s?.digest()));
             if (sha1s) {

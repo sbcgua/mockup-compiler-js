@@ -33,7 +33,10 @@ export default class MetaCalculator {
         const convertToArrayAndAddType =
             (map, type) => [...map.entries()].map(([file, sha1]) => [slash(file), sha1, type]);
 
-        const allFiles = convertToArrayAndAddType(this.#excelFileManager.fileHashMap, 'X');
+        const allFiles = [
+            ...convertToArrayAndAddType(this.#excelFileManager.fileHashMap, 'X'),
+            ...convertToArrayAndAddType(this.#excelFileManager.mockHashMap, 'M'),
+        ];
         if (this.#includeFileManager) {
             allFiles.push(...convertToArrayAndAddType(this.#includeFileManager.fileHashMap, 'I'));
         }

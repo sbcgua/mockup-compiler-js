@@ -26,12 +26,16 @@ describe('MetaCalculator', () => {
                     ['file1', 'hash1'],
                     ['file2', 'hash2'],
                 ]),
+                mockHashMap: new Map([
+                    ['@file1/mock1', 'hashM1'],
+                ]),
             },
             eol: 'lf',
             destDir: '/dest',
         });
         const expMeta = [
             ['TYPE\tSRC_FILE\tTIMESTAMP\tSHA1'],
+            ['M\t@file1/mock1\t\thashM1'],
             ['X\tfile1\t\thash1'],
             ['X\tfile2\t\thash2'],
         ].join('\n');
@@ -49,6 +53,9 @@ describe('MetaCalculator', () => {
                     ['file1', 'hash1'],
                     ['file2', 'hash2'],
                 ]),
+                mockHashMap: new Map([
+                    ['@file1/mock1', 'hashM1'],
+                ]),
             },
             includeFileManager: {
                 fileHashMap: new Map([
@@ -63,6 +70,7 @@ describe('MetaCalculator', () => {
             ['TYPE\tSRC_FILE\tTIMESTAMP\tSHA1'],
             ['I\t/extra/inc1\t\tH1'],
             ['I\t/extra/inc2\t\tH2'],
+            ['M\t@file1/mock1\t\thashM1'],
             ['X\tfile1\t\thash1'],
             ['X\tfile2\t\thash2'],
         ].join('\n');

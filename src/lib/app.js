@@ -128,6 +128,7 @@ export default class App {
             ...(this.#withMeta ? [this.#metaCalculator.metaSrcFileName] : []),
         ]);
         this.#logger.log(`\nArchiving complete. File size = ${archSize} bytes`);
+        this.#logger.log(this.#bundler.destination);
     }
 
     #startWatcher() {

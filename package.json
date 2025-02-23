@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "testrun": "node src/index.js -c test-sample/.mock-config.json",
+    "testrun:t": "node src/index.js -c test-sample/.mock-config.json --bundle-format text -z ../_dest/build.txt",
     "lint": "eslint",
     "build:sea": "bash bin/build-sea.sh",
     "build:bundle": "esbuild --format=cjs --platform=node --bundle --outfile=_build/bundle.js src/index.js"

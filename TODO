@@ -17,7 +17,10 @@
 ☐ new mock file format
     ✔ force sorting @done(25-02-01 19:33)
     - utf8 only (or add binary format)
+    - mock checksums
     - format validator?
+☐ Make hashing not optional, remove timestamp (check ML compiler still works)
+☐ Rename zipPath and arg opts ?
 ☐ Release
     ☐ update readme
     ☐ bump version
@@ -25,6 +28,8 @@
     ☐ release to npm
 
 Ecosystem:
-    ☐ implement in ML itself
+    ✔ implement in ML itself @done(25-02-23 21:20)
+    ☐ switch source must save the file name
+    ☐ optimize upload with zipping the text format?
     ☐ implement in ABAP compiler
     ☐ try for UAVAT

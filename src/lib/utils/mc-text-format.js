@@ -32,6 +32,7 @@ class TextBundler {
     }
     #render(os) {
         os.write('!!MOCKUP-LOADER-FORMAT 1.0\n');
+        os.write(`!!FILE-COUNT ${this.#fileList.length}\n`);
         for (const name of this.#fileList) {
             const last = (name === this.#fileList.at(-1));
             this.#renderOneFile(os, name, last);

@@ -26,6 +26,7 @@ describe('mc-text-format: buildTextBundle', () => {
 
         const expectedContent = [
             '!!MOCKUP-LOADER-FORMAT 1.0',
+            '!!FILE-COUNT 3',
             '',
             '!!FILE file1.txt text 2',
             'Content 1',

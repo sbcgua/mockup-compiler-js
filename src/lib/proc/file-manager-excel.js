@@ -6,6 +6,7 @@ import { readFile as readFileAsync } from 'node:fs/promises';
 import { read as readXLSX } from 'xlsx';
 import { slash } from '../utils/fs-utils.js';
 import { FileManagerBase } from './file-manager-base.js';
+import SimpleSHA1Stream from '../utils/sha1-stream.js';
 
 const START_OF_FILE_PROCESSING = 'start-of-file-processing';
 const ITEM_PROCESSED = 'item-processed';
@@ -17,9 +18,11 @@ export default class ExcelFileManager extends FileManagerBase {
     #mockExtractor;
     #mockProcessor;
     #fileHashMap = new Map();
+    #mockHashMap = new Map();
     #mockList = new Set();
 
     get fileHashMap() { return this.#fileHashMap }
+    get mockHashMap() { return this.#mockHashMap }
     get testObjectList() { return [...this.#mockList] }
     get srcDirs() { return [this.#srcDir] }
 
@@ -94,8 +97,8 @@ export default class ExcelFileManager extends FileManagerBase {
     async #processParsedMocks(parsedMocks, fileName, targetDirName) {
         const promises = [...Object.entries(parsedMocks)]
             .map(([mockName, mockCells]) => {
-                Object.defineProperty(mockCells, '__filename__', { value: fileName, enumerable: false });
-                Object.defineProperty(mockCells, '__sheet__', { value: mockName, enumerable: false });
+                // Object.defineProperty(mockCells, '__filename__', { value: fileName, enumerable: false });
+                // Object.defineProperty(mockCells, '__sheet__', { value: mockName, enumerable: false });
                 return [mockName, mockCells];
             })
             .map(([mockName, mockCells]) => this.#processMock(targetDirName, mockName, mockCells));
@@ -111,7 +114,8 @@ export default class ExcelFileManager extends FileManagerBase {
         const {data, rowCount} = this.#mockProcessor(mockCells);
         const mockFilename = mockName + '.txt';
         const mockPath = path.join(this.#destDir, targetDirName, mockFilename);
-        await this.#saveMock(mockPath, data);
+        const hash = await this.#saveMock(mockPath, data);
+        this.#mockHashMap.set(`@${targetDirName}/${mockName}`, hash);
         this.#emitMockProcessed({ name: mockFilename, rowCount });
         return `${targetDirName}/${mockFilename}`;
     }
@@ -119,10 +123,16 @@ export default class ExcelFileManager extends FileManagerBase {
     #saveMock(mockPath, data) {
         // Why not writeFileAsync ?
         return new Promise((resolve, reject) => {
-            const fileStream = fs.createWriteStream(mockPath, 'utf8');
-            fileStream.on('finish', resolve);
-            fileStream.on('error', reject);
-            fileStream.end(data);
+            const sha1s = this.#withHashing ? new SimpleSHA1Stream() : null;
+            const ws = fs.createWriteStream(mockPath, 'utf8');
+            ws.on('finish', () => resolve(sha1s?.digest()));
+            ws.on('error', reject);
+            if (sha1s) {
+                sha1s.pipe(ws);
+                sha1s.end(data);
+            } else {
+                ws.end(data);
+            }
         });
     }
 
