@@ -25,19 +25,19 @@
   "dependencies": {
     "archiver": "^7.0.1",
     "chalk": "^5.4.1",
-    "commander": "^13.1.0",
+    "commander": "^14.0.0",
     "lodash-es": "^4.17.21",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@eslint/js": "^9.18.0",
+    "@eslint/js": "^9.28.0",
     "deep-freeze": "0.0.1",
-    "esbuild": "^0.24.2",
-    "eslint": "^9.18.0",
-    "globals": "^15.14.0",
-    "memfs": "^4.17.0",
+    "esbuild": "^0.25.5",
+    "eslint": "^9.28.0",
+    "globals": "^16.2.0",
+    "memfs": "^4.17.2",
     "postject": "^1.0.0-alpha.6",
-    "resedit-cli": "^2.0.1",
-    "vitest": "^3.0.4"
+    "resedit-cli": "^2.1.0",
+    "vitest": "^3.2.2"
   }
 }
