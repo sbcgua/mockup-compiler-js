@@ -1,0 +1,8 @@
+zip.png
+zip-black.png
+zip-file.png
+zip-folder.png
+
+created by:
+
+<a href="https://www.flaticon.com/free-icons/document" title="document icons">Document icons created by Roman Káčerek - Flaticon</a>
