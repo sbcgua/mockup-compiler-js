@@ -9,7 +9,7 @@ Since v1.2.0 the mockup compiler supports budling in text format. The motivation
 
 ## Format
 
-Metadata marks are lines that start with `!!`. The expectation is that abap fields do not start with ! symbol, thus it should be safe for the majority of cases. Includes cannot not be controlled, obviously.
+Metadata marks are lines that start with `!!`. The expectation is that abap fields do not start with `!` symbol, thus it should be safe for the majority of cases. Includes cannot not be controlled, obviously. The file structure is:
 
 ```text
 !!MOCKUP-LOADER-FORMAT <VERSION>
@@ -21,14 +21,16 @@ Metadata marks are lines that start with `!!`. The expectation is that abap fiel
   ... empty lines before the next FILE are ignored
 ```
 
-- The file start from `MOCKUP-LOADER-FORMAT` tag, followed by version. Currently, the version is `1.0`.
-- `FILE-COUNT` tag describes the count of files for a basic integrity check
-- The header is followed by other metadata or optional free comments before the first `FILE`.
-- Each file is marked with `FILE` tag, followed by relative filename (`FILENAME`) in lowercase, `TYPE` of the content - currently `text` only (but potentially `base64` in the future) and number of following text `LINES` with the data.
-- Then the `LINES` lines of file content follow.
-- The file block may be optionally followed by empty lines (for human readability) - they are ignored.
+- The header:
+  - The file start from `MOCKUP-LOADER-FORMAT` tag, followed by version. Currently, the version is `1.0`.
+  - Then `FILE-COUNT` tag follows describing the count of files for a basic integrity check.
+  - The header is followed by other metadata or optional free comments before the first `FILE`.
+- Files:
+  - Each file is marked with `FILE` tag, followed by relative filename (`FILENAME`) in lowercase, `TYPE` of the content - currently `text` only (but potentially `base64` in the future) and number of following text `LINES` with the data.
+  - Then the `LINES` lines of file content follow (`FILEDATA`).
+  - The file block may be optionally followed by empty lines (for human readability) - they are ignored.
 
-### Examples
+### Example
 
 ```text
 !!MOCKUP-LOADER-FORMAT 1.0

@@ -4,7 +4,8 @@
   "description": "Tool to convert Excel unit test data to text and archive it",
   "type": "module",
   "bin": {
-    "mockup-compiler": "./src/index.js"
+    "mockup-compiler": "./src/index.js",
+    "mockup-validator": "./src/validator.js"
   },
   "scripts": {
     "test": "vitest run",

@@ -18,7 +18,7 @@
     ✔ force sorting @done(25-02-01 19:33)
     - utf8 only (or add binary format)
     - mock checksums? (but the bundle will usually contain .meta with checksums)
-    - format validator?
+    ✔ format validator? @done(25-06-13 22:45)
 ☐ ~~Make hashing not optional~~
 ✔ Remove meta timestamp (check ML compiler still works) @done(25-06-13 20:25)
 ✔ Rename zipPath and arg opts ? @done(25-06-13 19:46)
@@ -32,5 +32,5 @@ Ecosystem:
     ✔ implement in ML itself @done(25-02-23 21:20)
     ☐ switch source must save the file name
     ☐ optimize upload with zipping the text format?
-    ☐ implement in ABAP compiler
+    ☐ implement in ABAP compiler?
     ☐ try for UAVAT
