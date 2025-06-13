@@ -19,7 +19,8 @@
     - utf8 only (or add binary format)
     - mock checksums? (but the bundle will usually contain .meta with checksums)
     - format validator?
-☐ Make hashing not optional, remove timestamp (check ML compiler still works)
+☐ ~~Make hashing not optional~~
+✔ Remove meta timestamp (check ML compiler still works) @done(25-06-13 20:25)
 ✔ Rename zipPath and arg opts ? @done(25-06-13 19:46)
 ☐ Release
     ☐ update readme

@@ -34,10 +34,10 @@ describe('MetaCalculator', () => {
             destDir: '/dest',
         });
         const expMeta = [
-            ['TYPE\tSRC_FILE\tTIMESTAMP\tSHA1'],
-            ['M\t@file1/mock1\t\thashM1'],
-            ['X\tfile1\t\thash1'],
-            ['X\tfile2\t\thash2'],
+            ['TYPE\tSRC_FILE\tSHA1'],
+            ['M\t@file1/mock1\thashM1'],
+            ['X\tfile1\thash1'],
+            ['X\tfile2\thash2'],
         ].join('\n');
         m.buildAndSave();
         expect(vol.toJSON()).toEqual({
@@ -67,12 +67,12 @@ describe('MetaCalculator', () => {
             destDir: '/dest',
         });
         const expMeta = [
-            ['TYPE\tSRC_FILE\tTIMESTAMP\tSHA1'],
-            ['I\t/extra/inc1\t\tH1'],
-            ['I\t/extra/inc2\t\tH2'],
-            ['M\t@file1/mock1\t\thashM1'],
-            ['X\tfile1\t\thash1'],
-            ['X\tfile2\t\thash2'],
+            ['TYPE\tSRC_FILE\tSHA1'],
+            ['I\t/extra/inc1\tH1'],
+            ['I\t/extra/inc2\tH2'],
+            ['M\t@file1/mock1\thashM1'],
+            ['X\tfile1\thash1'],
+            ['X\tfile2\thash2'],
         ].join('\n');
         m.buildAndSave();
         expect(vol.toJSON()).toEqual({

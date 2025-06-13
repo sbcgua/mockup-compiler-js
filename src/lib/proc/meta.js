@@ -41,10 +41,10 @@ export default class MetaCalculator {
             allFiles.push(...convertToArrayAndAddType(this.#includeFileManager.fileHashMap, 'I'));
         }
 
-        const meta = allFiles.map(([src_file, sha1, type]) => ({ src_file, sha1, type, timestamp: null }));
+        const meta = allFiles.map(([src_file, sha1, type]) => ({ src_file, sha1, type }));
         const sortedMeta = sortBy(meta, ['type', 'src_file']);
 
-        return stringifyWithTabs(sortedMeta, ['type', 'src_file', 'timestamp', 'sha1'], {
+        return stringifyWithTabs(sortedMeta, ['type', 'src_file', 'sha1'], {
             eolChar: this.#eol,
             upperCaseColumns: true,
         });
