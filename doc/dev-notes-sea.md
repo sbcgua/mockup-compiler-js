@@ -1,3 +1,6 @@
+<!-- markdownlint-disable no-bare-urls -->
+# SEA notes
+
 ## Useful
 
 - https://notes.billmill.org/programming/javascript/Making_a_single-file_executable_with_node_and_esbuild.html
@@ -34,9 +37,9 @@ postject and --sentinel-fuse must be outside of package.json to avoid
 - https://stackoverflow.com/questions/252226/signing-a-windows-exe-file
 signtool sign /a /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 MyFile.exe
 
- - https://developer.microsoft.com/en-gb/windows/downloads/windows-sdk/
- - https://learn.microsoft.com/en-us/windows/win32/seccrypto/signtool
- - https://stackoverflow.com/questions/31869552/how-to-install-signtool-exe-for-windows-10?newreg=4ed08a28e10e45f6b0ba564b07578716
+- https://developer.microsoft.com/en-gb/windows/downloads/windows-sdk/
+- https://learn.microsoft.com/en-us/windows/win32/seccrypto/signtool
+- https://stackoverflow.com/questions/31869552/how-to-install-signtool-exe-for-windows-10?newreg=4ed08a28e10e45f6b0ba564b07578716
 
 Extract:
 
@@ -54,4 +57,3 @@ Extract:
     It is also possible to commit signtool.exe and the other files from this folder into your version control repository if want to use it in e.g. CI scenarios. I have tried it and it seems to work fine.
 
     (All files are probably not necessary since there are also some other .exe tools in this folder that might be responsible for these dependencies, but I am not sure which ones could be removed to make the set of files even smaller. Someone else is free to investigate further in this area. :) I tried to just copy signtool.* and that didn't work, so at least some of the other files are needed.)
-

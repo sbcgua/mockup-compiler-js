@@ -8,7 +8,7 @@ function assignDefaults(config) {
     if (!config.bundleFormat) config.bundleFormat = 'zip';
     if (config.zipPath && !config.bundlePath) {
         config.bundlePath = config.zipPath;
-        config.zipPath = undefined;
+        delete config.zipPath;
     }
 }
 
@@ -52,9 +52,9 @@ const configScheme = {
         sourceDir:           { check: 'String' },
         destDir:             { check: 'String' },
         includes:            { check: 'ArrayOfStrings' },
-        zipPath:             { check: 'String' },
+        // zipPath:             { check: 'String' },
         bundlePath:          { check: 'String' },
-        suppressZip:         { check: 'Boolean' },
+        noBundle:            { check: 'Boolean' },
         eol:                 { check: 'eol', mustBe: '"lf" or "crlf"' },
         bundleFormat:        { check: 'bundleFormat', mustBe: '"text" or "zip"' },
         quiet:               { check: 'Boolean' },

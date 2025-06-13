@@ -43,7 +43,7 @@ export default class App {
             destDir: this.#destDir,
             eol: config.eol,
         });
-        this.#bundler = this.#bundlePath && !config.suppressZip && new Bundler({
+        this.#bundler = this.#bundlePath && !config.noBundle && new Bundler({
             uncompressedDir: this.#destDir,
             bundlePath: this.#bundlePath,
             bundlerFn: config.bundleFormat === 'text' ? buildTextBundle : zipFiles,

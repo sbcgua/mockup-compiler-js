@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { readFileSync } from 'node:fs';
 import { isSea, getAsset } from 'node:sea';
 import { Command } from 'commander';
@@ -7,17 +9,20 @@ import App from './lib/app.js';
 import { readConfig } from './lib/config.js';
 import Logger from './lib/utils/logger.js';
 import { argOptions, argsToConfig } from './lib/args.js';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 function readVersion() {
+    const indexFileDir = path.dirname(fileURLToPath(import.meta.url));
     try {
         let packageBlob;
         if (isSea()) {
             packageBlob = getAsset('package.json', 'utf-8');
         } else {
             try {
-                packageBlob = readFileSync('./package.json');
+                packageBlob = readFileSync(path.join(indexFileDir, './package.json'));
             } catch {
-                packageBlob = readFileSync('../package.json');
+                packageBlob = readFileSync(path.join(indexFileDir, '../package.json'));
             }
         }
         const packageInfo = JSON.parse(packageBlob);

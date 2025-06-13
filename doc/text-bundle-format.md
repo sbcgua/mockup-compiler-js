@@ -4,12 +4,12 @@ Since v1.2.0 the mockup compiler supports budling in text format. The motivation
 
 ## Important notes
 
-- files are sorted by relaive path before bundling, to keep the order predictable
+- files are sorted by relative path before bundling, to keep the order predictable
 - include should be in utf-8 enconding (other encoding are not tested and, anyway, mocks are utf-8 and mixing encoding is not a good idea)
 
 ## Format
 
-Metadata marks are lines that start with `!!`. The idea is that abap fields do not start with ! symbol, thus it should be safe for the majority of cases. Includes cannot not be controlled, obviously.
+Metadata marks are lines that start with `!!`. The expectation is that abap fields do not start with ! symbol, thus it should be safe for the majority of cases. Includes cannot not be controlled, obviously.
 
 ```text
 !!MOCKUP-LOADER-FORMAT <VERSION>
@@ -22,11 +22,11 @@ Metadata marks are lines that start with `!!`. The idea is that abap fields do n
 ```
 
 - The file start from `MOCKUP-LOADER-FORMAT` tag, followed by version. Currently, the version is `1.0`.
-- The header is followed by other metadata or optional free comments.
 - `FILE-COUNT` tag describes the count of files for a basic integrity check
-- Each file is marked with `FILE` tag, followed by relative filename (`FILENAME`) in lowercase, `TYPE` of the content - currently `text` only (but potentially `base64` in the future, may be still withing v1.0 format) and number of following text `LINES` with the data.
+- The header is followed by other metadata or optional free comments before the first `FILE`.
+- Each file is marked with `FILE` tag, followed by relative filename (`FILENAME`) in lowercase, `TYPE` of the content - currently `text` only (but potentially `base64` in the future) and number of following text `LINES` with the data.
 - Then the `LINES` lines of file content follow.
-- The file block may be optionally followed by empty lines (for human readability) - this portion is ignored.
+- The file block may be optionally followed by empty lines (for human readability) - they are ignored.
 
 ### Examples
 
