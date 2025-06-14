@@ -14,13 +14,13 @@ class TextBundler {
     constructor(rootDir, fileList, destPath) {
         this.#rootDir  = rootDir;
         this.#destPath = destPath;
-        this.#fileList = [...fileList].sort();
+        this.#fileList = fileList.toSorted();
     }
 
     bundle() {
         return new Promise((resolve, reject) => {
             const ostr = createWriteStream(this.#destPath);
-            ostr.on('close', () => ostr.errored || resolve(ostr.bytesWritten));
+            ostr.on('close', () => ostr.errored ? reject(ostr.errored) : resolve(ostr.bytesWritten));
             ostr.on('error', reject);
 
             try {

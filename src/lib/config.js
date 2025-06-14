@@ -45,7 +45,7 @@ const CHECKS = {
     Array: v => Array.isArray(v),
     ArrayOfStrings: v => Array.isArray(v) && (!v.length || v.every(x => typeof x === 'string')),
     eol: v => ['lf', 'crlf'].includes(v),
-    bundleFormat: v => ['text', 'zip', 'text+zip'].includes(v),
+    bundleFormat: v => ['text', 'zip'].includes(v), // 'text+zip'
 };
 const configScheme = {
     properties: {
@@ -56,7 +56,7 @@ const configScheme = {
         bundlePath:          { check: 'String' },
         noBundle:            { check: 'Boolean' },
         eol:                 { check: 'eol', mustBe: '"lf" or "crlf"' },
-        bundleFormat:        { check: 'bundleFormat', mustBe: '"text" or "zip" or "text+zip"' },
+        bundleFormat:        { check: 'bundleFormat', mustBe: '"text" or "zip"' }, // "text+zip"
         quiet:               { check: 'Boolean' },
         withMeta:            { check: 'Boolean' },
         cleanDestDirOnStart: { check: 'Boolean' },

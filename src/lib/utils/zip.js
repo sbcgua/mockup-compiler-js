@@ -7,12 +7,7 @@ export function zipFiles(rootDir, fileList, zipPath) {
         const archive = archiver('zip', { zlib: { level: 9 } });
 
         const ostr = createWriteStream(zipPath);
-        // ostr.on('close', () => ostr.errored || resolve(archive.pointer()));
-        ostr.on('close', () => {
-            console.log(archive.pointer(), 'bytes written to zip');
-            console.log(ostr.bytesWritten, 'bytes written to ostr');
-            return resolve(archive.pointer());
-        });
+        ostr.on('close', () => ostr.errored ? reject(ostr.errored) : resolve(ostr.bytesWritten)); // archive.pointer()
         ostr.on('error', reject);
 
         archive.on('warning', (err) => reject(Object.assign(err, { _loc: 'zipFiles warning' })));

@@ -45,7 +45,7 @@ export default class App {
         });
         if (this.#bundlePath && !config.noBundle) {
             this.#bundler = new Bundler({
-                uncompressedDir: this.#destDir,
+                sourceDir: this.#destDir, // sourceDir is the uncompressed dir
                 bundlePath: this.#bundlePath,
                 bundlerFn: config.bundleFormat === 'text' ? buildTextBundle : zipFiles,
             });
@@ -130,7 +130,7 @@ export default class App {
             ...(this.#withMeta ? [this.#metaCalculator.metaSrcFileName] : []),
         ]);
         this.#logger.log(`\nBundle ready. File size = ${archSize} bytes`);
-        this.#logger.log(this.#bundler.destination);
+        this.#logger.log(this.#bundler.bundlePath);
     }
 
     #startWatcher() {
