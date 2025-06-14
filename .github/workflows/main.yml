@@ -88,6 +88,11 @@ jobs:
         run: |
           echo "VERSION_CHANGED=${{ steps.detect_version_change.outputs.VERSION_CHANGED }}"
           echo "NEW_VERSION=${{ steps.detect_version_change.outputs.NEW_VERSION }}"
+          if [ "${GITHUB_REF}" = "refs/heads/master" ] && [ "${GITHUB_EVENT_NAME}" != "pull_request" ]; then
+            echo "This is a push to master, proceeding with tag creation"
+          else
+            echo "This is not a push to master, skipping tag creation"
+          fi
       - name: Create new tag
         if: github.ref == 'refs/heads/master' && success() && steps.detect_version_change.outputs.VERSION_CHANGED == 'yes'
         env:
