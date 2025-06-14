@@ -13,12 +13,12 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 function readVersion() {
-    const indexFileDir = path.dirname(fileURLToPath(import.meta.url));
     try {
         let packageBlob;
         if (isSea()) {
             packageBlob = getAsset('package.json', 'utf-8');
         } else {
+            const indexFileDir = path.dirname(fileURLToPath(import.meta.url));
             try {
                 packageBlob = readFileSync(path.join(indexFileDir, './package.json'));
             } catch {

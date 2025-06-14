@@ -36,11 +36,16 @@ jobs:
           test -f _dest/build.zip && echo build.zip OK
           test `find _dest | wc -l` = "9" && echo file count OK
           test -f _dest/.meta/src_files && echo src_files OK
-          test `cat _dest/.meta/src_files | wc -l` = "3" && echo src_files line count OK
+          test `cat _dest/.meta/src_files | wc -l` = "4" && echo src_files line count OK
+          npm run testrun:t
+          test -f _dest/build.txt && echo build.txt OK
+          test `cat _dest/build.txt | wc -l` = "21" && echo build.txt line count OK
 
   test-sea:
     name: Test SEA build
     runs-on: ubuntu-latest
+    if: false
+    # Disable this job currently as it is widnows specific
     steps:
       - uses: actions/setup-node@v4
         with:
