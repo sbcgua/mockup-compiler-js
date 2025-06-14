@@ -43,11 +43,13 @@ export default class App {
             destDir: this.#destDir,
             eol: config.eol,
         });
-        this.#bundler = this.#bundlePath && !config.noBundle && new Bundler({
-            uncompressedDir: this.#destDir,
-            bundlePath: this.#bundlePath,
-            bundlerFn: config.bundleFormat === 'text' ? buildTextBundle : zipFiles,
-        });
+        if (this.#bundlePath && !config.noBundle) {
+            this.#bundler = new Bundler({
+                uncompressedDir: this.#destDir,
+                bundlePath: this.#bundlePath,
+                bundlerFn: config.bundleFormat === 'text' ? buildTextBundle : zipFiles,
+            });
+        }
     }
 
     #initDestDir({cleanDestDirOnStart}) {
@@ -127,7 +129,7 @@ export default class App {
             ...(this.#includeFileManager ? this.#includeFileManager.testObjectList : []),
             ...(this.#withMeta ? [this.#metaCalculator.metaSrcFileName] : []),
         ]);
-        this.#logger.log(`\nArchiving complete. File size = ${archSize} bytes`);
+        this.#logger.log(`\nBundle ready. File size = ${archSize} bytes`);
         this.#logger.log(this.#bundler.destination);
     }
 

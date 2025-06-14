@@ -9,11 +9,11 @@ export class Bundler {
         this.#bundlePath = bundlePath;
         this.#bundlerFn = bundlerFn;
     }
-    #deleteZipFile() {
+    #deleteBundleFile() {
         if (fs.existsSync(this.#bundlePath)) fs.rmSync(this.#bundlePath);
     }
     bundle(files) {
-        this.#deleteZipFile();
+        this.#deleteBundleFile();
         return this.#bundlerFn(this.#uncompressedDir, files, this.#bundlePath);
     }
     get destination() { return this.#bundlePath }

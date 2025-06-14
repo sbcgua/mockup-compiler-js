@@ -12,7 +12,7 @@ export const argOptions = [
     ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
     ['-m, --with-meta', 'calculate meta file (with source file hashes)'],
     ['-v, --verbose', 'verbose errors'],
-    ['--bundle-format <format>', 'bundle format: text or zip (default)'],
+    ['--bundle-format <format>', 'bundle format: text or zip (default) or text+zip'],
 ];
 
 export function argsToConfig(args) {

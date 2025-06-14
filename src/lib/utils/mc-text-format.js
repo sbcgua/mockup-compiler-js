@@ -19,26 +19,27 @@ class TextBundler {
 
     bundle() {
         return new Promise((resolve, reject) => {
-            const os = createWriteStream(this.#destPath);
-            os.on('close', () => os.errored || resolve(os.bytesWritten));
-            os.on('error', reject);
+            const ostr = createWriteStream(this.#destPath);
+            ostr.on('close', () => ostr.errored || resolve(ostr.bytesWritten));
+            ostr.on('error', reject);
+
             try {
-                this.#render(os);
-                os.end();
+                this.#render(ostr);
+                ostr.end();
             } catch (error) {
-                os.destroy(error);
+                ostr.destroy(error);
             }
         });
     }
-    #render(os) {
-        os.write('!!MOCKUP-LOADER-FORMAT 1.0\n');
-        os.write(`!!FILE-COUNT ${this.#fileList.length}\n`);
+    #render(ostr) {
+        ostr.write('!!MOCKUP-LOADER-FORMAT 1.0\n');
+        ostr.write(`!!FILE-COUNT ${this.#fileList.length}\n`);
         for (const name of this.#fileList) {
             const last = (name === this.#fileList.at(-1));
-            this.#renderOneFile(os, name, last);
+            this.#renderOneFile(ostr, name, last);
         }
     }
-    #renderOneFile(os, name, last = false) {
+    #renderOneFile(ostr, name, last = false) {
         const filePath = join(this.#rootDir, name);
         const data = readFileSync(filePath, 'utf-8'); // suppose it's a text file
         const lines = data.split('\n');
@@ -50,8 +51,8 @@ class TextBundler {
         const dataLines = lines.length;
         if (!last) lines.push(''); // add a blank line at the end
 
-        os.write('\n');
-        os.write(`!!FILE ${name} text ${dataLines}\n`);
-        os.write(lines.join('\n'));
+        ostr.write('\n');
+        ostr.write(`!!FILE ${name} text ${dataLines}\n`);
+        ostr.write(lines.join('\n'));
     }
 }
