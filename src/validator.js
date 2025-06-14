@@ -23,19 +23,16 @@ function validateBundleFile(filename) {
     if (version !== '1.0') error('Unsupported format version: ' + version);
     i++;
 
-    // 2. !!FILE-COUNT <N>
-    if (!lines[i] || !lines[i].startsWith('!!FILE-COUNT ')) error('Missing or invalid !!FILE-COUNT header');
-    const fileCount = parseInt(lines[i].split(' ')[1], 10);
-    if (isNaN(fileCount) || fileCount < 0) error('Invalid file count');
-    i++;
-    // while (lines[i] && lines[i].trim() === '') i++; // skip blank lines
+    // 2. Optional metadata/comments until first !!FILE or !!FILE-COUNT
+    while (
+        i < lines.length &&
+        !lines[i].startsWith('!!FILE ') &&
+        !lines[i].startsWith('!!FILE-COUNT ')) i++;
 
-    // 3. Optional metadata/comments until first !!FILE
-    while (lines[i] !== undefined && !lines[i].startsWith('!!FILE ')) i++;
-
-    // 4. Validate FILES
+    // 3. Validate FILES
     let fileCounter = 0;
     while (i < lines.length) {
+        if (lines[i].startsWith('!!FILE-COUNT ')) break; // Stop if we hit FILE-COUNT -> EOF
         if (!lines[i].startsWith('!!FILE ')) error(`Expected !!FILE tag at line ${i+1}`);
         // !!FILE <FILENAME> <TYPE> <LINES>
         const fileTag = lines[i].split(' ');
@@ -58,7 +55,18 @@ function validateBundleFile(filename) {
         // skip any blank lines after file data
         while (lines[i] !== undefined && lines[i].trim() === '') i++;
     }
+
+    // 4. !!FILE-COUNT <N>
+    if (!lines[i] || !lines[i].startsWith('!!FILE-COUNT ')) error('Missing or invalid !!FILE-COUNT');
+    const fileCount = parseInt(lines[i].split(' ')[1], 10);
+    if (isNaN(fileCount) || fileCount < 0) error('Invalid file count');
     if (fileCounter !== fileCount) error(`FILE-COUNT (${fileCount}) does not match actual file blocks (${fileCounter})`);
+    i++;
+
+    // 5. EOF: No more lines should be present
+    while (lines[i] !== undefined && lines[i].trim() === '') i++; // Skip any trailing blank lines
+    if (i < lines.length) console.log(`WARNING: Unexpected content after !!FILE-COUNT at line ${i+1}`);
+
     console.log('Validation successful. File is a valid mockup text bundle.');
 }
 
