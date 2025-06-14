@@ -26,7 +26,6 @@ describe('mc-text-format: buildTextBundle', () => {
 
         const expectedContent = [
             '!!MOCKUP-LOADER-FORMAT 1.0',
-            '!!FILE-COUNT 3',
             '',
             '!!FILE file1.txt text 2',
             'Content 1',
@@ -37,6 +36,8 @@ describe('mc-text-format: buildTextBundle', () => {
             '',
             '!!FILE file3.txt text 1',
             'Content 3',
+            '',
+            '!!FILE-COUNT 3',
         ].join('\n');
 
         const bytesWritten = await buildTextBundle(rootDir, fileList, destPath);

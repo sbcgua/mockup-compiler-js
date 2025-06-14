@@ -3,13 +3,13 @@
 ✔ Fix UTs @done(25-01-28 11:55)
 ✔ update modules @done(25-01-28 11:55)
 ✔ migrate to new eslint @done(25-01-28 11:55)
-☐ build sea or pkg or esbuild
+✔ build sea or pkg or esbuild @done(25-06-14 21:07)
     ✘ build installer (NSIS or MSI) ? @cancelled(25-01-30 10:19)
     ✔ detect SEA and properly report version @done(25-01-30 20:26)
     ✔ Fail on missing config + GracefulError @done(25-01-31 12:55)
     ✔ Add icon @done(25-01-31 12:32)
     ✔ add dev notes @done(25-01-31 12:40)
-    ☐ better signature logic ?
+    ✘ better signature logic ? @cancelled(25-06-14 21:07)
         why bother if it self-signed?
         or need to publish certificate
     ✔ improve icon @done(25-06-13 19:13)
@@ -19,7 +19,7 @@
     - utf8 only (or add binary format)
     - mock checksums? (but the bundle will usually contain .meta with checksums)
     ✔ format validator? @done(25-06-13 22:45)
-☐ ~~Make hashing not optional~~
+✘ ~Make hashing not optional~ @cancelled(25-06-14 21:08)
 ✔ Remove meta timestamp (check ML compiler still works) @done(25-06-13 20:25)
 ✔ Rename zipPath and arg opts ? @done(25-06-13 19:46)
 ☐ Release
@@ -27,10 +27,11 @@
     ☐ bump version
     ☐ release to github
     ☐ release to npm
-
+    
 Ecosystem:
     ✔ implement in ML itself @done(25-02-23 21:20)
     ☐ switch source must save the file name
     ☐ optimize upload with zipping the text format?
+        ☐ Better budler logic?
     ☐ implement in ABAP compiler?
     ☐ try for UAVAT

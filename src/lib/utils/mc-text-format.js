@@ -33,13 +33,14 @@ class TextBundler {
     }
     #render(ostr) {
         ostr.write('!!MOCKUP-LOADER-FORMAT 1.0\n');
-        ostr.write(`!!FILE-COUNT ${this.#fileList.length}\n`);
         for (const name of this.#fileList) {
-            const last = (name === this.#fileList.at(-1));
-            this.#renderOneFile(ostr, name, last);
+            this.#renderOneFile(ostr, name);
         }
+        ostr.write('\n');
+        ostr.write(`!!FILE-COUNT ${this.#fileList.length}`);
+        // ostr.write('!!EOF\n');
     }
-    #renderOneFile(ostr, name, last = false) {
+    #renderOneFile(ostr, name) {
         const filePath = join(this.#rootDir, name);
         const data = readFileSync(filePath, 'utf-8'); // suppose it's a text file
         const lines = data.split('\n');
@@ -49,7 +50,7 @@ class TextBundler {
             lines.pop();
         }
         const dataLines = lines.length;
-        if (!last) lines.push(''); // add a blank line at the end
+        lines.push(''); // add a blank line at the end
 
         ostr.write('\n');
         ostr.write(`!!FILE ${name} text ${dataLines}\n`);

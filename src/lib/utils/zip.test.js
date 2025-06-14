@@ -15,6 +15,7 @@ describe('zipFiles', () => {
         mockOutput = {
             on: vi.fn(),
             close: vi.fn(),
+            bytesWritten: 123,
         };
         mockArchive = {
             on: vi.fn(),

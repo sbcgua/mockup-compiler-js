@@ -7,12 +7,12 @@ vi.mock('node:fs');
 describe('Bundler', () => {
     let bundler;
     let bundlerFn;
-    const uncompressedDir = '/root';
+    const sourceDir = '/root';
     const bundlePath = '/root/archive.zip';
 
     beforeEach(() => {
         bundlerFn = vi.fn(() => 123);
-        bundler = new Bundler({ uncompressedDir, bundlePath, bundlerFn });
+        bundler = new Bundler({ sourceDir, bundlePath, bundlerFn });
     });
 
     afterEach(() => {
@@ -42,6 +42,6 @@ describe('Bundler', () => {
         const result = await bundler.bundle(files);
 
         expect(result).toBe(123);
-        expect(bundlerFn).toHaveBeenCalledWith(uncompressedDir, files, bundlePath);
+        expect(bundlerFn).toHaveBeenCalledWith(sourceDir, files, bundlePath);
     });
 });

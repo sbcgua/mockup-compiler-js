@@ -13,28 +13,29 @@ Metadata marks are lines that start with `!!`. The expectation is that abap fiel
 
 ```text
 !!MOCKUP-LOADER-FORMAT <VERSION>
-!!FILE-COUNT <N>
-  ... other metadata before first !!FILE
+  ... other metadata before first !!FILE, for compatibility
   ... maybe TOC in future?
 !!FILE <FILENAME> <TYPE> <LINES>
 <FILEDATA>
   ... empty lines before the next FILE are ignored
+!!FILE-COUNT <N>
 ```
 
 - The header:
   - The file start from `MOCKUP-LOADER-FORMAT` tag, followed by version. Currently, the version is `1.0`.
-  - Then `FILE-COUNT` tag follows describing the count of files for a basic integrity check.
-  - The header is followed by other metadata or optional free comments before the first `FILE`.
+  - The header is followed by other metadata or optional free comments before the first `FILE`. In particular, for future compatibility.
 - Files:
   - Each file is marked with `FILE` tag, followed by relative filename (`FILENAME`) in lowercase, `TYPE` of the content - currently `text` only (but potentially `base64` in the future) and number of following text `LINES` with the data.
   - Then the `LINES` lines of file content follow (`FILEDATA`).
   - The file block may be optionally followed by empty lines (for human readability) - they are ignored.
+- Footer:
+  - The file is closed with `FILE-COUNT` tag, describing the count of files for a basic integrity check.
+  - Any further data is ignored for now.
 
 ### Example
 
 ```text
 !!MOCKUP-LOADER-FORMAT 1.0
-!!FILE-COUNT 2
 some comments or future metadata
 
 !!FILE /test1/t001.txt text 2
@@ -46,4 +47,6 @@ BUKRS NAME1
 BELNR BUKRS
 1000001 0101
 1000002 0101
+
+!!FILE-COUNT 2
 ```
