@@ -12,8 +12,8 @@ Converts set of excels in a given directory to a set of tab-delimited text-files
 1. Finds all `*.xlsx` in the given directory.
 2. In each file, find the sheets to convert:
     - **By default**, converts all sheets with names not starting with `'-'`. *This is the recommended approach*.
-    - But also: searches for `_contents` sheet with 2 columns. The first is a name of another sheet in the workbook, the second includes the sheet into conversion if not empty. See example `test.xlsx` in the `test-sample` dir. If found, listed sheets are converted.
-    - If `_exclude` sheet is present, then the list of sheets in the first column (except the first line - column name) are excluded from processing. This happens on top of `_contents` sheet. See example `test.xlsx` in the `test-sample` dir.
+    - But also: searches for `_contents` sheet with 2 columns. The first is a name of another sheet in the workbook, the second includes the sheet into conversion if not empty. See example `test.xlsx` in the `test-sample` dir. If found, listed sheets are converted. *This is an outdated approach and might be deprecated in the future*
+    - If `_exclude` sheet is present, then the list of sheets in the first column (except the first line - column name) are excluded from processing. This happens on top of `_contents` sheet. See example `test.xlsx` in the `test-sample` dir. *This is an outdated approach and might be deprecated in the future*
 3. All the listed sheets are converted into tab-delimited text files in UTF8.
     - each sheet should contain data, staring in A1 cell
     - if A1 contains `#` at the beginning this row is skipped (it is for comments) and the header is read from B1
@@ -21,10 +21,10 @@ Converts set of excels in a given directory to a set of tab-delimited text-files
     - columns after *the first empty column* are ignored
     - rows after *the first empty row* are ignored
 4. All the files are saved to the given destination folder...
-5. ... and optionally zipped into archive (`zipPath` config param)
+5. ... and optionally zipped into archive (`bundlePath` config param)
 6. The file path in the zip will be `<excel name in lower case>/<sheet name>.txt`
-7. If specified, files from `includes` directory explicitly added too
-8. Optionally, `.meta` files are created (`withMeta` config param) with sha1 hashes of the source files
+7. If specified, files from `includes` directory explicitly added too (e.g. some non-table data, xmls ...)
+8. Optionally, `.meta` files are created (`withMeta` config param) with sha1 hashes of the source files. It useful for integrity, overview and version control.
 
 ### Text format (experimental)
 
@@ -40,7 +40,7 @@ BUKRS NAME
 ...
 ```
 
-See [doc/dev-notes-format.md](doc/dev-notes-format.md) for more format details.
+See [doc/text-bundle-format.md](doc/text-bundle-format.md) for more format details.
 
 ## Installation
 
@@ -50,7 +50,7 @@ The default approach is to install it as an NPM package. It assumes you have [no
 npm install -g mockup-compiler-js
 ```
 
-Alternatively, you can download a binary from [Releases](https://github.com/sbcgua/mockup-compiler-js/releases). The binary is a [nodejs sea application](https://nodejs.org/api/single-executable-applications.html), thus, a nodejs binary with the embeded source code in it. The releases are not signed, you can review the build script in [bin/build-sea.sh](bin/build-sea.sh). If you have any improvement advises for the binary releases, please post to issues.
+Alternatively, you can download a binary from [Releases](https://github.com/sbcgua/mockup-compiler-js/releases). The binary is a [nodejs sea application](https://nodejs.org/api/single-executable-applications.html), thus, a nodejs binary with the embeded source code in it. The releases are not signed, you can review the build script in [bin/build-sea.sh](bin/build-sea.sh) and build it yourself locally if you prefer (`npm run build:sea`). If you have any improvement advises for the binary releases, please post to issues.
 
 ## Running
 
@@ -60,11 +60,11 @@ Params to specify: source directory (`-s`), build directory (`-d`), optionally i
 mockup-compiler -s ./src-dir -d ./dest-dir -i ./static-assets -z ./build.zip
 ```
 
-See also `mockup-compiler --help` for the full list of options.
+See also `mockup-compiler --help` for the full list of options. Also, check the [file config section](#config) below.
 
 ## Watch mode
 
-The tool can also be run in the **watch mode**. In this case runs complete build first and then starts watching the source files - if changed, runs conversion on the changed one again and re-archives (if requested)
+The tool can also be run in the **watch mode**. In this case runs complete build first and then starts watching the source files - if changed, runs conversion on the changed one again and re-bundles them (if requested)
 
 ```bash
 mockup-compiler ... --watch
@@ -72,7 +72,7 @@ mockup-compiler ... --watch
 
 ## Config
 
-The setting can be given in a config. By default the programs looks for the config in the current directory in file `.mock-config.json`. Optionally can be set with `-c` command opt. Example of the file:
+The setting can be given in a config. By default the programs looks for the config in the current directory in file `.mock-config.json`. Optionally, can be referred with `-c` command opt. Example of the file:
 
 ```json
 {
@@ -84,7 +84,7 @@ The setting can be given in a config. By default the programs looks for the conf
     "includes": [
         "_dest/_inc"
     ],
-    "skipFieldsStartingWith": "_",
+    "skipFieldsStartingWith": "-",
     "withMeta": true,
     "cleanDestDirOnStart": false
 }
@@ -97,14 +97,10 @@ mockup-compiler -c ./my-mock-config.json
 ```
 
 - **Important**: the paths are calculated relative to current work directory unless given as absolute paths.
-- If `zipPath` is not specified, zip file will not be created, just tab-delimited texts.
-- `eol` - defines which end-of-line character to use: linux style (LF) or window style (CRLF). We recommend LF.
+- If `bundlePath` is not specified, zip/text bundle file will not be created, just tab-delimited texts.
+- `eol` - defines which end-of-line character to use: linux style (LF) or window style (CRLF). *We recommend LF*.
 - `includes` - optionally defines a dir to directly copy files from, in addition to excel processing. *Currently support only one include dir*.
 - `withMeta` instructs the compiler to create `.meta/src_files` with SHA1 hashes of source files (for integrity and compatibility with abap version of the tool)
 - `cleanDestDirOnStart` deletes the destination dir before file processing. Importantly, it does not cleans the dir in watch mode, so changes are written on top of the existing files structure. Thus, e.g., deleting a sheet in excel will **not** delete it's already compiled representation.
 - `skipFieldsStartingWith` - skips fields which start from the given symbol, by default it is `'-'`
-
-**CHANGES** since v1.2.0
-
-- a new parameter is introduced - `bundleFormat` - which can be `zip` (the default, if empty) or `text`, which controls the output file format
-- prefer using `bundlePath` paramater instead of `zipPath`. The latter is deprecated and will be removed in future releases
+- **CHANGED** since v1.2.0: `bundleFormat` - defines the bormat of the budle file: `zip` (the default, if empty) or `text` (see [doc/text-bundle-format.md](doc/text-bundle-format.md))

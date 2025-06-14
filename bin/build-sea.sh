@@ -45,7 +45,7 @@ npx postject _build/mockup-compiler.exe NODE_SEA_BLOB _build/sea-prep.blob --sen
 
 # Adding icon
 echo "Adding icon..."
-npx resedit -i _build/mockup-compiler.exe -o _build/mockup-compiler.exe --icon 1,doc/mc-icon.ico || exit 1
+npx resedit -i _build/mockup-compiler.exe -o _build/mockup-compiler.exe --icon 1,doc/images/mc-icon.ico || exit 1
 
 # Sign the executable
 # echo "Signing the executable..."
