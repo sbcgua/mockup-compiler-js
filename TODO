@@ -23,8 +23,8 @@
 ✔ Remove meta timestamp (check ML compiler still works) @done(25-06-13 20:25)
 ✔ Rename zipPath and arg opts ? @done(25-06-13 19:46)
 ☐ Release
-    ☐ update readme
-    ☐ bump version
+    ✔ update readme @done(25-06-14 22:10)
+    ✔ bump version @done(25-06-14 22:10)
     ☐ release to github
     ☐ release to npm
     
