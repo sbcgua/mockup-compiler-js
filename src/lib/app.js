@@ -4,7 +4,7 @@ import Watcher from './watcher.js';
 import MetaCalculator from './proc/meta.js';
 import { Bundler } from './utils/bundler.js';
 import { zipFiles } from './utils/zip.js';
-import { buildTextBundle } from './utils/mc-text-format.js';
+import { buildTextBundle, buildTextZipBundle } from './utils/mc-text-format.js';
 import ExcelFileManager from './proc/file-manager-excel.js';
 import IncludeFileManager from './proc/file-manager-includes.js';
 import { createMockProcessor, parseWokbookIntoMocks } from './proc/mock-processings.js';
@@ -47,7 +47,9 @@ export default class App {
             this.#bundler = new Bundler({
                 sourceDir: this.#destDir, // sourceDir is the uncompressed dir
                 bundlePath: this.#bundlePath,
-                bundlerFn: config.bundleFormat === 'text' ? buildTextBundle : zipFiles,
+                bundlerFn: config.bundleFormat === 'text' ? buildTextBundle // TODO refactor
+                    : config.bundleFormat === 'text+zip' ? buildTextZipBundle
+                        : zipFiles,
             });
         }
     }

@@ -1,9 +1,39 @@
 import { createWriteStream, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { PassThrough } from 'node:stream';
+import archiver from 'archiver';
+
 export function buildTextBundle(rootDir, fileList, destPath) {
     const bundler = new TextBundler(rootDir, fileList, destPath);
     return bundler.bundle();
+}
+
+const DEFAULT_TEXT_BUNDLE_NAME = 'bundle.txt';
+
+export function buildTextZipBundle(rootDir, fileList, destPath) {
+    const bundler = new TextBundler(rootDir, fileList, destPath);
+    const passThroughStream = new PassThrough();
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    const ostr = createWriteStream(destPath);
+
+    return new Promise((resolve, reject) => {
+
+        ostr.on('close', () => ostr.errored ? reject(ostr.errored) : resolve(ostr.bytesWritten));
+        ostr.on('error', reject);
+
+        archive.on('warning', err => reject(Object.assign(err, { _loc: 'buildTextZipBundle warning' })));
+        archive.on('error', err => reject(Object.assign(err, { _loc: 'buildTextZipBundle error' })));
+        // archive.on('close', err => console.log('archive close', err)  );
+        archive.pipe(ostr);
+        archive.append(passThroughStream, { name: DEFAULT_TEXT_BUNDLE_NAME });
+
+        bundler.bundle(passThroughStream).then(textBundleSize => {
+            console.log('Uncompressed text bundle size:', textBundleSize);
+            archive.finalize(); // then?
+        });
+
+    });
 }
 
 class TextBundler {
@@ -17,10 +47,16 @@ class TextBundler {
         this.#fileList = fileList.toSorted();
     }
 
-    bundle() {
+    bundle(writeHere) {
         return new Promise((resolve, reject) => {
-            const ostr = createWriteStream(this.#destPath);
-            ostr.on('close', () => ostr.errored ? reject(ostr.errored) : resolve(ostr.bytesWritten));
+            const ostr = writeHere || createWriteStream(this.#destPath);
+            let bytesWrittenCounter = 0;
+            if (ostr.bytesWritten === undefined) { // For streams without bytesWritten prop
+                ostr.on('data', (chunk) => { bytesWrittenCounter += chunk.length });
+            }
+            ostr.on('close', () => ostr.errored
+                ? reject(ostr.errored)
+                : resolve(ostr.bytesWritten ?? bytesWrittenCounter));
             ostr.on('error', reject);
 
             try {

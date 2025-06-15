@@ -43,19 +43,27 @@ jobs:
           npm run testrun:t
           test -f _dest/build.txt && echo build.txt OK
           test `cat _dest/build.txt | wc -l` = "21" && echo build.txt line count OK
+      - name: Testrun with text+zip bundle
+        run: |
+          npm run testrun:tz
+          test -f _dest/build-tz.zip && echo build-tz.zip OK
+          unzip -l _dest/build-tz.zip | grep 'bundle.txt' && echo bundle.txt in zip OK
 
   test-sea:
     name: Test SEA build
     runs-on: ubuntu-latest
-    if: false
-    # Disable this job currently as it is widnows specific
+    # if: false
+    # Limited to bundle file and sea blob because most of the rest needs windows
     steps:
       - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
       - uses: actions/checkout@v4
       - run: npm ci
-      - run: npm run build:sea
+      - name: Build SEA bundle
+        run: |
+          npm run build:bundle
+          node --experimental-sea-config sea-config.json
 
   auto-tag:
     name: Add a tag on new version

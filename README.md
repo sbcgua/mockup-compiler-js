@@ -42,6 +42,8 @@ BUKRS NAME
 
 See [doc/text-bundle-format.md](doc/text-bundle-format.md) for more format details.
 
+P.S. One even more experimental features is `text+zip` format - it creates a text bundle file (`bundle.txt`) and packs it into zip. The motivation is to improve performance of `zmockup_loader_switch_source` tool, which redirects mockup source to a local file. Read more withing [ABAP Mockup compiler](https://github.com/sbcgua/mockup_compiler) documentation.
+
 ## Installation
 
 The default approach is to install it as an NPM package. It assumes you have [nodejs](https://nodejs.org/) installed.

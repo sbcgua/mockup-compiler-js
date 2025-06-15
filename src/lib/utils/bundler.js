@@ -12,9 +12,9 @@ export class Bundler {
     #deleteBundleFile() {
         if (fs.existsSync(this.#bundlePath)) fs.rmSync(this.#bundlePath);
     }
-    bundle(files) {
+    async bundle(files) {
         this.#deleteBundleFile();
-        return this.#bundlerFn(this.#sourceDir, files, this.#bundlePath);
+        return await this.#bundlerFn(this.#sourceDir, files, this.#bundlePath);
     }
     get bundlePath() { return this.#bundlePath }
 }

@@ -27,11 +27,11 @@
     ✔ bump version @done(25-06-14 22:10)
     ☐ release to github
     ☐ release to npm
+☐ Better budler logic? Based on streams, maybe to remove uncompressed dir
     
 Ecosystem:
     ✔ implement in ML itself @done(25-02-23 21:20)
     ☐ switch source must save the file name
-    ☐ optimize upload with zipping the text format?
-        ☐ Better budler logic?
+    ✔ optimize upload with zipping the text format? @done(25-06-15 15:15)
     ☐ implement in ABAP compiler?
     ☐ try for UAVAT
