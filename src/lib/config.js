@@ -77,7 +77,7 @@ export function validateConfig(config) {
         if (!rule.check || !CHECKS[rule.check]) throw Error(`Unexpected validation rule: ${key}`); // Really unexpected :)
         let check = CHECKS[rule.check];
         if (!check(val)) {
-            throw Error(`Config validation error: ${key} must be ${rule.mustBe || rule.check}`);
+            throw Error(`Config validation error: ${key} must be ${rule.mustBe || rule.check} (received: ${val})`);
         }
     }
 
