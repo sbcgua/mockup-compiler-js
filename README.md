@@ -52,7 +52,7 @@ The default approach is to install it as an NPM package. It assumes you have [no
 npm install -g mockup-compiler-js
 ```
 
-Alternatively, you can download a binary from [Releases](https://github.com/sbcgua/mockup-compiler-js/releases). The binary is a [nodejs sea application](https://nodejs.org/api/single-executable-applications.html), thus, a nodejs binary with the embeded source code in it. The releases are not signed, you can review the build script in [bin/build-sea.sh](bin/build-sea.sh) and build it yourself locally if you prefer (`npm run build:sea`). If you have any improvement advises for the binary releases, please post to issues.
+Alternatively, you can download a binary from [Releases](https://github.com/sbcgua/mockup-compiler-js/releases). The binary is a [nodejs sea application](https://nodejs.org/api/single-executable-applications.html), thus, a nodejs binary with the embeded source code in it. The releases are not signed, you can review the build script in [bin/build-sea.sh](bin/build-sea.sh) and build it yourself locally if you prefer (`npm run build:bin`). If you have any improvement advises for the binary releases, please post to issues.
 
 ## Running
 
