@@ -1,0 +1,9 @@
+{
+    "main": "_build/bundle.js",
+    "output": "_build/sea-prep.blob",
+    "disableExperimentalSEAWarning": true,
+    "assets": {
+        "package.json": "package.json",
+        "LICENSE": "LICENSE"
+    }
+}

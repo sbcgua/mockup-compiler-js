@@ -8,6 +8,15 @@ Legend
 + : added
 - : removed
 
+v1.2.0, 2025-06-25
+-------------------
+! update to ESM
+! deps update
+! config is not defaulted anymore, it must be either pointed with a param, or lay in the current dir, or be specified with args (destDir and sourceDir are mandatory)
+! zipPath parameter changed to bundlePath
++ [MAJOR] New text file format for the resulting artifact (as an diffable alternative to zip)
++ [MAJOR] Nodejs single executable, to be able to exec without node installation
+
 v1.1.2, 2023-02-07
 -------------------
 * deps update

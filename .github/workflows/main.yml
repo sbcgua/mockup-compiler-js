@@ -13,29 +13,57 @@ jobs:
     name: Run linter
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: npm ci
       - run: npm run lint
+
   test:
     name: Run unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: npm ci
-      - run: npm run test -- --reporters="github-actions"
-      - run: |
+      - run: npm run test
+      - name: Testrun with zip bundle
+        run: |
           npm run testrun
           test -d _dest && echo dest OK
           test -f _dest/build.zip && echo build.zip OK
           test `find _dest | wc -l` = "9" && echo file count OK
           test -f _dest/.meta/src_files && echo src_files OK
-          test `cat _dest/.meta/src_files | wc -l` = "3" && echo src_files line count OK
+          test `cat _dest/.meta/src_files | wc -l` = "4" && echo src_files line count OK
+      - name: Testrun with text bundle
+        run: |
+          npm run testrun:t
+          test -f _dest/build.txt && echo build.txt OK
+          test `cat _dest/build.txt | wc -l` = "21" && echo build.txt line count OK
+      - name: Testrun with text+zip bundle
+        run: |
+          npm run testrun:tz
+          test -f _dest/build-tz.zip && echo build-tz.zip OK
+          unzip -l _dest/build-tz.zip | grep 'bundle.txt' && echo bundle.txt in zip OK
+
+  test-sea:
+    name: Test SEA build
+    runs-on: ubuntu-latest
+    # if: false
+    # Limited to bundle file and sea blob because most of the rest needs windows
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - name: Build SEA bundle
+        run: |
+          npm run build:bundle
+          node --experimental-sea-config sea-config.json
 
   auto-tag:
     name: Add a tag on new version
@@ -44,9 +72,9 @@ jobs:
       - test
     runs-on: ubuntu-latest
     # ORIGINAL REPO, to avoid running for forks
-    if: github.ref == 'refs/heads/master' && github.repository == 'sbcgua/mockup-compiler-js'
+    if: github.repository == 'sbcgua/mockup-compiler-js'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: Detect version change
         id: detect_version_change
@@ -59,11 +87,22 @@ jobs:
             echo "Version change was not detected, exiting..."
           else
             echo "Version change detected"
-            echo "::set-output name=VERSION_CHANGED::yes"
-            echo "::set-output name=NEW_VERSION::$CURRENT_VERSION"
+            # echo "::set-output name=VERSION_CHANGED::yes"
+            # echo "::set-output name=NEW_VERSION::$CURRENT_VERSION"
+            echo "VERSION_CHANGED=yes" >> $GITHUB_OUTPUT
+            echo "NEW_VERSION=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          fi
+      - name: Debug outputs
+        run: |
+          echo "VERSION_CHANGED=${{ steps.detect_version_change.outputs.VERSION_CHANGED }}"
+          echo "NEW_VERSION=${{ steps.detect_version_change.outputs.NEW_VERSION }}"
+          if [ "${GITHUB_REF}" = "refs/heads/master" ] && [ "${GITHUB_EVENT_NAME}" != "pull_request" ]; then
+            echo "This is a push to master, proceeding with tag creation"
+          else
+            echo "This is not a push to master, skipping tag creation"
           fi
       - name: Create new tag
-        if: success() && steps.detect_version_change.outputs.VERSION_CHANGED == 'yes'
+        if: github.ref == 'refs/heads/master' && success() && steps.detect_version_change.outputs.VERSION_CHANGED == 'yes'
         env:
           GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
         run: |

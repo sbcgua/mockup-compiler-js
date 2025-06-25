@@ -1,16 +1,21 @@
 {
   "name": "mockup-compiler-js",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Tool to convert Excel unit test data to text and archive it",
-  "main": "index.js",
+  "type": "module",
   "bin": {
-    "mockup-compiler": "./index.js"
+    "mockup-compiler": "./src/index.js",
+    "mockup-validator": "./src/validator.js"
   },
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "testrun": "node index.js -c test-sample/.mock-config.json",
-    "lint": "eslint index.js lib"
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "testrun": "node src/index.js -c test-sample/.mock-config.json",
+    "testrun:t": "node src/index.js -c test-sample/.mock-config.json --bundle-format text -z ../_dest/build.txt",
+    "testrun:tz": "node src/index.js -c test-sample/.mock-config.json --bundle-format text+zip -z ../_dest/build-tz.zip",
+    "lint": "eslint",
+    "build:bin": "bash bin/build-sea.sh",
+    "build:bundle": "esbuild --format=cjs --platform=node --bundle --outfile=_build/bundle.js src/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,18 +23,23 @@
   },
   "private": false,
   "author": "Alexander Tsybulsky",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "archiver": "^5.3.1",
-    "chalk": "^4.1.2",
-    "commander": "^8.3.0",
-    "lodash": "^4.17.21",
+    "archiver": "^7.0.1",
+    "chalk": "^5.4.1",
+    "commander": "^14.0.0",
+    "lodash-es": "^4.17.21",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@eslint/js": "^9.29.0",
     "deep-freeze": "0.0.1",
-    "eslint": "^8.33.0",
-    "jest": "^29.4.1",
-    "memfs": "^3.4.13"
+    "esbuild": "^0.25.5",
+    "eslint": "^9.29.0",
+    "globals": "^16.2.0",
+    "memfs": "^4.17.2",
+    "postject": "^1.0.0-alpha.6",
+    "resedit-cli": "^2.1.0",
+    "vitest": "^3.2.3"
   }
 }

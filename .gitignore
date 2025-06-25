@@ -16,6 +16,7 @@ yarn-error.log*
 playground.js
 
 # artifacts
+_build
 _dest
 _mock_build_temp
 playground.js
