@@ -16,7 +16,7 @@
 ✔ run from current dir (test) @done(25-01-31 13:03)
 ☐ new mock file format
     ✔ force sorting @done(25-02-01 19:33)
-    - utf8 only (or add binary format)
+    - utf8 only (or add binary format - base64?)
     - mock checksums? (but the bundle will usually contain .meta with checksums)
     ✔ format validator? @done(25-06-13 22:45)
 ✘ ~Make hashing not optional~ @cancelled(25-06-14 21:08)
@@ -31,7 +31,7 @@
     
 Ecosystem:
     ✔ implement in ML itself @done(25-02-23 21:20)
-    ☐ switch source must save the file name
+    ✔ switch source must save the file name @done(25-06-25 21:06)
     ✔ optimize upload with zipping the text format? @done(25-06-15 15:15)
     ☐ implement in ABAP compiler?
-    ☐ try for UAVAT
+    ✔ try for UAVAT @done(25-06-25 21:06)
