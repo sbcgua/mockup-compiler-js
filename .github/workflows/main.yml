@@ -35,14 +35,14 @@ jobs:
           npm run testrun
           test -d _dest && echo dest OK
           test -f _dest/build.zip && echo build.zip OK
-          test `find _dest | wc -l` = "9" && echo file count OK
+          test `find _dest | wc -l` = "11" && echo file count OK
           test -f _dest/.meta/src_files && echo src_files OK
-          test `cat _dest/.meta/src_files | wc -l` = "4" && echo src_files line count OK
+          test `cat _dest/.meta/src_files | wc -l` = "6" && echo src_files line count OK
       - name: Testrun with text bundle
         run: |
           npm run testrun:t
           test -f _dest/build.txt && echo build.txt OK
-          test `cat _dest/build.txt | wc -l` = "21" && echo build.txt line count OK
+          test `cat _dest/build.txt | wc -l` = "29" && echo build.txt line count OK
       - name: Testrun with text+zip bundle
         run: |
           npm run testrun:tz
@@ -73,6 +73,8 @@ jobs:
     runs-on: ubuntu-latest
     # ORIGINAL REPO, to avoid running for forks
     if: github.repository == 'sbcgua/mockup-compiler-js'
+    permissions:
+      contents: write # for tag
     steps:
       - uses: actions/checkout@v4
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
@@ -104,7 +106,7 @@ jobs:
       - name: Create new tag
         if: github.ref == 'refs/heads/master' && success() && steps.detect_version_change.outputs.VERSION_CHANGED == 'yes'
         env:
-          GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # secrets.DEPLOYMENT_TOKEN
         run: |
           if [ -z "${GITHUB_TOKEN}" ]; then
             echo "GITHUB_TOKEN is undefined"

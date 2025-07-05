@@ -4,6 +4,7 @@ import path from 'node:path';
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
 function assignDefaults(config) {
+    if (!config.pattern) config.pattern = ['*.xlsx'];
     if (!config.eol) config.eol = 'lf';
     if (!config.bundleFormat) config.bundleFormat = 'zip';
     if (config.zipPath && !config.bundlePath) {
@@ -37,6 +38,9 @@ function postProcessConfig(config, rootDir) {
     if (config.eol) {
         config.eol = config.eol.toLowerCase();
     }
+    if (config.pattern && !Array.isArray(config.pattern)) {
+        config.pattern = [config.pattern];
+    }
 }
 
 const CHECKS = {
@@ -61,6 +65,7 @@ const configScheme = {
         withMeta:            { check: 'Boolean' },
         cleanDestDirOnStart: { check: 'Boolean' },
         skipFieldsStartingWith: { check: 'String' },
+        pattern:             { check: 'ArrayOfStrings' },
     },
     required: ['sourceDir', 'destDir', 'eol'],
 };
@@ -73,7 +78,7 @@ export function validateConfig(config) {
     // Validate complete shape
     for (let [key, val] of Object.entries(config)) {
         const rule = configScheme.properties[key];
-        if (!rule) throw Error(`Config validation error: unexpected param ${key}`);
+        if (!rule) throw Error(`Config validation error: unexpected param "${key}"`);
         if (!rule.check || !CHECKS[rule.check]) throw Error(`Unexpected validation rule: ${key}`); // Really unexpected :)
         let check = CHECKS[rule.check];
         if (!check(val)) {

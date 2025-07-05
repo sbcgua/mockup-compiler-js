@@ -27,7 +27,8 @@
     ✔ bump version @done(25-06-14 22:10)
     ☐ release to github
     ☐ release to npm
-☐ Better budler logic? Based on streams, maybe to remove uncompressed dir
+☐ Better budler logic? Based on streams, maybe to remove uncompressed dir -> inMemory param
+✔ Support xmls and glob patterns @done(25-07-05 11:49)
     
 Ecosystem:
     ✔ implement in ML itself @done(25-02-23 21:20)
