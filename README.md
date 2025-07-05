@@ -79,7 +79,8 @@ The setting can be given in a config. By default the programs looks for the conf
 ```json
 {
     "sourceDir": ".",
-    "eol": "lf", // lf or crlf
+    "pattern": "*.xslx",    // optional
+    "eol": "lf",            // lf or crlf, optional
     "destDir": "_dest",
     "bundlePath": "_dest/build.zip",
     "bundleFormat": "zip",
@@ -100,9 +101,10 @@ mockup-compiler -c ./my-mock-config.json
 
 - **Important**: the paths are calculated relative to current work directory unless given as absolute paths.
 - If `bundlePath` is not specified, zip/text bundle file will not be created, just tab-delimited texts.
-- `eol` - defines which end-of-line character to use: linux style (LF) or window style (CRLF). *We recommend LF*.
+- `eol` - defines which end-of-line character to use: linux style (LF) or window style (CRLF). *We recommend LF*. Default is LF.
 - `includes` - optionally defines a dir to directly copy files from, in addition to excel processing. *Currently support only one include dir*.
 - `withMeta` instructs the compiler to create `.meta/src_files` with SHA1 hashes of source files (for integrity and compatibility with abap version of the tool)
 - `cleanDestDirOnStart` deletes the destination dir before file processing. Importantly, it does not cleans the dir in watch mode, so changes are written on top of the existing files structure. Thus, e.g., deleting a sheet in excel will **not** delete it's already compiled representation.
 - `skipFieldsStartingWith` - skips fields which start from the given symbol, by default it is `'-'`
 - **CHANGED** since v1.2.0: `bundleFormat` - defines the bormat of the budle file: `zip` (the default, if empty) or `text` (see [doc/text-bundle-format.md](doc/text-bundle-format.md))
+- `pattern` - is a glob pattern for Excel files. By default it is "*.xlsx", however the tool support all formats which are supported by the underlying library [sheetjs](https://www.npmjs.com/package/xlsx). The param can be a string or an array, e.g. `["*.xlsx", "*.xml"]`.

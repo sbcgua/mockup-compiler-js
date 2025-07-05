@@ -23,6 +23,7 @@ describe('Config Module', () => {
                 ...mockConfig,
                 bundleFormat: 'zip',
                 eol: 'lf',
+                pattern: ['*.xlsx'],
             });
         });
 
@@ -36,6 +37,7 @@ describe('Config Module', () => {
                 bundleFormat: 'zip',
                 eol: 'lf',
                 quiet: true,
+                pattern: ['*.xlsx'],
             });
         });
 
@@ -65,7 +67,7 @@ describe('Config Module', () => {
 
         test('should throw error for unexpected params', () => {
             const invalidConfig = { ...mockCompleteConfig, unexpectedParam: true };
-            expect(() => validateConfig(invalidConfig)).toThrowError('Config validation error: unexpected param unexpectedParam');
+            expect(() => validateConfig(invalidConfig)).toThrowError('Config validation error: unexpected param "unexpectedParam"');
         });
 
         test('should throw error for invalid param types', () => {

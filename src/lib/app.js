@@ -35,6 +35,7 @@ export default class App {
         this.#excelFileManager = this.#setupExcelFileManager({
             eol: config.eol,
             skipFieldsStartingWith: config.skipFieldsStartingWith,
+            pattern: config.pattern,
         });
         this.#includeFileManager = this.#setupIncludeFileManager();
         this.#metaCalculator = this.#withMeta && new MetaCalculator({
@@ -66,13 +67,14 @@ export default class App {
         }
     }
 
-    #setupExcelFileManager({eol, skipFieldsStartingWith}) {
+    #setupExcelFileManager({eol, skipFieldsStartingWith, pattern}) {
         const fileProcessor = new ExcelFileManager({
             srcDir: this.#srcDir,
             destDir: this.#destDir,
             mockExtractor: parseWokbookIntoMocks,
             mockProcessor: createMockProcessor(eol, skipFieldsStartingWith),
             withHashing: this.#withMeta,
+            pattern,
         });
         fileProcessor.on('start-of-file-processing', ({name}) => {
             this.#logger.log(chalk.grey('Processing:'), `${name}`);

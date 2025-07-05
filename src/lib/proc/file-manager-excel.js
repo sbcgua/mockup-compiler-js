@@ -7,6 +7,7 @@ import { read as readXLSX } from 'xlsx';
 import { slash } from '../utils/fs-utils.js';
 import { FileManagerBase } from './file-manager-base.js';
 import SimpleSHA1Stream from '../utils/sha1-stream.js';
+import picomatch from 'picomatch'; // Also micromatch looks good, but picomatch is smaller and faster
 
 const START_OF_FILE_PROCESSING = 'start-of-file-processing';
 const ITEM_PROCESSED = 'item-processed';
@@ -20,6 +21,7 @@ export default class ExcelFileManager extends FileManagerBase {
     #fileHashMap = new Map();
     #mockHashMap = new Map();
     #mockList = new Set();
+    #pattern;
 
     get fileHashMap() { return this.#fileHashMap }
     get mockHashMap() { return this.#mockHashMap }
@@ -34,7 +36,7 @@ export default class ExcelFileManager extends FileManagerBase {
      * @param {Function} mockExtractor file parsing routine
      * @param {Function} mockProcessor single mock processing routine
      */
-    constructor({srcDir, destDir, withHashing, mockExtractor, mockProcessor}) {
+    constructor({srcDir, destDir, withHashing, mockExtractor, mockProcessor, pattern}) {
         assert(typeof destDir === 'string' && typeof mockExtractor === 'function' && typeof mockProcessor === 'function');
         super();
         this.#srcDir = srcDir;
@@ -43,6 +45,7 @@ export default class ExcelFileManager extends FileManagerBase {
 
         this.#mockExtractor = mockExtractor;
         this.#mockProcessor = mockProcessor;
+        this.#pattern = pattern || ['*.xlsx'];
         this.#validateParams();
     }
 
@@ -56,7 +59,8 @@ export default class ExcelFileManager extends FileManagerBase {
 
         let files = fs.readdirSync(this.#srcDir);
         files = files
-            .filter(f => /\.xlsx$/.test(f))
+            // .filter(f => /\.xlsx$/.test(f))
+            .filter(f => picomatch.isMatch(f, this.#pattern))
             .filter(f => !f.startsWith('~'))
             .map(f => path.join(this.#srcDir, f));
 
