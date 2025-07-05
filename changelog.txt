@@ -8,6 +8,10 @@ Legend
 + : added
 - : removed
 
+v1.2.1, 2025-??
+-------------------
++ added `pattern` param to config, allowing specifing glob file patterm for Excel files
+
 v1.2.0, 2025-06-25
 -------------------
 ! update to ESM
