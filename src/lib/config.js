@@ -13,7 +13,7 @@ function assignDefaults(config) {
     }
 }
 
-function readConfigFile(confPath, optional = false) {
+function readConfigFile(confPath, {optional = false} = {}) {
     try {
         confPath = path.resolve(confPath);
         const configData = fs.readFileSync(confPath, 'utf8');
@@ -59,6 +59,7 @@ const configScheme = {
         // zipPath:             { check: 'String' },
         bundlePath:          { check: 'String' },
         noBundle:            { check: 'Boolean' },
+        inMemory:            { check: 'Boolean' },
         eol:                 { check: 'eol', mustBe: '"lf" or "crlf"' },
         bundleFormat:        { check: 'bundleFormat', mustBe: '"text" or "zip" or "text+zip"' },
         quiet:               { check: 'Boolean' },
@@ -67,10 +68,16 @@ const configScheme = {
         skipFieldsStartingWith: { check: 'String' },
         pattern:             { check: 'ArrayOfStrings' },
     },
-    required: ['sourceDir', 'destDir', 'eol'],
+    required: ['sourceDir', 'eol'],
 };
 
 export function validateConfig(config) {
+    // Validate DestDir/inMemory
+    if (!config.destDir && !config.inMemory) throw Error('Config or params must have "destDir" or enabled "inMemory"');
+    if (config.destDir && config.inMemory) throw Error('"destDir" and "inMemory" cannot be used together. Please use only one of them.');
+    if (config.inMemory && !config.bundlePath) {
+        throw Error('"inMemory" mode requires "bundlePath" to be set');
+    }
     // Validate required params
     for (let req of configScheme.required) {
         if (!config[req]) throw Error(`Config or params must have ${req}`);
@@ -89,10 +96,15 @@ export function validateConfig(config) {
 }
 
 export function readConfig(confPath, overloads = null) {
-    if (!confPath) confPath = CONFIG_DEFAULT_PATH;
+    let config;
+    if (confPath) {
+        config = readConfigFile(confPath); // readConfigFile throws if the file is not found
+    } else {
+        confPath = CONFIG_DEFAULT_PATH;
+        config = readConfigFile(confPath, { optional: true }); // don't throw if the default config is not found
+    }
     const rootDir = path.dirname(confPath);
 
-    let config = readConfigFile(confPath, Boolean(overloads));
     config = { ...config, ...overloads };
     assignDefaults(config);
     postProcessConfig(config, rootDir);
