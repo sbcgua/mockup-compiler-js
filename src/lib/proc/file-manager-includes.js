@@ -13,6 +13,7 @@ export default class IncludeFileManager extends FileManagerBase {
     #includeRoot;
     #destDir;
     #withHashing = false;
+    #destFs;
 
     get fileHashMap() { return this.#fileHashMap }
     get testObjectList() { return [...this.#fileHashMap.keys()].map(f => f.toLowerCase()) }
@@ -24,18 +25,19 @@ export default class IncludeFileManager extends FileManagerBase {
      * @param {string} destDir destination folder
      * @param {boolean} withHashing enable hashing
      */
-    constructor({destDir, includeDir, withHashing}) {
+    constructor({destDir, includeDir, withHashing, memfs}) {
         assert(typeof destDir === 'string' && typeof includeDir === 'string');
         super();
         this.#includeRoot = includeDir;
         this.#destDir = destDir;
         this.#withHashing = withHashing;
+        this.#destFs = memfs || fs;
         this.#validateParams();
     }
 
     #validateParams() {
         if (!fs.existsSync(this.#includeRoot)) throw Error('Include dir does not exist');
-        if (!fs.existsSync(this.#destDir)) throw Error('Destination dir does not exist');
+        if (!this.#destFs.existsSync(this.#destDir)) throw Error('Destination dir does not exist');
     }
 
     async processAll() {
@@ -60,7 +62,7 @@ export default class IncludeFileManager extends FileManagerBase {
     }
 
     #proveDestDir(destDir) {
-        if (!fs.existsSync(destDir)) fs.mkdirSync(destDir, { recursive: true });
+        if (!this.#destFs.existsSync(destDir)) this.#destFs.mkdirSync(destDir, { recursive: true });
     }
 
     async #copyDir(srcDir, destDir) {
@@ -92,7 +94,7 @@ export default class IncludeFileManager extends FileManagerBase {
             const sha1s = this.#withHashing ? new SimpleSHA1Stream() : null;
             const rs = fs.createReadStream(srcPath);
             rs.on('error', reject);
-            const ws = fs.createWriteStream(dstPath);
+            const ws = this.#destFs.createWriteStream(dstPath);
             ws.on('error', reject);
             ws.on('finish', () => resolve(sha1s?.digest()));
             if (sha1s) {

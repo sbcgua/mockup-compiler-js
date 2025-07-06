@@ -22,6 +22,7 @@ export default class ExcelFileManager extends FileManagerBase {
     #mockHashMap = new Map();
     #mockList = new Set();
     #pattern;
+    #destFs;
 
     get fileHashMap() { return this.#fileHashMap }
     get mockHashMap() { return this.#mockHashMap }
@@ -36,12 +37,13 @@ export default class ExcelFileManager extends FileManagerBase {
      * @param {Function} mockExtractor file parsing routine
      * @param {Function} mockProcessor single mock processing routine
      */
-    constructor({srcDir, destDir, withHashing, mockExtractor, mockProcessor, pattern}) {
+    constructor({srcDir, destDir, withHashing, mockExtractor, mockProcessor, pattern, memfs}) {
         assert(typeof destDir === 'string' && typeof mockExtractor === 'function' && typeof mockProcessor === 'function');
         super();
         this.#srcDir = srcDir;
         this.#destDir = destDir;
         this.#withHashing = withHashing;
+        this.#destFs = memfs || fs;
 
         this.#mockExtractor = mockExtractor;
         this.#mockProcessor = mockProcessor;
@@ -51,7 +53,7 @@ export default class ExcelFileManager extends FileManagerBase {
 
     #validateParams() {
         if (!fs.existsSync(this.#srcDir)) throw Error('Source dir does not exist');
-        if (!fs.existsSync(this.#destDir)) throw Error('Destination dir does not exist');
+        if (!this.#destFs.existsSync(this.#destDir)) throw Error('Destination dir does not exist');
     }
 
     async processAll() {
@@ -111,7 +113,7 @@ export default class ExcelFileManager extends FileManagerBase {
     }
 
     #proveDestDir(destDir) {
-        if (!fs.existsSync(destDir)) fs.mkdirSync(destDir);
+        if (!this.#destFs.existsSync(destDir)) this.#destFs.mkdirSync(destDir);
     }
 
     async #processMock(targetDirName, mockName, mockCells) {
@@ -128,7 +130,7 @@ export default class ExcelFileManager extends FileManagerBase {
         // Why not writeFileAsync ?
         return new Promise((resolve, reject) => {
             const sha1s = this.#withHashing ? new SimpleSHA1Stream() : null;
-            const ws = fs.createWriteStream(mockPath, 'utf8');
+            const ws = this.#destFs.createWriteStream(mockPath, 'utf8');
             ws.on('finish', () => resolve(sha1s?.digest()));
             ws.on('error', reject);
             if (sha1s) {

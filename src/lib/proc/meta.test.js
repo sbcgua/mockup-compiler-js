@@ -18,7 +18,7 @@ describe('MetaCalculator', () => {
         });
     });
 
-    test('should calculate meta', () => {
+    test('should calculate meta', async () => {
         const m = new MetaCalculator({
             fs,
             excelFileManager: {
@@ -39,13 +39,13 @@ describe('MetaCalculator', () => {
             ['X\tfile1\thash1'],
             ['X\tfile2\thash2'],
         ].join('\n');
-        m.buildAndSave();
+        await m.buildAndSave();
         expect(vol.toJSON()).toEqual({
             '/dest/.meta/src_files': expMeta,
         });
     });
 
-    test('should calculate meta with includes', () => {
+    test('should calculate meta with includes', async () => {
         const m = new MetaCalculator({
             fs,
             excelFileManager: {
@@ -74,7 +74,7 @@ describe('MetaCalculator', () => {
             ['X\tfile1\thash1'],
             ['X\tfile2\thash2'],
         ].join('\n');
-        m.buildAndSave();
+        await m.buildAndSave();
         expect(vol.toJSON()).toEqual({
             '/dest/.meta/src_files': expMeta,
         });
