@@ -130,7 +130,7 @@ export default class App {
         switch (bundleFormat) {
             case 'text': return buildTextBundle;
             case 'text+zip': return buildTextZipBundle;
-            case 'zip': return zipFiles;
+            case 'zip': return buildZipBundle;
             default: throw new Error(`Unsupported bundle format: ${bundleFormat}`);
         }
     }
