@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import { type } from 'node:os';
 import path from 'node:path';
 
 function createItemGenerator(sourceDir, fileList, memfs) {
