@@ -58,6 +58,9 @@ describe('Config Module', () => {
         test('should validate correct config', () => {
             expect(() => validateConfig(mockCompleteConfig)).not.toThrow();
         });
+        test('should validate with "commented" items', () => {
+            expect(() => validateConfig({...mockCompleteConfig, '#comment': 'This is a comment' })).not.toThrow();
+        });
 
         test('should throw error for missing required params', () => {
             const invalidConfig = { ...mockCompleteConfig };

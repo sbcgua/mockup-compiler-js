@@ -84,6 +84,7 @@ export function validateConfig(config) {
     }
     // Validate complete shape
     for (let [key, val] of Object.entries(config)) {
+        if (key.startsWith('#')) continue; // skip comments (it's more for internal use)
         const rule = configScheme.properties[key];
         if (!rule) throw Error(`Config validation error: unexpected param "${key}"`);
         if (!rule.check || !CHECKS[rule.check]) throw Error(`Unexpected validation rule: ${key}`); // Really unexpected :)
