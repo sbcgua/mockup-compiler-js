@@ -93,18 +93,24 @@ The setting can be given in a config. By default the programs looks for the conf
 }
 ```
 
-All params are optional except source and destination dirs.
+Invoice with:
 
 ```bash
 mockup-compiler -c ./my-mock-config.json
 ```
 
+- All params are optional except source and destination dirs.
+- Params starting from `#` are ignored (this is more for testing and temp settings)
 - **Important**: the paths are calculated relative to current work directory unless given as absolute paths.
 - If `bundlePath` is not specified, zip/text bundle file will not be created, just tab-delimited texts.
-- `eol` - defines which end-of-line character to use: linux style (LF) or window style (CRLF). *We recommend LF*. Default is LF.
+- `eol` - defines which end-of-line character to use: linux style (LF) or window style (CRLF). *We recommend LF* which is aldo the default.
 - `includes` - optionally defines a dir to directly copy files from, in addition to excel processing. *Currently support only one include dir*.
 - `withMeta` instructs the compiler to create `.meta/src_files` with SHA1 hashes of source files (for integrity and compatibility with abap version of the tool)
-- `cleanDestDirOnStart` deletes the destination dir before file processing. Importantly, it does not cleans the dir in watch mode, so changes are written on top of the existing files structure. Thus, e.g., deleting a sheet in excel will **not** delete it's already compiled representation.
+- `cleanDestDirOnStart` deletes the destination dir before file processing. Importantly, it does not cleans the dir in watch mode, so changes are written on top of the existing files structure. Thus, e.g., deleting a sheet in excel will **not** delete it's already compiled representation - this can lead to rare subtle bugs - just restart the watcher ... ;).
 - `skipFieldsStartingWith` - skips fields which start from the given symbol, by default it is `'-'`
-- **CHANGED** since v1.2.0: `bundleFormat` - defines the bormat of the budle file: `zip` (the default, if empty) or `text` (see [doc/text-bundle-format.md](doc/text-bundle-format.md))
+- **CHANGED** since v1.2.0: `bundleFormat` - defines the format of the budle file:
+  - `zip` (the default, if empty)
+  - `text` (see [doc/text-bundle-format.md](doc/text-bundle-format.md))
+  - `text+zip` - creates a text bundle and then zips it (decreases travel time to abap backend, use when the bundle becomes large and slow)
 - `pattern` - is a glob pattern for Excel files. By default it is "*.xlsx", however the tool support all formats which are supported by the underlying library [sheetjs](https://www.npmjs.com/package/xlsx). The param can be a string or an array, e.g. `["*.xlsx", "*.xml"]`.
+- `inMemory` - don't create mocks on the disk (in `destDir`), instead stash them in memory and write only the bundle file. Beware of potential memory usage if the data volume is large.
