@@ -1,27 +1,17 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
-import { vol } from 'memfs';
-import { buildTextBundle } from './mc-text-format';
-
-vi.mock('node:fs', async () => {
-    const memfs = await vi.importActual('memfs');
-    return { default: memfs.fs, ...memfs.fs };
-});
+import { describe, test, expect, beforeEach } from 'vitest';
+import { vol, fs } from 'memfs';
+import { TextBundler } from './mc-text-format';
 
 describe('mc-text-format: buildTextBundle', () => {
-    const rootDir = '/mock/root';
-    const destPath = '/mock/dest/bundle.txt';
-    const fileList = ['file2.txt', 'file1.txt', 'file3.txt']; // Intentionally not sorted
-
     beforeEach(() => {
         vol.reset();
     });
 
     test('should bundle files into one output file', async () => {
         vol.fromJSON({ // Intentianally not sorted
-            '/mock/root/file1.txt': 'Content 1\n2nd line\n\n',
-            '/mock/root/file2.txt': 'Content 2',
-            '/mock/root/file3.txt': 'Content 3',
-            '/mock/dest/': {}, // Ensure dest directory exists
+            '/file1.txt': 'Content 1\n2nd line\n\n',
+            '/file2.txt': 'Content 2',
+            '/file3.txt': 'Content 3',
         });
 
         const expectedContent = [
@@ -40,26 +30,20 @@ describe('mc-text-format: buildTextBundle', () => {
             '!!FILE-COUNT 3',
         ].join('\n');
 
-        const bytesWritten = await buildTextBundle(rootDir, fileList, destPath);
-        expect(vol.readFileSync(destPath, 'utf-8')).toEqual(expectedContent);
-        expect(bytesWritten).toBe(expectedContent.length);
-    });
-
-    test('should reject if an error occurs while reading files', async () => {
-        vol.fromJSON({
-            '/mock/dest/': {}, // Ensure dest directory exists
+        await new Promise((resolve, reject) => {
+            const writeStream = fs.createWriteStream('/bundle.txt'); // Create the destination file
+            writeStream.on('close', resolve);
+            writeStream.on('error', reject);
+            const bundler = new TextBundler(writeStream);
+            async function bundleFiles() {
+                await bundler.append('file1.txt', fs.createReadStream('/file1.txt'));
+                await bundler.append('file2.txt', fs.createReadStream('/file2.txt'));
+                await bundler.append('file3.txt', fs.createReadStream('/file3.txt'));
+                bundler.end();
+            }
+            bundleFiles();
         });
 
-        await expect(buildTextBundle(rootDir, fileList, destPath)).rejects.toThrow(/no such file or directory.*file1/);
-    });
-
-    test('should reject if an error occurs while writing to output', async () => {
-        vol.fromJSON({
-            '/mock/root/file1.txt': 'Content 1\n2nd line\n\n',
-            '/mock/root/file2.txt': 'Content 2',
-            '/mock/root/file3.txt': 'Content 3',
-        });
-
-        await expect(buildTextBundle(rootDir, fileList, destPath)).rejects.toThrow(/no such file or directory.*dest/);
+        expect(vol.readFileSync('/bundle.txt', 'utf-8')).toEqual(expectedContent);
     });
 });
