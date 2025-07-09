@@ -31,14 +31,27 @@ export async function buildTextBundle(itemGenerator, ostr) {
 
 const DEFAULT_TEXT_BUNDLE_NAME = 'bundle.txt';
 
-export async function buildTextZipBundle(itemGenerator, ostr) {
-    const archive = archiver('zip', { zlib: { level: 9 } });
-    archive.on('warning', (err) => { throw Object.assign(err, { _loc: 'buildTextZipBundle warning' }) });
-    archive.on('error', (err) => { throw Object.assign(err, { _loc: 'buildTextZipBundle error' }) });
-    archive.pipe(ostr);
+function once(fn) {
+    let called = false;
+    return (...args) => {
+        if (called) return;
+        called = true;
+        return fn(...args);
+    };
+}
 
+function generatorFromArray(array) {
+    return function* () {
+        for (const item of array) {
+            yield item;
+        }
+    };
+}
+
+export async function buildTextZipBundle(itemGenerator, ostr) {
     let textBundleSize = 0;
     const passThroughStream = new PassThrough();
+
     passThroughStream.on('data', chunk => { textBundleSize += chunk.length });
     passThroughStream.on('end', () => {
         if (passThroughStream.errored) {
@@ -46,10 +59,11 @@ export async function buildTextZipBundle(itemGenerator, ostr) {
             // ostr.destroy(error); ?
         } else {
             console.log('Uncompressed text bundle size:', textBundleSize);
-            archive.finalize();
         }
     });
+    passThroughStream.on('resume', once(() => {
+        buildTextBundle(itemGenerator, passThroughStream);
+    }));
 
-    archive.append(passThroughStream, { name: DEFAULT_TEXT_BUNDLE_NAME });
-    await buildTextBundle(itemGenerator, passThroughStream);
+    await buildZipBundle(generatorFromArray([ { name: DEFAULT_TEXT_BUNDLE_NAME, readStream: passThroughStream } ]), ostr);
 }
