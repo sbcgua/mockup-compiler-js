@@ -32,7 +32,7 @@
     ✔ check watcher @done(25-07-09 09:07)
     ✔ improve bundler logic @done(25-07-08 20:14)
     ☐ Maybe move meta to the end of the file?
-    ☐ Fix tests
+    ✔ Fix tests @done(25-07-09 09:45)
     ✔ Combine Text and Zip bundlers (reuse?) @done(25-07-09 08:39)
 ✔ Support xmls and glob patterns @done(25-07-05 11:49)
     
