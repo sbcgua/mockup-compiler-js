@@ -29,7 +29,7 @@
     ✔ release to npm @done(25-07-05 22:52)
 ☐ Better budler logic? Based on streams, maybe to remove uncompressed dir
     ✔ inMemory param @done(25-07-05 22:54)
-    ☐ check watcher
+    ✔ check watcher @done(25-07-09 09:07)
     ✔ improve bundler logic @done(25-07-08 20:14)
     ☐ Maybe move meta to the end of the file?
     ☐ Fix tests

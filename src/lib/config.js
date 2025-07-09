@@ -63,6 +63,7 @@ const configScheme = {
         eol:                 { check: 'eol', mustBe: '"lf" or "crlf"' },
         bundleFormat:        { check: 'bundleFormat', mustBe: '"text" or "zip" or "text+zip"' },
         quiet:               { check: 'Boolean' },
+        verbose:             { check: 'Boolean' },
         withMeta:            { check: 'Boolean' },
         cleanDestDirOnStart: { check: 'Boolean' },
         skipFieldsStartingWith: { check: 'String' },

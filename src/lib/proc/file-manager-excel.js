@@ -56,14 +56,18 @@ export default class ExcelFileManager extends FileManagerBase {
         if (!this.#destFs.existsSync(this.#destDir)) throw Error('Destination dir does not exist');
     }
 
+    isFileRelevant(filepath) {
+        assert(typeof filepath === 'string');
+        return picomatch.isMatch(filepath, this.#pattern) && !filepath.startsWith('~');
+    }
+
     async processAll() {
         if (this.#fileHashMap.size > 0) throw Error('Cannot processAll twice');
 
         let files = fs.readdirSync(this.#srcDir);
         files = files
             // .filter(f => /\.xlsx$/.test(f))
-            .filter(f => picomatch.isMatch(f, this.#pattern))
-            .filter(f => !f.startsWith('~'))
+            .filter(f => this.isFileRelevant(f))
             .map(f => path.join(this.#srcDir, f));
 
         for (let f of files) {

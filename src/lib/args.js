@@ -32,6 +32,7 @@ export function argsToConfig(args) {
         withMeta:  args.withMeta,
         cleanDestDirOnStart: args.cleanDest,
         bundleFormat: args.bundleFormat,
+        verbose:    args.verbose,
     };
     for (let k of Object.keys(config)) {
         if (config[k] == undefined) delete config[k];

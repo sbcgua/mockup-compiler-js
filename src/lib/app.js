@@ -20,11 +20,13 @@ export default class App {
 
     #withMeta;
     #inMemory = false;
+    #verbose = false;
 
     constructor(config, withWatcher) {
-        this.#logger      = config.logger;
-        this.#withMeta    = config.withMeta;
-        this.#inMemory    = config.inMemory;
+        this.#logger   = config.logger;
+        this.#withMeta = config.withMeta;
+        this.#inMemory = config.inMemory;
+        this.#verbose  = config.verbose;
 
         let destDir = config.destDir;
 
@@ -59,6 +61,7 @@ export default class App {
         });
         this.#watcher = this.#setupWatcher({
             withWatcher,
+            verbose: config.verbose,
         });
     }
 
@@ -147,7 +150,7 @@ export default class App {
         });
     }
 
-    #setupWatcher({ withWatcher }) {
+    #setupWatcher({ withWatcher, verbose }) {
         if (!withWatcher) return;
         return new Watcher({
             logger: this.#logger,
@@ -155,6 +158,7 @@ export default class App {
             includeFileManager: this.#includeFileManager,
             metaCalculator: this.#metaCalculator,
             bundler: this.#bundler,
+            verbose,
         });
     }
 
@@ -166,7 +170,7 @@ export default class App {
             await this.#metaCalculator.buildAndSave();
         }
 
-        if (this.#inMemory) {
+        if (this.#inMemory && this.#verbose) {
             this.#logger.log(chalk.blue('\nIn-memory file system tree:'));
             console.log(chalk.grey(memVol.toTree()));
             console.log();
@@ -174,6 +178,16 @@ export default class App {
 
         if (this.#bundler) {
             await this.#createBundle();
+        }
+
+        if (this.#verbose) {
+            const mem = process.memoryUsage();
+            this.#logger.log(
+                chalk.magenta('  [MEM]'),
+                `rss=${(mem.rss / 1024 / 1024).toFixed(1)}MB`,
+                `heapUsed=${(mem.heapUsed / 1024 / 1024).toFixed(1)}MB`,
+                `heapTotal=${(mem.heapTotal / 1024 / 1024).toFixed(1)}MB`
+            );
         }
 
         if (this.#watcher) {
