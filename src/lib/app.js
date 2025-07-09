@@ -3,76 +3,93 @@ import chalk from 'chalk';
 import Watcher from './watcher.js';
 import MetaCalculator from './proc/meta.js';
 import { Bundler } from './utils/bundler.js';
-import { zipFiles } from './utils/zip.js';
-import { buildTextBundle, buildTextZipBundle } from './utils/mc-text-format.js';
+import { buildZipBundle, buildTextBundle, buildTextZipBundle } from './utils/bundler-functions.js';
 import ExcelFileManager from './proc/file-manager-excel.js';
 import IncludeFileManager from './proc/file-manager-includes.js';
 import { createMockProcessor, parseWokbookIntoMocks } from './proc/mock-processings.js';
+import { fs as memfs, vol as memVol } from 'memfs';
 
 export default class App {
+    #logger;
+
     #excelFileManager;
     #includeFileManager;
-    #withWatcher;
-    #srcDir;
-    #destDir;
-    #bundlePath;
-    #includes;
-    #logger;
-    #withMeta;
     #metaCalculator;
     #bundler;
+    #watcher;
+
+    #withMeta;
+    #inMemory = false;
+    #verbose = false;
 
     constructor(config, withWatcher) {
-        this.#withWatcher = withWatcher;
-        this.#srcDir      = config.sourceDir;
-        this.#destDir     = config.destDir;
-        this.#bundlePath  = config.bundlePath;
-        this.#includes    = config.includes;
-        this.#logger      = config.logger;
-        this.#withMeta    = config.withMeta;
+        this.#logger   = config.logger;
+        this.#withMeta = config.withMeta;
+        this.#inMemory = config.inMemory;
+        this.#verbose  = config.verbose;
 
-        this.#initDestDir({ cleanDestDirOnStart: config.cleanDestDirOnStart });
+        let destDir = config.destDir;
+
+        if (this.#inMemory) {
+            if (destDir) throw Error('"inMemory" mode cannot be used with "destDir"');
+            destDir = '/'; // in-memory root dir
+        }
+
+        this.#initDestDir(destDir, {
+            cleanDestDirOnStart: config.cleanDestDirOnStart,
+        });
         this.#excelFileManager = this.#setupExcelFileManager({
+            srcDir: config.sourceDir,
+            destDir,
             eol: config.eol,
             skipFieldsStartingWith: config.skipFieldsStartingWith,
+            pattern: config.pattern,
         });
-        this.#includeFileManager = this.#setupIncludeFileManager();
-        this.#metaCalculator = this.#withMeta && new MetaCalculator({
-            excelFileManager: this.#excelFileManager,
-            includeFileManager: this.#includeFileManager,
-            destDir: this.#destDir,
+        this.#includeFileManager = this.#setupIncludeFileManager({
+            destDir,
+            includes: config.includes,
+        });
+        this.#metaCalculator = this.#setupMetaCalculator({
             eol: config.eol,
+            destDir,
         });
-        if (this.#bundlePath && !config.noBundle) {
-            this.#bundler = new Bundler({
-                sourceDir: this.#destDir, // sourceDir is the uncompressed dir
-                bundlePath: this.#bundlePath,
-                bundlerFn: config.bundleFormat === 'text' ? buildTextBundle // TODO refactor
-                    : config.bundleFormat === 'text+zip' ? buildTextZipBundle
-                        : zipFiles,
-            });
-        }
+        this.#bundler = this.#setupBundler({
+            noBundle: config.noBundle,
+            bundleFormat: config.bundleFormat,
+            destDir,
+            bundlePath: config.bundlePath,
+        });
+        this.#watcher = this.#setupWatcher({
+            withWatcher,
+            verbose: config.verbose,
+        });
     }
 
-    #initDestDir({cleanDestDirOnStart}) {
-        if (fs.existsSync(this.#destDir)) {
-            if (cleanDestDirOnStart) {
-                this.#logger.log(chalk.grey('Removing dest dir'), this.#destDir);
-                fs.rmdirSync(this.#destDir, { recursive: true, force: true });
-                fs.mkdirSync(this.#destDir);
-            }
+    #initDestDir(destDir, {cleanDestDirOnStart}) {
+        if (this.#inMemory) {
+            memVol.reset();
         } else {
-            fs.mkdirSync(this.#destDir);
+            if (fs.existsSync(destDir)) {
+                if (cleanDestDirOnStart) {
+                    this.#logger.log(chalk.grey('Removing dest dir'), destDir);
+                    fs.rmdirSync(destDir, { recursive: true, force: true });
+                    fs.mkdirSync(destDir);
+                }
+            } else {
+                fs.mkdirSync(destDir);
+            }
         }
     }
 
-    #setupExcelFileManager({eol, skipFieldsStartingWith}) {
+    #setupExcelFileManager({eol, skipFieldsStartingWith, pattern, srcDir, destDir}) {
         const fileProcessor = new ExcelFileManager({
-            srcDir: this.#srcDir,
-            destDir: this.#destDir,
+            srcDir,
+            destDir,
             mockExtractor: parseWokbookIntoMocks,
             mockProcessor: createMockProcessor(eol, skipFieldsStartingWith),
             withHashing: this.#withMeta,
+            pattern,
+            memfs: this.#inMemory ? memfs : undefined,
         });
         fileProcessor.on('start-of-file-processing', ({name}) => {
             this.#logger.log(chalk.grey('Processing:'), `${name}`);
@@ -83,16 +100,17 @@ export default class App {
         return fileProcessor;
     }
 
-    #setupIncludeFileManager() {
-        if (!this.#includes || this.#includes.length === 0) return;
-        if (this.#includes.length > 1) {
+    #setupIncludeFileManager({destDir, includes}) {
+        if (!includes || includes.length === 0) return;
+        if (includes.length > 1) {
             throw Error('Multiple includes is not supported curently, please log an issue if you need this feature');
         }
 
         const includeManager = new IncludeFileManager({
-            includeDir: this.#includes[0],
-            destDir: this.#destDir,
+            includeDir: includes[0],
+            destDir,
             withHashing: this.#withMeta,
+            memfs: this.#inMemory ? memfs : undefined,
         });
         includeManager.on('item-processed', ({ name }) => {
             this.#logger.log(chalk.green('  [OK]'), `${name}`);
@@ -100,20 +118,80 @@ export default class App {
         return includeManager;
     }
 
+    #setupMetaCalculator({ eol, destDir }) {
+        if (!this.#withMeta) return;
+        return new MetaCalculator({
+            excelFileManager: this.#excelFileManager,
+            includeFileManager: this.#includeFileManager,
+            destDir,
+            eol,
+            memfs: this.#inMemory ? memfs : undefined,
+        });
+    }
+
+    #chooseBundleFormat(bundleFormat) {
+        switch (bundleFormat) {
+            case 'text': return buildTextBundle;
+            case 'text+zip': return buildTextZipBundle;
+            case 'zip': return buildZipBundle;
+            default: throw new Error(`Unsupported bundle format: ${bundleFormat}`);
+        }
+    }
+
+    #setupBundler({ noBundle, bundleFormat, destDir, bundlePath }) {
+        if (!bundlePath || bundlePath === '') return;
+        if (noBundle) return;
+
+        return new Bundler({
+            sourceDir: destDir, // sourceDir is the uncompressed dir
+            memfs: this.#inMemory ? memfs : undefined,
+            bundlePath,
+            bundleFn: this.#chooseBundleFormat(bundleFormat),
+        });
+    }
+
+    #setupWatcher({ withWatcher, verbose }) {
+        if (!withWatcher) return;
+        return new Watcher({
+            logger: this.#logger,
+            excelFileManager: this.#excelFileManager,
+            includeFileManager: this.#includeFileManager,
+            metaCalculator: this.#metaCalculator,
+            bundler: this.#bundler,
+            verbose,
+        });
+    }
+
     async run() {
         await this.#processFiles();
         this.#printStats();
 
         if (this.#metaCalculator) {
-            this.#metaCalculator.buildAndSave();
+            await this.#metaCalculator.buildAndSave();
+        }
+
+        if (this.#inMemory && this.#verbose) {
+            this.#logger.log(chalk.blue('\nIn-memory file system tree:'));
+            console.log(chalk.grey(memVol.toTree()));
+            console.log();
         }
 
         if (this.#bundler) {
             await this.#createBundle();
         }
 
-        if (this.#withWatcher) {
-            this.#startWatcher();
+        if (this.#verbose) {
+            const mem = process.memoryUsage();
+            this.#logger.log(
+                chalk.magenta('  [MEM]'),
+                `rss=${(mem.rss / 1024 / 1024).toFixed(1)}MB`,
+                `heapUsed=${(mem.heapUsed / 1024 / 1024).toFixed(1)}MB`,
+                `heapTotal=${(mem.heapTotal / 1024 / 1024).toFixed(1)}MB`
+            );
+        }
+
+        if (this.#watcher) {
+            this.#watcher.start();
         }
     }
 
@@ -126,24 +204,14 @@ export default class App {
     }
 
     async #createBundle() {
-        const archSize = await this.#bundler.bundle([
+        const completefileList = [
             ...this.#excelFileManager.testObjectList,
             ...(this.#includeFileManager ? this.#includeFileManager.testObjectList : []),
-            ...(this.#withMeta ? [this.#metaCalculator.metaSrcFileName] : []),
-        ]);
+            ...(this.#metaCalculator ? [this.#metaCalculator.metaSrcFileName] : []),
+        ];
+        const archSize = await this.#bundler.bundle(completefileList);
         this.#logger.log(`\nBundle ready. File size = ${archSize} bytes`);
         this.#logger.log(this.#bundler.bundlePath);
-    }
-
-    #startWatcher() {
-        const watcher = new Watcher({
-            logger: this.#logger,
-            excelFileManager: this.#excelFileManager,
-            includeFileManager: this.#includeFileManager,
-            metaCalculator: this.#metaCalculator,
-            bundler: this.#bundler,
-        });
-        watcher.start();
     }
 
     #printStats() {

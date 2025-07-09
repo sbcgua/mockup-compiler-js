@@ -17,17 +17,24 @@
 ☐ new mock file format
     ✔ force sorting @done(25-02-01 19:33)
     - utf8 only (or add binary format - base64?)
-    - mock checksums? (but the bundle will usually contain .meta with checksums)
+    - mock checksums? (but the bundle will usually contain .meta with checksums) @low
     ✔ format validator? @done(25-06-13 22:45)
 ✘ ~Make hashing not optional~ @cancelled(25-06-14 21:08)
 ✔ Remove meta timestamp (check ML compiler still works) @done(25-06-13 20:25)
 ✔ Rename zipPath and arg opts ? @done(25-06-13 19:46)
-☐ Release
+✔ Release @done(25-07-05 22:52)
     ✔ update readme @done(25-06-14 22:10)
     ✔ bump version @done(25-06-14 22:10)
-    ☐ release to github
-    ☐ release to npm
+    ✔ release to github @done(25-07-05 22:52)
+    ✔ release to npm @done(25-07-05 22:52)
 ☐ Better budler logic? Based on streams, maybe to remove uncompressed dir
+    ✔ inMemory param @done(25-07-05 22:54)
+    ✔ check watcher @done(25-07-09 09:07)
+    ✔ improve bundler logic @done(25-07-08 20:14)
+    ☐ Maybe move meta to the end of the file?
+    ✔ Fix tests @done(25-07-09 09:45)
+    ✔ Combine Text and Zip bundlers (reuse?) @done(25-07-09 08:39)
+✔ Support xmls and glob patterns @done(25-07-05 11:49)
     
 Ecosystem:
     ✔ implement in ML itself @done(25-02-23 21:20)

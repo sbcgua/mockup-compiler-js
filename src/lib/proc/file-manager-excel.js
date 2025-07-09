@@ -7,6 +7,7 @@ import { read as readXLSX } from 'xlsx';
 import { slash } from '../utils/fs-utils.js';
 import { FileManagerBase } from './file-manager-base.js';
 import SimpleSHA1Stream from '../utils/sha1-stream.js';
+import picomatch from 'picomatch'; // Also micromatch looks good, but picomatch is smaller and faster
 
 const START_OF_FILE_PROCESSING = 'start-of-file-processing';
 const ITEM_PROCESSED = 'item-processed';
@@ -20,6 +21,8 @@ export default class ExcelFileManager extends FileManagerBase {
     #fileHashMap = new Map();
     #mockHashMap = new Map();
     #mockList = new Set();
+    #pattern;
+    #destFs;
 
     get fileHashMap() { return this.#fileHashMap }
     get mockHashMap() { return this.#mockHashMap }
@@ -34,21 +37,28 @@ export default class ExcelFileManager extends FileManagerBase {
      * @param {Function} mockExtractor file parsing routine
      * @param {Function} mockProcessor single mock processing routine
      */
-    constructor({srcDir, destDir, withHashing, mockExtractor, mockProcessor}) {
+    constructor({srcDir, destDir, withHashing, mockExtractor, mockProcessor, pattern, memfs}) {
         assert(typeof destDir === 'string' && typeof mockExtractor === 'function' && typeof mockProcessor === 'function');
         super();
         this.#srcDir = srcDir;
         this.#destDir = destDir;
         this.#withHashing = withHashing;
+        this.#destFs = memfs || fs;
 
         this.#mockExtractor = mockExtractor;
         this.#mockProcessor = mockProcessor;
+        this.#pattern = pattern || ['*.xlsx'];
         this.#validateParams();
     }
 
     #validateParams() {
         if (!fs.existsSync(this.#srcDir)) throw Error('Source dir does not exist');
-        if (!fs.existsSync(this.#destDir)) throw Error('Destination dir does not exist');
+        if (!this.#destFs.existsSync(this.#destDir)) throw Error('Destination dir does not exist');
+    }
+
+    isFileRelevant(filepath) {
+        assert(typeof filepath === 'string');
+        return picomatch.isMatch(filepath, this.#pattern) && !filepath.startsWith('~');
     }
 
     async processAll() {
@@ -56,8 +66,8 @@ export default class ExcelFileManager extends FileManagerBase {
 
         let files = fs.readdirSync(this.#srcDir);
         files = files
-            .filter(f => /\.xlsx$/.test(f))
-            .filter(f => !f.startsWith('~'))
+            // .filter(f => /\.xlsx$/.test(f))
+            .filter(f => this.isFileRelevant(f))
             .map(f => path.join(this.#srcDir, f));
 
         for (let f of files) {
@@ -107,7 +117,7 @@ export default class ExcelFileManager extends FileManagerBase {
     }
 
     #proveDestDir(destDir) {
-        if (!fs.existsSync(destDir)) fs.mkdirSync(destDir);
+        if (!this.#destFs.existsSync(destDir)) this.#destFs.mkdirSync(destDir);
     }
 
     async #processMock(targetDirName, mockName, mockCells) {
@@ -124,7 +134,7 @@ export default class ExcelFileManager extends FileManagerBase {
         // Why not writeFileAsync ?
         return new Promise((resolve, reject) => {
             const sha1s = this.#withHashing ? new SimpleSHA1Stream() : null;
-            const ws = fs.createWriteStream(mockPath, 'utf8');
+            const ws = this.#destFs.createWriteStream(mockPath, 'utf8');
             ws.on('finish', () => resolve(sha1s?.digest()));
             ws.on('error', reject);
             if (sha1s) {

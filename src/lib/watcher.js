@@ -12,9 +12,11 @@ export default class Watcher {
     #watchedDirs = [];
     #bundler;
     #metaCalculator;
+    #verbose;
 
-    constructor({ logger, excelFileManager, includeFileManager, bundler, metaCalculator }) {
+    constructor({ logger, excelFileManager, includeFileManager, bundler, metaCalculator, verbose = false }) {
         this.#logger = logger;
+        this.#verbose = verbose;
         this.#excelFileManager = excelFileManager;
         this.#includeFileManager = includeFileManager;
         this.#metaCalculator = metaCalculator;
@@ -34,7 +36,7 @@ export default class Watcher {
 
     #initWatchers() {
         const mockDir = this.#excelFileManager.srcDirs[0]; // Always one dir for excel
-        this.#watchers.push(fs.watch(mockDir, this.#createEventHandler(mockDir, this.#excelFileManager, /\.xlsx$/)));
+        this.#watchers.push(fs.watch(mockDir, this.#createEventHandler(mockDir, this.#excelFileManager)));
         this.#watchedDirs.push(mockDir);
 
         if (this.#includeFileManager) {
@@ -45,13 +47,16 @@ export default class Watcher {
         }
     }
 
-    #createEventHandler(dir, fileManager, filenameRe = null) {
+    #createEventHandler(dir, fileManager) {
         let lastChange = 0;
         let lastHandlerComplete = true;
+        const isFileRelevant = fileManager.isFileRelevant
+            ? (f) => fileManager.isFileRelevant(f)
+            : () => true;
         return async (eventType, filename) => {
             if (eventType !== 'change') return;
-            if (filename.startsWith('~')) return;
-            if (filenameRe && !filenameRe.test(filename)) return;
+            if (!isFileRelevant(filename)) return;
+
             try {
                 if (fs.lstatSync(path.join(dir, filename)).isDirectory()) return;
             } catch {
@@ -97,6 +102,16 @@ export default class Watcher {
                 ...(this.#metaCalculator ? [this.#metaCalculator.metaSrcFileName] : []),
             ]);
             this.#logger.log(chalk.green('  [>>]'), `Archiving complete. File size = ${archSize} bytes`);
+
+            if (this.#verbose) {
+                const mem = process.memoryUsage();
+                this.#logger.log(
+                    chalk.magenta('  [MEM]'),
+                    `rss=${(mem.rss / 1024 / 1024).toFixed(1)}MB`,
+                    `heapUsed=${(mem.heapUsed / 1024 / 1024).toFixed(1)}MB`,
+                    `heapTotal=${(mem.heapTotal / 1024 / 1024).toFixed(1)}MB`
+                );
+            }
         }
     }
 

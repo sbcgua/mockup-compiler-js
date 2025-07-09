@@ -1,47 +1,51 @@
 import fs from 'node:fs';
+import path from 'node:path';
+
+function createItemGenerator(sourceDir, fileList, memfs) {
+    return function* () {
+        for (let name of fileList) {
+            const filePath = path.join(sourceDir, name);
+            const readStream = memfs
+                ? memfs.createReadStream(filePath)
+                : fs.createReadStream(filePath);
+            yield { name, readStream };
+        }
+    };
+}
 
 export class Bundler {
     #sourceDir;
     #bundlePath;
     #bundlerFn;
-    constructor({sourceDir, bundlePath, bundlerFn}) {
+    #memfs;
+    constructor({sourceDir, bundlePath, memfs, bundleFn}) {
         this.#sourceDir  = sourceDir;
         this.#bundlePath = bundlePath;
-        this.#bundlerFn  = bundlerFn;
+        this.#memfs      = memfs;
+        this.#bundlerFn  = bundleFn;
     }
     #deleteBundleFile() {
         if (fs.existsSync(this.#bundlePath)) fs.rmSync(this.#bundlePath);
     }
-    async bundle(files) {
+    async bundle(fileList) {
+        if (!fileList || !Array.isArray(fileList) || fileList.length === 0) {
+            throw new Error('Invalid file list provided for bundling');
+        }
+
         this.#deleteBundleFile();
-        return await this.#bundlerFn(this.#sourceDir, files, this.#bundlePath);
+
+        fileList = fileList.toSorted(); // Sort for consistency
+        const ostr = fs.createWriteStream(this.#bundlePath);
+
+        const itemGenerator = createItemGenerator(this.#sourceDir, fileList, this.#memfs);
+
+        const worker = new Promise((resolve, reject) => {
+            ostr.on('close', () => ostr.errored ? reject(ostr.errored) : resolve(ostr.bytesWritten));
+            ostr.on('error', reject);
+            this.#bundlerFn(itemGenerator, ostr);
+        });
+
+        return await worker;
     }
     get bundlePath() { return this.#bundlePath }
 }
-
-/**
- * Idea for a better bundler, that is based on streams.
- * BundleManager( bundlePath, bundler )
- *   createWriteStream( bundlePath )
- *   bundler.getStream.pipe( writeStream )
- *   bundle(sourceDir, files): (or maybe later switch to streamOnly approach, so that mocks are generated as streams one-by-one)
- *     sort filenames
- *     forEach:
- *       createReadStream(file)
- *       bundler.append(rs, { name: ... })
- *     bundler.end()
- *
- * ZIP:
- *   getStream => archiver
- *   append => archiver.append
- *   end => archiver.finalize
- *
- * TEXT:
- *   construct => add headers
- *   getStream => PassThrough
- *   append => buildText, write to PassThrough
- *   end => write tail, PassThrough.end
- *
- * TEXT+ZIP:
- *   same, but pipe PassThrough to archiver, name -> bundle.txt
- */

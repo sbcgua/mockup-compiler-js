@@ -10,13 +10,15 @@ export default class MetaCalculator {
     #eol;
     #metaDir;
     #metaFilePath;
+    #destFs;
 
-    constructor({excelFileManager, includeFileManager, eol, destDir}) {
+    constructor({excelFileManager, includeFileManager, eol, destDir, memfs}) {
         this.#excelFileManager = excelFileManager;
         this.#includeFileManager = includeFileManager;
         this.#eol = eol;
+        this.#destFs = memfs || fs;
 
-        if (!fs.existsSync(destDir)) throw Error('Destination dir does not exist');
+        if (!this.#destFs.existsSync(destDir)) throw Error('Destination dir does not exist');
         this.#metaDir = path.join(destDir, this.metaDirName);
         this.#metaFilePath = path.join(destDir, this.metaSrcFileName);
     }
@@ -24,9 +26,15 @@ export default class MetaCalculator {
     get metaDirName() { return '.meta' }
 
     buildAndSave() {
-        if (!fs.existsSync(this.#metaDir)) fs.mkdirSync(this.#metaDir);
+        if (!this.#destFs.existsSync(this.#metaDir)) this.#destFs.mkdirSync(this.#metaDir);
         const metaData = this.#getSrcFilesMeta();
-        fs.writeFileSync(this.#metaFilePath, metaData);
+        return new Promise((resolve, reject) => {
+            const stream = this.#destFs.createWriteStream(this.#metaFilePath, { encoding: 'utf8' });
+            stream.on('finish', resolve);
+            stream.on('error', reject);
+            stream.write(metaData);
+            stream.end();
+        });
     }
 
     #getSrcFilesMeta() {

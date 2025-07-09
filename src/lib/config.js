@@ -4,6 +4,7 @@ import path from 'node:path';
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
 function assignDefaults(config) {
+    if (!config.pattern) config.pattern = ['*.xlsx'];
     if (!config.eol) config.eol = 'lf';
     if (!config.bundleFormat) config.bundleFormat = 'zip';
     if (config.zipPath && !config.bundlePath) {
@@ -12,7 +13,7 @@ function assignDefaults(config) {
     }
 }
 
-function readConfigFile(confPath, optional = false) {
+function readConfigFile(confPath, {optional = false} = {}) {
     try {
         confPath = path.resolve(confPath);
         const configData = fs.readFileSync(confPath, 'utf8');
@@ -37,6 +38,9 @@ function postProcessConfig(config, rootDir) {
     if (config.eol) {
         config.eol = config.eol.toLowerCase();
     }
+    if (config.pattern && !Array.isArray(config.pattern)) {
+        config.pattern = [config.pattern];
+    }
 }
 
 const CHECKS = {
@@ -55,25 +59,35 @@ const configScheme = {
         // zipPath:             { check: 'String' },
         bundlePath:          { check: 'String' },
         noBundle:            { check: 'Boolean' },
+        inMemory:            { check: 'Boolean' },
         eol:                 { check: 'eol', mustBe: '"lf" or "crlf"' },
         bundleFormat:        { check: 'bundleFormat', mustBe: '"text" or "zip" or "text+zip"' },
         quiet:               { check: 'Boolean' },
+        verbose:             { check: 'Boolean' },
         withMeta:            { check: 'Boolean' },
         cleanDestDirOnStart: { check: 'Boolean' },
         skipFieldsStartingWith: { check: 'String' },
+        pattern:             { check: 'ArrayOfStrings' },
     },
-    required: ['sourceDir', 'destDir', 'eol'],
+    required: ['sourceDir', 'eol'],
 };
 
 export function validateConfig(config) {
+    // Validate DestDir/inMemory
+    if (!config.destDir && !config.inMemory) throw Error('Config or params must have "destDir" or enabled "inMemory"');
+    if (config.destDir && config.inMemory) throw Error('"destDir" and "inMemory" cannot be used together. Please use only one of them.');
+    if (config.inMemory && !config.bundlePath) {
+        throw Error('"inMemory" mode requires "bundlePath" to be set');
+    }
     // Validate required params
     for (let req of configScheme.required) {
         if (!config[req]) throw Error(`Config or params must have ${req}`);
     }
     // Validate complete shape
     for (let [key, val] of Object.entries(config)) {
+        if (key.startsWith('#')) continue; // skip comments (it's more for internal use)
         const rule = configScheme.properties[key];
-        if (!rule) throw Error(`Config validation error: unexpected param ${key}`);
+        if (!rule) throw Error(`Config validation error: unexpected param "${key}"`);
         if (!rule.check || !CHECKS[rule.check]) throw Error(`Unexpected validation rule: ${key}`); // Really unexpected :)
         let check = CHECKS[rule.check];
         if (!check(val)) {
@@ -84,10 +98,15 @@ export function validateConfig(config) {
 }
 
 export function readConfig(confPath, overloads = null) {
-    if (!confPath) confPath = CONFIG_DEFAULT_PATH;
+    let config;
+    if (confPath) {
+        config = readConfigFile(confPath); // readConfigFile throws if the file is not found
+    } else {
+        confPath = CONFIG_DEFAULT_PATH;
+        config = readConfigFile(confPath, { optional: true }); // don't throw if the default config is not found
+    }
     const rootDir = path.dirname(confPath);
 
-    let config = readConfigFile(confPath, Boolean(overloads));
     config = { ...config, ...overloads };
     assignDefaults(config);
     postProcessConfig(config, rootDir);

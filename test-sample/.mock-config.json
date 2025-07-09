@@ -1,10 +1,13 @@
 {
     "sourceDir": ".",
+    "pattern": ["*.xlsx", "*.xml"],
     "eol": "crlf",
     "destDir": "../_dest",
     "bundlePath": "../_dest/build.zip",
+    "bundleFormat": "zip",
     "includes": [
         "./includes"
     ],
-    "withMeta": true
+    "withMeta": true,
+    "inMemory": false
 }
