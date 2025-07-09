@@ -8,7 +8,7 @@ Legend
 + : added
 - : removed
 
-v1.2.1, 2025-??
+v1.2.1, 2025-07-09
 -------------------
 + added `pattern` param to config, allowing specifing glob file patterm for Excel files
 + added `inMemory` param to config, to create mock files in memory rather than on disk
