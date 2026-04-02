@@ -28,7 +28,7 @@
     "archiver": "^7.0.1",
     "chalk": "^5.5.0",
     "commander": "^14.0.0",
-    "lodash-es": "^4.17.21",
+    "lodash-es": "^4.17.23",
     "picomatch": "^4.0.3",
     "memfs": "^4.24.0",
     "xlsx": "^0.18.5"
