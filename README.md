@@ -28,7 +28,7 @@ Converts set of excels in a given directory to a set of tab-delimited text-files
 
 ### Text format (experimental)
 
-Since version 1.2.0, there is an expremental feature to build the resulting file in text, not zip. The motivation is keep the resulting file readable and "diffable" in git repositories. Obviosuly, the data is not copressed in this case. Importantly, only text file includes are currently supported, and only in utf-8 encoding (please post an issue if this feature is required, our team does not use binary includes at the time being, however, the implementation is definitely possible though with the base64 encoding).
+Since version 1.2.0, there is an expremental feature to build the resulting file in text, not zip. The motivation is keep the resulting file readable and "diffable" in git repositories. Obviosuly, the data is not compressed in this case. Importantly, only text file includes are currently supported, and only in utf-8 encoding (please post an issue if this feature is required, our team does not use binary includes at the time being, however, the implementation is definitely possible though with the base64 encoding).
 
 ```text
 !!MOCKUP-LOADER-FORMAT 1.0
@@ -42,7 +42,7 @@ BUKRS NAME
 
 See [doc/text-bundle-format.md](doc/text-bundle-format.md) for more format details.
 
-P.S. One even more experimental features is `text+zip` format - it creates a text bundle file (`bundle.txt`) and packs it into zip. The motivation is to improve performance of `zmockup_loader_switch_source` tool, which redirects mockup source to a local file. Read more withing [ABAP Mockup compiler](https://github.com/sbcgua/mockup_compiler) documentation.
+P.S. One even more experimental features is `text+zip` format - it creates a text bundle file (`bundle.txt`) and packs it into zip. The motivation is to improve performance of `zmockup_loader_switch_source` tool, which redirects mockup source to a local file - the SAP GUI is rather slow in reading files from the desktop, so the text bundle is zip-compressed and them unpacked at the server side (by `zmockup_loader_switch_source` tool). Read more withing [ABAP Mockup compiler](https://github.com/sbcgua/mockup_compiler) documentation.
 
 ## Installation
 
@@ -56,7 +56,7 @@ Alternatively, you can download a binary from [Releases](https://github.com/sbcg
 
 ## Running
 
-Params to specify: source directory (`-s`), build directory (`-d`), optionally includes directory (`-i`), optionally path to zip file (`-z`). Example:
+Typical params to specify: source directory (`-s`), build directory (`-d`), optionally includes directory (`-i`), optionally path to zip file (`-z`). Example:
 
 ```bash
 mockup-compiler -s ./src-dir -d ./dest-dir -i ./static-assets -z ./build.zip
@@ -93,14 +93,14 @@ The setting can be given in a config. By default the programs looks for the conf
 }
 ```
 
-Invoice with:
+Invoke with:
 
 ```bash
 mockup-compiler -c ./my-mock-config.json
 ```
 
 - All params are optional except source and destination dirs.
-- Params starting from `#` are ignored (this is more for testing and temp settings)
+- Params starting from `#` are ignored (this is more for testing and temp settings).
 - **Important**: the paths are calculated relative to current work directory unless given as absolute paths.
 - If `bundlePath` is not specified, zip/text bundle file will not be created, just tab-delimited texts.
 - `eol` - defines which end-of-line character to use: linux style (LF) or window style (CRLF). *We recommend LF* which is aldo the default.

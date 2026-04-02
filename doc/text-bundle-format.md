@@ -1,15 +1,15 @@
 # Bundling in text format
 
-Since v1.2.0 the mockup compiler supports budling in text format. The motivation is to enable readability and "diff-ability" for git repositories.
+Since v1.2.0 the mockup compiler supports bundling in text format. The motivation is to enable readability and "diff-ability" for git repositories.
 
 ## Important notes
 
 - files are sorted by relative path before bundling, to keep the order predictable
-- include should be in utf-8 enconding (other encoding are not tested and, anyway, mocks are utf-8 and mixing encoding is not a good idea)
+- includes should be in utf-8 enconding (other encoding are not tested and, anyway, mocks are utf-8 and mixing encoding is not a good idea)
 
 ## Format
 
-Metadata marks are lines that start with `!!`. The expectation is that abap fields do not start with `!` symbol, thus it should be safe for the majority of cases. Includes cannot not be controlled, obviously. The file structure is:
+Metadata marks are lines that start with `!!`. The expectation is that abap fields do not start with `!` symbol, thus it should be safe for the majority of cases. Includes content cannot not be controlled, obviously. The file structure is:
 
 ```text
 !!MOCKUP-LOADER-FORMAT <VERSION>
@@ -26,7 +26,7 @@ Metadata marks are lines that start with `!!`. The expectation is that abap fiel
   - The header is followed by other metadata or optional free comments before the first `FILE`. In particular, for future compatibility.
 - Files:
   - Each file is marked with `FILE` tag, followed by relative filename (`FILENAME`) in lowercase, `TYPE` of the content - currently `text` only (but potentially `base64` in the future) and number of following text `LINES` with the data.
-  - Then the `LINES` lines of file content follow (`FILEDATA`).
+  - Then the `LINES` lines of file content follow (`FILEDATA` block).
   - The file block may be optionally followed by empty lines (for human readability) - they are ignored.
 - Footer:
   - The file is closed with `FILE-COUNT` tag, describing the count of files for a basic integrity check.
