@@ -6,7 +6,7 @@ export class FileManagerBase extends EventEmitter {
     get mockHashMap() { return null } // TODO unify somehow ?
     get testObjectList() { return null }
     get srcDirs() { return null }
-    async processAll() {};
-    async processOneFile(filepath) {}; // eslint-disable-line no-unused-vars
+    async processAll() {}
+    async processOneFile(filepath) {} // eslint-disable-line no-unused-vars
     // event 'item-processed'
 }
