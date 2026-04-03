@@ -66,7 +66,7 @@ See also `mockup-compiler --help` for the full list of options. Also, check the 
 
 ## Watch mode
 
-The tool can also be run in the **watch mode**. In this case runs complete build first and then starts watching the source files - if changed, runs conversion on the changed one again and re-bundles them (if requested)
+The tool can also be run in the **watch mode**. In this case, after the first build, the tool starts watching the source files - if they change, it re-runs conversion on the changed file again and re-bundles them (if requested)
 
 ```bash
 mockup-compiler ... --watch
