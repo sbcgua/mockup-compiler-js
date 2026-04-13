@@ -8,10 +8,10 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 
 import App from './lib/app.ts';
-import { argOptions, argsToConfig } from './lib/args.js';
+import { argOptions, argsToConfig } from './lib/args.ts';
 import { readConfig } from './lib/config.ts';
 import type { AppRuntimeConfig, CliArgs } from './lib/types';
-import Logger from './lib/utils/logger.js';
+import Logger from './lib/utils/logger.ts';
 
 type AppError = Error & {
     _file?: string;

@@ -1,4 +1,6 @@
-export const argOptions = [
+import type { CliArgs, ConfigOverloads } from './types';
+
+export const argOptions: Array<[string, string]> = [
     ['-b, --no-color', 'suppress colors'],
     ['-q, --quiet', 'show no output'],
     ['-w, --watch', 'keep watching the files and re-render when changed'],
@@ -15,34 +17,28 @@ export const argOptions = [
     ['--bundle-format <format>', 'bundle format: text or zip (default) or text+zip'],
 ];
 
-/** @typedef {import('./types').CliArgs} CliArgs */
-/** @typedef {import('./types').ConfigOverloads} ConfigOverloads */
-
-/**
- * @param {CliArgs} args
- * @returns {ConfigOverloads}
- */
-export function argsToConfig(args) {
+export function argsToConfig(args: CliArgs): ConfigOverloads {
     if (args.eol && !/^(lf|crlf)$/i.test(args.eol)) {
         console.error('EOL must be "lf" or "crlf"');
         process.exit(1);
     }
 
-    const config = {
+    const config: ConfigOverloads = {
         sourceDir: args.source,
-        destDir:   args.destination,
+        destDir: args.destination,
         bundlePath: args.bundlePath,
-        noBundle:  args.bundle === false,
-        includes:  args.include && [args.include],
-        eol:       args.eol,
-        quiet:     args.quiet,
-        withMeta:  args.withMeta,
+        noBundle: args.bundle === false,
+        includes: args.include ? [args.include] : undefined,
+        eol: args.eol,
+        quiet: args.quiet,
+        withMeta: args.withMeta,
         cleanDestDirOnStart: args.cleanDest,
         bundleFormat: args.bundleFormat,
-        verbose:    args.verbose,
+        verbose: args.verbose,
     };
-    for (let k of Object.keys(config)) {
-        if (config[k] == undefined) delete config[k];
+
+    for (const key of Object.keys(config) as Array<keyof ConfigOverloads>) {
+        if (config[key] === undefined) delete config[key];
     }
     return config;
 }

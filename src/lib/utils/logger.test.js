@@ -1,5 +1,5 @@
 import { test, expect, vi, describe } from 'vitest';
-import Logger from './logger';
+import Logger from './logger.ts';
 
 describe('Logger', () => {
     test('Logger should log messages when not quiet', () => {
