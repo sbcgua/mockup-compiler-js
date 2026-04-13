@@ -1,5 +1,5 @@
 import { test, expect, describe } from 'vitest';
-import { extractWorkbookSheets } from './workbook-reader.js';
+import { extractWorkbookSheets } from './workbook-reader.ts';
 
 describe('extractWorkbookSheets', () => {
 

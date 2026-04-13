@@ -1,4 +1,4 @@
-import { parseWokbookIntoMocks, createMockProcessor } from './mock-processings';
+import { parseWokbookIntoMocks, createMockProcessor } from './mock-processings.ts';
 import { test, expect, describe } from 'vitest';
 
 describe('parseWokbookIntoMocks (include/exclude sheets)', () => {

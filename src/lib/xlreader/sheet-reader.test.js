@@ -1,4 +1,4 @@
-import { sheetToJson } from './sheet-reader.js';
+import { sheetToJson } from './sheet-reader.ts';
 import { test, expect, describe } from 'vitest';
 
 const MOCK = {
