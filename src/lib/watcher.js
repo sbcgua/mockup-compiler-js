@@ -3,6 +3,11 @@ import path from 'node:path';
 import chalk from 'chalk';
 import { slash, findCommonPath } from './utils/fs-utils.js';
 
+/** @typedef {import('./types').LoggerContract} LoggerContract */
+/** @typedef {import('./types').FileManagerContract} FileManagerContract */
+/** @typedef {import('./types').BundlerContract} BundlerContract */
+/** @typedef {import('./types').MetaCalculatorContract} MetaCalculatorContract */
+
 export default class Watcher {
     #logger;
     #excelFileManager;
@@ -14,6 +19,16 @@ export default class Watcher {
     #metaCalculator;
     #verbose;
 
+    /**
+     * @param {{
+     *   logger: LoggerContract,
+     *   excelFileManager: FileManagerContract,
+     *   includeFileManager?: FileManagerContract,
+     *   bundler?: BundlerContract,
+     *   metaCalculator?: MetaCalculatorContract,
+     *   verbose?: boolean,
+     * }} params
+     */
     constructor({ logger, excelFileManager, includeFileManager, bundler, metaCalculator, verbose = false }) {
         this.#logger = logger;
         this.#verbose = verbose;

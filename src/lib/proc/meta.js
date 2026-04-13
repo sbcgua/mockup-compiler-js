@@ -4,6 +4,9 @@ import { sortBy } from 'lodash-es';
 import { stringifyWithTabs } from '../utils/tabbed.js';
 import { slash } from '../utils/fs-utils.js';
 
+/** @typedef {import('../types').MetaCalculatorContract} MetaCalculatorContract */
+
+/** @implements {MetaCalculatorContract} */
 export default class MetaCalculator {
     #excelFileManager;
     #includeFileManager;

@@ -9,6 +9,12 @@ import { FileManagerBase } from './file-manager-base.js';
 import SimpleSHA1Stream from '../utils/sha1-stream.js';
 import picomatch from 'picomatch'; // Also micromatch looks good, but picomatch is smaller and faster
 
+/** @typedef {import('../types').MockExtractor} MockExtractor */
+/** @typedef {import('../types').MockProcessor} MockProcessor */
+/** @typedef {import('../types').WorkbookMocks} WorkbookMocks */
+/** @typedef {import('../types').FileProcessingStartedEvent} FileProcessingStartedEvent */
+/** @typedef {import('../types').FileManagerProcessedItemEvent} FileManagerProcessedItemEvent */
+
 const START_OF_FILE_PROCESSING = 'start-of-file-processing';
 const ITEM_PROCESSED = 'item-processed';
 
@@ -34,8 +40,8 @@ export default class ExcelFileManager extends FileManagerBase {
      * @param {string} srcDir source folder
      * @param {string} destDir destination folder
      * @param {boolean} withHashing enable hashing
-     * @param {Function} mockExtractor file parsing routine
-     * @param {Function} mockProcessor single mock processing routine
+     * @param {MockExtractor} mockExtractor file parsing routine
+     * @param {MockProcessor} mockProcessor single mock processing routine
      */
     constructor({srcDir, destDir, withHashing, mockExtractor, mockProcessor, pattern, memfs}) {
         assert(typeof destDir === 'string' && typeof mockExtractor === 'function' && typeof mockProcessor === 'function');
@@ -104,6 +110,11 @@ export default class ExcelFileManager extends FileManagerBase {
         }
     }
 
+    /**
+     * @param {WorkbookMocks} parsedMocks
+     * @param {string} fileName
+     * @param {string} targetDirName
+     */
     async #processParsedMocks(parsedMocks, fileName, targetDirName) {
         const promises = [...Object.entries(parsedMocks)]
             .map(([mockName, mockCells]) => {
@@ -146,10 +157,18 @@ export default class ExcelFileManager extends FileManagerBase {
         });
     }
 
+    /**
+     * @param {string} name
+     */
     #emitStartOfFileProcessing(name) {
-        this.emit(START_OF_FILE_PROCESSING, { name });
+        /** @type {FileProcessingStartedEvent} */
+        const payload = { name };
+        this.emit(START_OF_FILE_PROCESSING, payload);
     }
 
+    /**
+     * @param {FileManagerProcessedItemEvent} event
+     */
     #emitMockProcessed({ name, rowCount }) {
         this.emit(ITEM_PROCESSED, { name, rowCount });
     }

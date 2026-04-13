@@ -15,6 +15,13 @@ export const argOptions = [
     ['--bundle-format <format>', 'bundle format: text or zip (default) or text+zip'],
 ];
 
+/** @typedef {import('./types').CliArgs} CliArgs */
+/** @typedef {import('./types').ConfigOverloads} ConfigOverloads */
+
+/**
+ * @param {CliArgs} args
+ * @returns {ConfigOverloads}
+ */
 export function argsToConfig(args) {
     if (args.eol && !/^(lf|crlf)$/i.test(args.eol)) {
         console.error('EOL must be "lf" or "crlf"');

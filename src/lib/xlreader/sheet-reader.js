@@ -1,10 +1,18 @@
 // Reading converters
 import { utils as XLSXUtils } from 'xlsx';
 
+/** @typedef {import('../types').MockRow} MockRow */
+/** @typedef {import('../types').MockTable} MockTable */
+/** @typedef {import('../types').SheetCellValue} SheetCellValue */
+
 // Internal constants
 const EXCEL_DATE_MULT  = 24 * 60 * 60 * 1000;
 const EXCEL_DATE_EPOCH = Date.UTC(1899, 11, 30); // (new Date(Date.UTC(1899, 11, 30))).valueOf()
 
+/**
+ * @param {unknown} v
+ * @returns {Date | string | null}
+ */
 export function num2date(v) {
     if (!v) return null;
     if (typeof v === 'number') return new Date(v * EXCEL_DATE_MULT + EXCEL_DATE_EPOCH);
@@ -23,6 +31,12 @@ const CONVERTERS = {
     },
 };
 
+/**
+ * @param {import('xlsx').WorkSheet} sheet
+ * @param {import('xlsx').Range} range
+ * @param {string | undefined} commentChar
+ * @returns {boolean}
+ */
 function isFirstRowCommented(sheet, range, commentChar) {
     if (typeof commentChar !== 'string' || commentChar.length !== 1) return false;
     const rowRef = XLSXUtils.encode_row(range.s.r);
@@ -31,6 +45,11 @@ function isFirstRowCommented(sheet, range, commentChar) {
     return cell.t === 's' && cell.v[0] === commentChar;
 }
 
+/**
+ * @param {import('xlsx').WorkSheet} sheet
+ * @param {import('xlsx').Range} range
+ * @param {object | undefined} opts
+ */
 function buildColumns(sheet, range, opts) {
     const { renameMap, convMap, lowerCaseColumns } = opts || {};
     const numcols    = range.e.c - range.s.c + 1;
@@ -76,6 +95,11 @@ function buildColumns(sheet, range, opts) {
 //   formatters: { date, number } - optional formatters for data types
 //   lowerCaseColumns: convert columns to lower case
 
+/**
+ * @param {import('xlsx').WorkSheet | null} sheet
+ * @param {object} [opts]
+ * @returns {MockTable}
+ */
 export function sheetToJson(sheet, opts){
     if(sheet === null || sheet['!ref'] === null) return [];
 
@@ -99,6 +123,7 @@ export function sheetToJson(sheet, opts){
     try {
         for (r = range.s.r + 1; r <= range.e.r; r++) {
             rowRef = XLSXUtils.encode_row(r);
+            /** @type {MockRow} */
             const row    = {};
             let isEmpty  = true;
             let firstColEmpty = false;
@@ -142,6 +167,11 @@ export function sheetToJson(sheet, opts){
     return out;
 }
 
+/**
+ * @param {import('xlsx').CellObject} cell
+ * @param {{ date?: Function, number?: Function } | undefined} formatters
+ * @returns {SheetCellValue}
+ */
 function formatCell(cell, formatters) {
     // XLSX.utils.format_cell - does not identify dates and also return numbers as string
     if (cell.t === 'b') return cell.v; // boolean

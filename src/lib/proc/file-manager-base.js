@@ -1,5 +1,8 @@
 import EventEmitter from 'node:events';
 
+/** @typedef {import('../types').FileManagerContract} FileManagerContract */
+
+/** @implements {FileManagerContract} */
 export class FileManagerBase extends EventEmitter {
     // constructor({destDir, withHashing, srcDir});
     get fileHashMap() { return null }

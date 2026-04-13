@@ -1,7 +1,13 @@
+/** @typedef {import('../types').BundleOutputStream} BundleOutputStream */
+/** @typedef {import('../types').BundleItem['readStream']} BundleReadStream */
+
 export class TextBundler {
     #ostr;
     #fileCount = 0;
 
+    /**
+     * @param {BundleOutputStream} ostr
+     */
     constructor(ostr) {
         if (!ostr || typeof ostr.write !== 'function' || typeof ostr.end !== 'function') {
             throw new Error('Invalid output stream provided');
@@ -9,6 +15,11 @@ export class TextBundler {
         this.#ostr = ostr;
     }
 
+    /**
+     * @param {string} name
+     * @param {BundleReadStream} readStream
+     * @returns {Promise<void>}
+     */
     async append(name, readStream) {
         if (!name || typeof name !== 'string') throw new Error('Invalid file name provided');
         if (!readStream || typeof readStream.on !== 'function') throw new Error('Invalid read stream provided');

@@ -9,6 +9,9 @@ import IncludeFileManager from './proc/file-manager-includes.js';
 import { createMockProcessor, parseWokbookIntoMocks } from './proc/mock-processings.js';
 import { fs as memfs, vol as memVol } from 'memfs';
 
+/** @typedef {import('./types').AppRuntimeConfig} AppRuntimeConfig */
+/** @typedef {import('./types').BundleFormat} BundleFormat */
+
 export default class App {
     #logger;
 
@@ -22,6 +25,10 @@ export default class App {
     #inMemory = false;
     #verbose = false;
 
+    /**
+     * @param {AppRuntimeConfig} config
+     * @param {boolean} withWatcher
+     */
     constructor(config, withWatcher) {
         this.#logger   = config.logger;
         this.#withMeta = config.withMeta;
@@ -129,6 +136,9 @@ export default class App {
         });
     }
 
+    /**
+     * @param {BundleFormat} bundleFormat
+     */
     #chooseBundleFormat(bundleFormat) {
         switch (bundleFormat) {
             case 'text': return buildTextBundle;

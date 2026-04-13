@@ -5,6 +5,8 @@ import SimpleSHA1Stream from '../utils/sha1-stream.js';
 import { slash } from '../utils/fs-utils.js';
 import { FileManagerBase } from './file-manager-base.js';
 
+/** @typedef {import('../types').FileManagerProcessedItemEvent} FileManagerProcessedItemEvent */
+
 const ITEM_PROCESSED = 'item-processed';
 
 export default class IncludeFileManager extends FileManagerBase {
@@ -106,6 +108,9 @@ export default class IncludeFileManager extends FileManagerBase {
         });
     }
 
+    /**
+     * @param {FileManagerProcessedItemEvent} event
+     */
     #emitIncludeProcessed({ name }) {
         this.emit(ITEM_PROCESSED, { name });
     }

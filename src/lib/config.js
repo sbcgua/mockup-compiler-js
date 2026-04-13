@@ -3,6 +3,13 @@ import path from 'node:path';
 
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 
+/** @typedef {import('./types').RawConfig} RawConfig */
+/** @typedef {import('./types').ConfigOverloads} ConfigOverloads */
+/** @typedef {import('./types').AppConfig} AppConfig */
+
+/**
+ * @param {RawConfig} config
+ */
 function assignDefaults(config) {
     if (!config.pattern) config.pattern = ['*.xlsx'];
     if (!config.eol) config.eol = 'lf';
@@ -13,6 +20,11 @@ function assignDefaults(config) {
     }
 }
 
+/**
+ * @param {string} confPath
+ * @param {{ optional?: boolean }} [options]
+ * @returns {RawConfig | undefined}
+ */
 function readConfigFile(confPath, {optional = false} = {}) {
     try {
         confPath = path.resolve(confPath);
@@ -24,6 +36,10 @@ function readConfigFile(confPath, {optional = false} = {}) {
     }
 }
 
+/**
+ * @param {RawConfig} config
+ * @param {string} rootDir
+ */
 function postProcessConfig(config, rootDir) {
     const absolutize = p => path.isAbsolute(p) ? p : path.join(rootDir, p);
     const absolutizePath = dir => { if (config[dir]) config[dir] = absolutize(config[dir]); };
@@ -72,6 +88,10 @@ const configScheme = {
     required: ['sourceDir', 'eol'],
 };
 
+/**
+ * @param {RawConfig} config
+ * @returns {asserts config is AppConfig}
+ */
 export function validateConfig(config) {
     // Validate DestDir/inMemory
     if (!config.destDir && !config.inMemory) throw Error('Config or params must have "destDir" or enabled "inMemory"');
@@ -97,6 +117,11 @@ export function validateConfig(config) {
 
 }
 
+/**
+ * @param {string | undefined} confPath
+ * @param {ConfigOverloads | null} [overloads]
+ * @returns {AppConfig}
+ */
 export function readConfig(confPath, overloads = null) {
     let config;
     if (confPath) {

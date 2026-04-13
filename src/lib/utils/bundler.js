@@ -1,6 +1,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
+/** @typedef {import('../types').BundleItemGenerator} BundleItemGenerator */
+/** @typedef {import('../types').BundlerFunction} BundlerFunction */
+/** @typedef {import('../types').BundlerContract} BundlerContract */
+
+/**
+ * @param {string} sourceDir
+ * @param {string[]} fileList
+ * @param {typeof import('node:fs') | undefined} memfs
+ * @returns {BundleItemGenerator}
+ */
 function createItemGenerator(sourceDir, fileList, memfs) {
     return function* () {
         for (let name of fileList) {
@@ -13,11 +23,15 @@ function createItemGenerator(sourceDir, fileList, memfs) {
     };
 }
 
+/** @implements {BundlerContract} */
 export class Bundler {
     #sourceDir;
     #bundlePath;
     #bundlerFn;
     #memfs;
+    /**
+     * @param {{ sourceDir: string, bundlePath: string, memfs?: typeof import('node:fs'), bundleFn: BundlerFunction }} params
+     */
     constructor({sourceDir, bundlePath, memfs, bundleFn}) {
         this.#sourceDir  = sourceDir;
         this.#bundlePath = bundlePath;
@@ -27,6 +41,10 @@ export class Bundler {
     #deleteBundleFile() {
         if (fs.existsSync(this.#bundlePath)) fs.rmSync(this.#bundlePath);
     }
+    /**
+     * @param {string[]} fileList
+     * @returns {Promise<number>}
+     */
     async bundle(fileList) {
         if (!fileList || !Array.isArray(fileList) || fileList.length === 0) {
             throw new Error('Invalid file list provided for bundling');

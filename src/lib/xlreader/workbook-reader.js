@@ -1,5 +1,13 @@
 import { sheetToJson } from './sheet-reader.js';
 
+/** @typedef {import('../types').WorkbookLike} WorkbookLike */
+/** @typedef {import('../types').WorkbookMocks} WorkbookMocks */
+
+/**
+ * @param {WorkbookLike} wb
+ * @param {string[]} [sheetsToSave]
+ * @returns {WorkbookMocks}
+ */
 export function extractWorkbookSheets(wb, sheetsToSave) {
     if (!sheetsToSave) sheetsToSave = wb.SheetNames;
     const firstMissingSheet = sheetsToSave.find(s => !wb.Sheets[s]);

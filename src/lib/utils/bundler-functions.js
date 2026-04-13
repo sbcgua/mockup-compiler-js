@@ -2,6 +2,13 @@ import archiver from 'archiver';
 import { PassThrough } from 'node:stream';
 import { TextBundler } from './mc-text-format.js';
 
+/** @typedef {import('../types').BundleItemGenerator} BundleItemGenerator */
+/** @typedef {import('../types').BundleOutputStream} BundleOutputStream */
+
+/**
+ * @param {BundleItemGenerator} itemGenerator
+ * @param {BundleOutputStream} ostr
+ */
 export async function buildZipBundle(itemGenerator, ostr) {
     const archive = archiver('zip', { zlib: { level: 9 } });
     archive.on('warning', (err) => { throw Object.assign(err, { _loc: 'zipFiles warning' }) });
@@ -19,6 +26,10 @@ export async function buildZipBundle(itemGenerator, ostr) {
     await archive.finalize();
 }
 
+/**
+ * @param {BundleItemGenerator} itemGenerator
+ * @param {BundleOutputStream} ostr
+ */
 export async function buildTextBundle(itemGenerator, ostr) {
     const bundler = new TextBundler(ostr);
 
@@ -40,6 +51,10 @@ function once(fn) {
     };
 }
 
+/**
+ * @param {import('../types').BundleItem[]} array
+ * @returns {BundleItemGenerator}
+ */
 function generatorFromArray(array) {
     return function* () {
         for (const item of array) {
@@ -48,6 +63,10 @@ function generatorFromArray(array) {
     };
 }
 
+/**
+ * @param {BundleItemGenerator} itemGenerator
+ * @param {BundleOutputStream} ostr
+ */
 export async function buildTextZipBundle(itemGenerator, ostr) {
     let textBundleSize = 0;
     const passThroughStream = new PassThrough();

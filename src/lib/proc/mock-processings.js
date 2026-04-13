@@ -2,9 +2,18 @@ import { extractWorkbookSheets } from '../xlreader/workbook-reader.js';
 import { sheetToJson } from '../xlreader/sheet-reader.js';
 import { stringifyWithTabs } from '../utils/tabbed.js';
 
+/** @typedef {import('../types').WorkbookLike} WorkbookLike */
+/** @typedef {import('../types').WorkbookMocks} WorkbookMocks */
+/** @typedef {import('../types').MockTable} MockTable */
+/** @typedef {import('../types').MockProcessor} MockProcessor */
+
 const CONTENT_SHEET_NAME = '_contents';
 const EXCLUDE_SHEET_NAME = '_exclude';
 
+/**
+ * @param {WorkbookLike} wb
+ * @returns {string[]}
+ */
 function findSheetsToSave(wb) {
     const sheets = wb.SheetNames;
     if (!sheets) throw Error('Workbook does not contain sheets');
@@ -35,15 +44,28 @@ function findSheetsToSave(wb) {
 }
 
 /* returns: { mock1: [{}], mock2: [{}], ... } */
+/**
+ * @param {WorkbookLike} wbData
+ * @returns {WorkbookMocks}
+ */
 export function parseWokbookIntoMocks(wbData) {
     const sheetsToSave = findSheetsToSave(wbData);
     const mocks = extractWorkbookSheets(wbData, sheetsToSave);
     return mocks;
 }
 
+/**
+ * @param {string} eolChar
+ * @param {string | undefined} skipFieldsStartingWith
+ * @returns {MockProcessor}
+ */
 export function createMockProcessor(eolChar, skipFieldsStartingWith) {
     if (!skipFieldsStartingWith) skipFieldsStartingWith = '-';
-    return (mockRows) => {
+    return (
+        /**
+         * @param {MockTable} mockRows
+         */
+        (mockRows) => {
         let columnsToSave = mockRows.__columns__;
 
         // Remove columns after blank space and starting from _
@@ -65,5 +87,5 @@ export function createMockProcessor(eolChar, skipFieldsStartingWith) {
             }),
             rowCount: mockRows.length,
         };
-    };
+    });
 }

@@ -12,6 +12,8 @@ import { argOptions, argsToConfig } from './lib/args.js';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
+/** @typedef {import('./lib/types').CliArgs} CliArgs */
+
 function readVersion() {
     try {
         let packageBlob;
@@ -34,6 +36,9 @@ function readVersion() {
     }
 }
 
+/**
+ * @param {CliArgs} args
+ */
 async function main(args) {
     if (!args.color) chalk.level = 0;
 

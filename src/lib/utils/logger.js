@@ -1,3 +1,6 @@
+/** @typedef {import('../types').LoggerContract} LoggerContract */
+
+/** @implements {LoggerContract} */
 export default class Logger {
     constructor({ quiet }) {
         this.quiet = quiet;
