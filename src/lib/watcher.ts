@@ -17,7 +17,7 @@ export default class Watcher {
     #logger: LoggerContract;
     #excelFileManager: FileManagerContract;
     #includeFileManager?: FileManagerContract;
-    #trottleLimit: number;
+    #throttleLimit: number;
     #watchers: FSWatcher[] = [];
     #watchedDirs: string[] = [];
     #bundler?: BundlerContract;
@@ -31,7 +31,7 @@ export default class Watcher {
         this.#includeFileManager = includeFileManager;
         this.#metaCalculator = metaCalculator;
         this.#bundler = bundler;
-        this.#trottleLimit = 1000;
+        this.#throttleLimit = 1000;
     }
 
     start(): void {
@@ -78,7 +78,7 @@ export default class Watcher {
                 }
 
                 const now = Date.now();
-                if ((now - lastChange) > this.#trottleLimit && lastHandlerComplete) {
+                if ((now - lastChange) > this.#throttleLimit && lastHandlerComplete) {
                     lastHandlerComplete = false;
                     lastChange = now;
                     this.#reportChange(now, normalizedFilename);

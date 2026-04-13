@@ -1,10 +1,7 @@
-import fs, { type ReadStream } from 'node:fs';
+import fs from 'node:fs';
 import path from 'node:path';
-import type { BundleItemGenerator, BundlerContract, BundlerFunction } from '../types';
+import type { BundleItemGenerator, BundlerContract, BundlerFunction, ReadableFsLike } from '../types';
 
-type ReadableFsLike = {
-    createReadStream(path: string): ReadStream;
-};
 type BundlerParams = {
     sourceDir: string;
     bundlePath: string;

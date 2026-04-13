@@ -6,10 +6,10 @@ import Watcher from './watcher.ts';
 import MetaCalculator from './proc/meta.ts';
 import ExcelFileManager from './proc/file-manager-excel.ts';
 import IncludeFileManager from './proc/file-manager-includes.ts';
-import { createMockProcessor, parseWokbookIntoMocks } from './proc/mock-processings.ts';
+import { createMockProcessor, parseWorkbookIntoMocks } from './proc/mock-processings.ts';
 import { Bundler } from './utils/bundler.ts';
 import { buildZipBundle, buildTextBundle, buildTextZipBundle } from './utils/bundler-functions.ts';
-import type { AppRuntimeConfig, BundleFormat, BundlerFunction, FileManagerContract } from './types';
+import type { AppRuntimeConfig, BundleFormat, BundlerFunction, ReadableFsLike, WritableFsLike } from './types';
 
 type SetupExcelFileManagerParams = {
     eol: AppRuntimeConfig['eol'];
@@ -46,6 +46,14 @@ export default class App {
     #withMeta?: boolean;
     #inMemory = false;
     #verbose = false;
+
+    #getMemoryWritableFs(): WritableFsLike {
+        return memfs;
+    }
+
+    #getMemoryReadableFs(): ReadableFsLike {
+        return memfs;
+    }
 
     constructor(config: AppRuntimeConfig, withWatcher: boolean) {
         this.#logger = config.logger;
@@ -109,11 +117,11 @@ export default class App {
         const fileProcessor = new ExcelFileManager({
             srcDir,
             destDir,
-            mockExtractor: parseWokbookIntoMocks,
+            mockExtractor: parseWorkbookIntoMocks,
             mockProcessor: createMockProcessor(eol, skipFieldsStartingWith),
             withHashing: this.#withMeta,
             pattern,
-            memfs: this.#inMemory ? memfs as never : undefined,
+            memfs: this.#inMemory ? this.#getMemoryWritableFs() : undefined,
         });
         fileProcessor.on('start-of-file-processing', ({ name }) => {
             this.#logger.log(chalk.grey('Processing:'), `${name}`);
@@ -134,7 +142,7 @@ export default class App {
             includeDir: includes[0],
             destDir,
             withHashing: this.#withMeta,
-            memfs: this.#inMemory ? memfs as never : undefined,
+            memfs: this.#inMemory ? this.#getMemoryWritableFs() : undefined,
         });
         includeManager.on('item-processed', ({ name }) => {
             this.#logger.log(chalk.green('  [OK]'), `${name}`);
@@ -149,7 +157,7 @@ export default class App {
             includeFileManager: this.#includeFileManager,
             destDir,
             eol,
-            memfs: this.#inMemory ? memfs as never : undefined,
+            memfs: this.#inMemory ? this.#getMemoryWritableFs() : undefined,
         });
     }
 
@@ -168,7 +176,7 @@ export default class App {
 
         return new Bundler({
             sourceDir: destDir,
-            memfs: this.#inMemory ? memfs as never : undefined,
+            memfs: this.#inMemory ? this.#getMemoryReadableFs() : undefined,
             bundlePath,
             bundleFn: this.#chooseBundleFormat(bundleFormat),
         });

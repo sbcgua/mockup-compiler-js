@@ -3,9 +3,8 @@ import fs from 'node:fs';
 import { sortBy } from 'lodash-es';
 import { stringifyWithTabs } from '../utils/tabbed.ts';
 import { slash } from '../utils/fs-utils.ts';
-import type { EolMode, FileManagerContract, MetaCalculatorContract } from '../types';
+import type { EolMode, FileManagerContract, MetaCalculatorContract, WritableFsLike } from '../types';
 
-type WritableFsLike = Pick<typeof fs, 'existsSync' | 'mkdirSync' | 'createWriteStream'>;
 type MetaRow = {
     src_file: string;
     sha1: string | undefined;

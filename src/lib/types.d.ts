@@ -145,6 +145,16 @@ export interface BundleItem {
     readStream: Readable;
 }
 
+export interface ReadableFsLike {
+    createReadStream(path: string): Readable;
+}
+
+export interface WritableFsLike {
+    existsSync(path: string): boolean;
+    mkdirSync(path: string, options?: unknown): unknown;
+    createWriteStream(path: string, options?: unknown): Writable;
+}
+
 export type BundleItemGenerator = () => Generator<BundleItem, void, void>;
 
 export interface BundleOutputStream extends Writable {

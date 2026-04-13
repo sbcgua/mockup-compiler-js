@@ -42,6 +42,8 @@ export function parseWokbookIntoMocks(wbData: WorkbookLike): WorkbookMocks {
     return extractWorkbookSheets(wbData, sheetsToSave);
 }
 
+export const parseWorkbookIntoMocks = parseWokbookIntoMocks;
+
 export function createMockProcessor(eolChar: string, skipFieldsStartingWith = '-'): MockProcessor {
     return (mockRows: MockTable) => {
         let columnsToSave = mockRows.__columns__;

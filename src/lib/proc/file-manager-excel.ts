@@ -15,6 +15,7 @@ import type {
     MockExtractor,
     MockProcessor,
     MockTable,
+    WritableFsLike,
     WorkbookLike,
     WorkbookMocks,
 } from '../types';
@@ -22,7 +23,6 @@ import type {
 const START_OF_FILE_PROCESSING = 'start-of-file-processing';
 const ITEM_PROCESSED = 'item-processed';
 
-type WritableFsLike = Pick<typeof fs, 'existsSync' | 'mkdirSync' | 'createWriteStream'>;
 type ExcelFileManagerParams = {
     srcDir: string;
     destDir: string;

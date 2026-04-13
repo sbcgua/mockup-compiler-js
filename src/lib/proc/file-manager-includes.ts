@@ -4,11 +4,10 @@ import assert from 'node:assert';
 import SimpleSHA1Stream from '../utils/sha1-stream.ts';
 import { slash } from '../utils/fs-utils.ts';
 import { FileManagerBase } from './file-manager-base.ts';
-import type { FileManagerProcessedItemEvent } from '../types';
+import type { FileManagerProcessedItemEvent, WritableFsLike } from '../types';
 
 const ITEM_PROCESSED = 'item-processed';
 
-type WritableFsLike = Pick<typeof fs, 'existsSync' | 'mkdirSync' | 'createWriteStream'>;
 type IncludeFileManagerParams = {
     destDir: string;
     includeDir: string;
@@ -25,6 +24,7 @@ export default class IncludeFileManager extends FileManagerBase {
     #destFs: WritableFsLike;
 
     get fileHashMap(): Map<string, string | undefined> { return this.#fileHashMap; }
+    get mockHashMap(): null { return null; }
     get testObjectList(): string[] { return [...this.#fileHashMap.keys()].map(file => file.toLowerCase()); }
     get srcDirs(): string[] { return [...this.#includeDirs]; }
 
