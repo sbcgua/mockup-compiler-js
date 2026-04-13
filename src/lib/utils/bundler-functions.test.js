@@ -1,5 +1,5 @@
 import { test, expect, vi, describe, beforeEach, afterEach } from 'vitest';
-import { buildZipBundle, buildTextBundle, buildTextZipBundle } from './bundler-functions.js';
+import { buildZipBundle, buildTextBundle, buildTextZipBundle } from './bundler-functions.ts';
 import { Readable, PassThrough } from 'node:stream';
 import archiver from 'archiver';
 import { TextBundler } from './mc-text-format.ts';

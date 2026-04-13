@@ -1,5 +1,5 @@
 import { test, expect, vi, describe, beforeEach, afterEach } from 'vitest';
-import { Bundler } from './bundler.js';
+import { Bundler } from './bundler.ts';
 import { Readable } from 'node:stream';
 import fs from 'node:fs';
 import path from 'node:path';

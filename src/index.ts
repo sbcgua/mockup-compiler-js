@@ -7,7 +7,7 @@ import { getAsset, isSea } from 'node:sea';
 import { Command } from 'commander';
 import chalk from 'chalk';
 
-import App from './lib/app.js';
+import App from './lib/app.ts';
 import { argOptions, argsToConfig } from './lib/args.js';
 import { readConfig } from './lib/config.ts';
 import type { AppRuntimeConfig, CliArgs } from './lib/types';
