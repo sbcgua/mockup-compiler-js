@@ -66,6 +66,7 @@ export interface BaseValidatedConfig {
     skipFieldsStartingWith?: string;
     pattern: string[];
     logger?: LoggerContract;
+    [commentKey: `#${string}`]: unknown;
 }
 
 export interface DiskAppConfig extends BaseValidatedConfig {

@@ -1,28 +1,19 @@
-// @ts-check
+import type { BundleItem, BundleOutputStream } from '../types';
 
-/** @typedef {import('../types').BundleOutputStream} BundleOutputStream */
-/** @typedef {import('../types').BundleItem['readStream']} BundleReadStream */
+type BundleReadStream = BundleItem['readStream'];
 
 export class TextBundler {
-    #ostr;
+    #ostr: BundleOutputStream;
     #fileCount = 0;
 
-    /**
-     * @param {BundleOutputStream} ostr
-     */
-    constructor(ostr) {
+    constructor(ostr: BundleOutputStream) {
         if (!ostr || typeof ostr.write !== 'function' || typeof ostr.end !== 'function') {
             throw new Error('Invalid output stream provided');
         }
         this.#ostr = ostr;
     }
 
-    /**
-     * @param {string} name
-     * @param {BundleReadStream} readStream
-     * @returns {Promise<void>}
-     */
-    async append(name, readStream) {
+    async append(name: string, readStream: BundleReadStream): Promise<void> {
         if (!name || typeof name !== 'string') throw new Error('Invalid file name provided');
         if (!readStream || typeof readStream.on !== 'function') throw new Error('Invalid read stream provided');
 
@@ -31,43 +22,38 @@ export class TextBundler {
         await this.#renderOneFile(name, readStream);
         this.#fileCount++;
     }
-    end() {
+
+    end(): void {
         this.#writeFooter();
         this.#ostr.end();
     }
 
-    #writeHeader() {
+    #writeHeader(): void {
         this.#ostr.write('!!MOCKUP-LOADER-FORMAT 1.0\n');
     }
-    #writeFooter() {
+
+    #writeFooter(): void {
         this.#ostr.write('\n');
         this.#ostr.write(`!!FILE-COUNT ${this.#fileCount}`);
     }
 
-    /**
-     * @param {string} name
-     * @param {BundleReadStream} readStream
-     * @returns {Promise<void>}
-     */
-    async #renderOneFile(name, readStream) {
+    async #renderOneFile(name: string, readStream: BundleReadStream): Promise<void> {
         let data = '';
 
         readStream.setEncoding('utf-8');
-        await new Promise((resolve, reject) => {
-            /** @param {string} chunk */
-            readStream.on('data', chunk => { data += chunk });
+        await new Promise<void>((resolve, reject) => {
+            readStream.on('data', (chunk: string) => { data += chunk; });
             readStream.on('end', resolve);
             readStream.on('error', reject);
             readStream.resume();
         });
 
-        // trim trailing empty lines
         const lines = data.split('\n');
         while (lines.length > 0 && lines[lines.length - 1].trim() === '') {
             lines.pop();
         }
         const dataLines = lines.length;
-        lines.push(''); // add a blank line at the end
+        lines.push('');
 
         this.#ostr.write('\n');
         this.#ostr.write(`!!FILE ${name} text ${dataLines}\n`);

@@ -2,11 +2,11 @@ import { test, expect, vi, describe, beforeEach, afterEach } from 'vitest';
 import { buildZipBundle, buildTextBundle, buildTextZipBundle } from './bundler-functions.js';
 import { Readable, PassThrough } from 'node:stream';
 import archiver from 'archiver';
-import { TextBundler } from './mc-text-format.js';
+import { TextBundler } from './mc-text-format.ts';
 
 // Mock dependencies
 vi.mock('archiver');
-vi.mock('./mc-text-format.js');
+vi.mock('./mc-text-format.ts');
 vi.mock('node:stream', () => ({
     Readable: vi.fn(),
     PassThrough: vi.fn()

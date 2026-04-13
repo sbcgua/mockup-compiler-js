@@ -4,19 +4,19 @@
   "description": "Tool to convert Excel unit test data to text and archive it",
   "type": "module",
   "bin": {
-    "mockup-compiler": "./src/index.js",
-    "mockup-validator": "./src/validator.js"
+    "mockup-compiler": "./src/index.ts",
+    "mockup-validator": "./src/validator.ts"
   },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
     "typecheck": "tsc --noEmit",
-    "testrun": "node src/index.js -c test-sample/.mock-config.json",
-    "testrun:t": "node src/index.js -c test-sample/.mock-config.json --bundle-format text -z ../_dest/build.txt",
-    "testrun:tz": "node src/index.js -c test-sample/.mock-config.json --bundle-format text+zip -z ../_dest/build-tz.zip",
+    "testrun": "node src/index.ts -c test-sample/.mock-config.json",
+    "testrun:t": "node src/index.ts -c test-sample/.mock-config.json --bundle-format text -z ../_dest/build.txt",
+    "testrun:tz": "node src/index.ts -c test-sample/.mock-config.json --bundle-format text+zip -z ../_dest/build-tz.zip",
     "lint": "eslint",
     "build:bin": "bash bin/build-sea.sh",
-    "build:bundle": "esbuild --format=cjs --platform=node --bundle --outfile=_build/bundle.js src/index.js"
+    "build:bundle": "esbuild --format=cjs --platform=node --bundle --outfile=_build/bundle.js src/index.ts"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 import archiver from 'archiver';
 import { PassThrough } from 'node:stream';
-import { TextBundler } from './mc-text-format.js';
+import { TextBundler } from './mc-text-format.ts';
 
 /** @typedef {import('../types').BundleItemGenerator} BundleItemGenerator */
 /** @typedef {import('../types').BundleOutputStream} BundleOutputStream */

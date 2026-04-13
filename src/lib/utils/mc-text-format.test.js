@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import { vol, fs } from 'memfs';
-import { TextBundler } from './mc-text-format';
+import { TextBundler } from './mc-text-format.ts';
 
 describe('mc-text-format: buildTextBundle', () => {
     beforeEach(() => {

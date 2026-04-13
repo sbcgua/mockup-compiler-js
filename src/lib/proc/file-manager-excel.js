@@ -4,9 +4,9 @@ import assert from 'node:assert';
 import crypto from 'node:crypto';
 import { readFile as readFileAsync } from 'node:fs/promises';
 import { read as readXLSX } from 'xlsx';
-import { slash } from '../utils/fs-utils.js';
+import { slash } from '../utils/fs-utils.ts';
 import { FileManagerBase } from './file-manager-base.js';
-import SimpleSHA1Stream from '../utils/sha1-stream.js';
+import SimpleSHA1Stream from '../utils/sha1-stream.ts';
 import picomatch from 'picomatch'; // Also micromatch looks good, but picomatch is smaller and faster
 
 /** @typedef {import('../types').MockExtractor} MockExtractor */

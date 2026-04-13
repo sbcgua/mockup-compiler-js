@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import fs from 'node:fs';
-import { readConfig, validateConfig } from './config.js';
+import { readConfig, validateConfig } from './config.ts';
 
 vi.mock('node:fs');
 

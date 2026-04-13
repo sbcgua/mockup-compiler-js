@@ -1,8 +1,8 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import assert from 'node:assert';
-import SimpleSHA1Stream from '../utils/sha1-stream.js';
-import { slash } from '../utils/fs-utils.js';
+import SimpleSHA1Stream from '../utils/sha1-stream.ts';
+import { slash } from '../utils/fs-utils.ts';
 import { FileManagerBase } from './file-manager-base.js';
 
 /** @typedef {import('../types').FileManagerProcessedItemEvent} FileManagerProcessedItemEvent */

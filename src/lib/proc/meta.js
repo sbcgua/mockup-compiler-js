@@ -1,8 +1,8 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { sortBy } from 'lodash-es';
-import { stringifyWithTabs } from '../utils/tabbed.js';
-import { slash } from '../utils/fs-utils.js';
+import { stringifyWithTabs } from '../utils/tabbed.ts';
+import { slash } from '../utils/fs-utils.ts';
 
 /** @typedef {import('../types').MetaCalculatorContract} MetaCalculatorContract */
 

@@ -1,4 +1,4 @@
-import { stringifyWithTabs } from './tabbed';
+import { stringifyWithTabs } from './tabbed.ts';
 import { test, expect, describe } from 'vitest';
 
 const MOCK = [

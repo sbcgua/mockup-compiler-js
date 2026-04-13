@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import chalk from 'chalk';
-import { slash, findCommonPath } from './utils/fs-utils.js';
+import { slash, findCommonPath } from './utils/fs-utils.ts';
 
 /** @typedef {import('./types').LoggerContract} LoggerContract */
 /** @typedef {import('./types').FileManagerContract} FileManagerContract */

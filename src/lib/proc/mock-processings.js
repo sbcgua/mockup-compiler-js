@@ -1,6 +1,6 @@
 import { extractWorkbookSheets } from '../xlreader/workbook-reader.js';
 import { sheetToJson } from '../xlreader/sheet-reader.js';
-import { stringifyWithTabs } from '../utils/tabbed.js';
+import { stringifyWithTabs } from '../utils/tabbed.ts';
 
 /** @typedef {import('../types').WorkbookLike} WorkbookLike */
 /** @typedef {import('../types').WorkbookMocks} WorkbookMocks */

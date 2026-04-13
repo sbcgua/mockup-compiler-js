@@ -1,4 +1,4 @@
-import { slash, findCommonPath } from './fs-utils';
+import { slash, findCommonPath } from './fs-utils.ts';
 import { test, expect, describe } from 'vitest';
 
 describe('fs-utils', () => {
