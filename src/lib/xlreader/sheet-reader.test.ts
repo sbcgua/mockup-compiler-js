@@ -1,5 +1,6 @@
 import { sheetToJson } from './sheet-reader.ts';
 import { test, expect, describe } from 'vitest';
+import type { SheetCellValue } from '../types';
 
 const MOCK = {
     '!ref': 'A1:D3',
@@ -37,7 +38,11 @@ describe('sheet reader', () => {
     });
 
     test('dateFormatter', () => {
-        const act = sheetToJson(MOCK, { formatters: { date: (d) => d.toISOString().substr(0,10) } });
+        const act = sheetToJson(MOCK, {
+            formatters: {
+                date: d => d instanceof Date ? d.toISOString().slice(0, 10) : '',
+            },
+        });
         expect(act).toEqual([
             { A: 'Vasya', B: '2018-09-01', C: 15, D: true },
             { A: 'Petya', B: '2018-09-02', C: 16.37, D: false },
@@ -53,7 +58,7 @@ describe('sheet reader', () => {
     });
 
     test('numberFormatter 2', () => {
-        const act = sheetToJson(MOCK, { formatters: { number: (n, w) => w } });
+        const act = sheetToJson(MOCK, { formatters: { number: (_n, w) => (w ?? '') as SheetCellValue } });
         expect(act).toEqual([
             { A: 'Vasya', B: new Date('2018-09-01T00:00:00.000Z'), C: '15.00', D: true },
             { A: 'Petya', B: new Date('2018-09-02T00:00:00.000Z'), C: '16.37', D: false },

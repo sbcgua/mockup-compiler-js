@@ -1,24 +1,38 @@
 import ExcelFileManager from './file-manager-excel.ts';
 import { vol } from 'memfs';
 import { vi, test, expect, describe, beforeEach } from 'vitest';
+import type { MockExtractor, MockProcessor, WorkbookMocks } from '../types';
 
 vi.mock('node:fs', async () => {
-    const memfs = await vi.importActual('memfs');
+    const memfs = await vi.importActual<typeof import('memfs')>('memfs');
     return { default: memfs.fs, ...memfs.fs };
 });
 
 vi.mock('node:fs/promises', async () => {
-    const memfs = await vi.importActual('memfs');
+    const memfs = await vi.importActual<typeof import('memfs')>('memfs');
     return { default: memfs.fs.promises, ...memfs.fs.promises };
 });
 
-vi.mock('xlsx', () => ({ read: blob => blob }));
+vi.mock('xlsx', () => ({ read: (blob: unknown) => blob }));
 
 // import { readdirSync } from 'node:fs';
 // import { readFile } from 'node:fs/promises';
 // import { read } from 'xlsx';
 
 describe('ExcelFileManager', () => {
+    type MockSheetData = { data: string };
+    type MockedExtractor = MockExtractor & {
+        mock: { calls: unknown[][] };
+        mockClear(): void;
+    };
+    type MockedProcessor = MockProcessor & {
+        mock: { calls: unknown[][] };
+        mockClear(): void;
+    };
+    type ExcelFileManagerOverloads = Partial<{
+        withHashing: boolean;
+        pattern: string[];
+    }>;
 
     // test('dummy', async () => {
     //     vol.fromJSON({
@@ -35,7 +49,7 @@ describe('ExcelFileManager', () => {
         vol.reset();
     });
 
-    function createMockExtractor() {
+    function createMockExtractor(): MockedExtractor {
         // receive excel "signature", return "data" of sheets
         const mocks = new Map([
             ['excelblob1', {
@@ -50,19 +64,23 @@ describe('ExcelFileManager', () => {
                 mock4: {data: 'd'},
             }],
         ]);
-        return vi.fn(blob => mocks.get(blob));
+        return vi.fn((blob: unknown) => {
+            const workbook = mocks.get(String(blob));
+            if (!workbook) throw new Error(`Unexpected workbook blob: ${String(blob)}`);
+            return workbook as unknown as WorkbookMocks;
+        }) as unknown as MockedExtractor;
     }
 
-    function createMockProcessor() {
+    function createMockProcessor(): MockedProcessor {
         // receive "data" of sheet, return {"converted" data, rowCount}
         let mockNum = 0;
-        return vi.fn(mockData => ({
-            data: mockData.data + 'DATA',
+        return vi.fn((mockData: unknown) => ({
+            data: (mockData as MockSheetData).data + 'DATA',
             rowCount: ++mockNum,
-        }));
+        })) as unknown as MockedProcessor;
     }
 
-    function createInstance(overloads = null) {
+    function createInstance(overloads: ExcelFileManagerOverloads = {}) {
         const mockExtractor = createMockExtractor();
         const mockProcessor = createMockProcessor();
         const fm = new ExcelFileManager({

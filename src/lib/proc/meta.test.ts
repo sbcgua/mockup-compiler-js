@@ -1,15 +1,17 @@
 import { fs, vol } from 'memfs';
 import { vi, test, expect, describe, beforeEach } from 'vitest';
 import MetaCalculator from './meta.ts';
+import type { FileManagerContract } from '../types';
 
 vi.mock('node:fs', async () => {
     // https://stackoverflow.com/questions/74841423/how-to-mock-file-system-with-memfs-in-nodejs
     // https://kschaul.com/til/2024/06/26/mock-fs-with-vitest-and-memfs/
-    const memfs = await vi.importActual('memfs');
+    const memfs = await vi.importActual<typeof import('memfs')>('memfs');
     return { default: memfs.fs, ...memfs.fs };
 });
 
 describe('MetaCalculator', () => {
+    const asFileManager = (value: Partial<FileManagerContract>): FileManagerContract => value as FileManagerContract;
 
     beforeEach(() => {
         vol.reset();
@@ -20,8 +22,8 @@ describe('MetaCalculator', () => {
 
     test('should calculate meta', async () => {
         const m = new MetaCalculator({
-            fs,
-            excelFileManager: {
+            memfs: fs,
+            excelFileManager: asFileManager({
                 fileHashMap: new Map([
                     ['file1', 'hash1'],
                     ['file2', 'hash2'],
@@ -29,7 +31,7 @@ describe('MetaCalculator', () => {
                 mockHashMap: new Map([
                     ['@file1/mock1', 'hashM1'],
                 ]),
-            },
+            }),
             eol: 'lf',
             destDir: '/dest',
         });
@@ -47,8 +49,8 @@ describe('MetaCalculator', () => {
 
     test('should calculate meta with includes', async () => {
         const m = new MetaCalculator({
-            fs,
-            excelFileManager: {
+            memfs: fs,
+            excelFileManager: asFileManager({
                 fileHashMap: new Map([
                     ['file1', 'hash1'],
                     ['file2', 'hash2'],
@@ -56,13 +58,13 @@ describe('MetaCalculator', () => {
                 mockHashMap: new Map([
                     ['@file1/mock1', 'hashM1'],
                 ]),
-            },
-            includeFileManager: {
+            }),
+            includeFileManager: asFileManager({
                 fileHashMap: new Map([
                     ['/extra/inc1', 'H1'],
                     ['\\extra\\inc2', 'H2'],
                 ]),
-            },
+            }),
             eol: 'lf',
             destDir: '/dest',
         });
@@ -82,8 +84,8 @@ describe('MetaCalculator', () => {
 
     test('should getters', () => {
         const m = new MetaCalculator({
-            fs,
-            excelFileManager: {},
+            memfs: fs,
+            excelFileManager: asFileManager({}),
             eol: 'lf',
             destDir: '/dest',
         });

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { test, expect, vi, describe, beforeEach, afterEach } from 'vitest';
 import { Bundler } from './bundler.ts';
 import { Readable } from 'node:stream';

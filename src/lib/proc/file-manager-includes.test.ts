@@ -5,7 +5,7 @@ import IncludeFileManager from './file-manager-includes.ts';
 vi.mock('node:fs', async () => {
     // https://stackoverflow.com/questions/74841423/how-to-mock-file-system-with-memfs-in-nodejs
     // https://kschaul.com/til/2024/06/26/mock-fs-with-vitest-and-memfs/
-    const memfs = await vi.importActual('memfs');
+    const memfs = await vi.importActual<typeof import('memfs')>('memfs');
     return { default: memfs.fs, ...memfs.fs };
 });
 
