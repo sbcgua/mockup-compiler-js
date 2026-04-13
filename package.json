@@ -10,6 +10,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest watch",
+    "typecheck": "tsc --noEmit",
     "testrun": "node src/index.js -c test-sample/.mock-config.json",
     "testrun:t": "node src/index.js -c test-sample/.mock-config.json --bundle-format text -z ../_dest/build.txt",
     "testrun:tz": "node src/index.js -c test-sample/.mock-config.json --bundle-format text+zip -z ../_dest/build-tz.zip",
@@ -40,8 +41,10 @@
     "esbuild": "^0.25.5",
     "eslint": "^9.29.0",
     "globals": "^16.2.0",
+    "@types/node": "^24.0.7",
     "postject": "^1.0.0-alpha.6",
     "resedit-cli": "^2.1.0",
+    "typescript": "^5.8.3",
     "vitest": "^3.2.3"
   }
 }
