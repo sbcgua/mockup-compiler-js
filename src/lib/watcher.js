@@ -93,7 +93,7 @@ export default class Watcher {
         const filepath = path.join(dir, filename);
         await fileManager.processOneFile(filepath);
         if (this.#metaCalculator) {
-            this.#metaCalculator.buildAndSave();
+            await this.#metaCalculator.buildAndSave();
         }
         if (this.#bundler) {
             const archSize = await this.#bundler.bundle([
