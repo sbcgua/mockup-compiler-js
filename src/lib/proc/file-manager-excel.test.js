@@ -1,4 +1,4 @@
-import ExcelFileManager from './file-manager-excel.js';
+import ExcelFileManager from './file-manager-excel.ts';
 import { vol } from 'memfs';
 import { vi, test, expect, describe, beforeEach } from 'vitest';
 

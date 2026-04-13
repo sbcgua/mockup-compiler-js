@@ -1,11 +1,11 @@
 import fs from 'node:fs';
 import chalk from 'chalk';
 import Watcher from './watcher.js';
-import MetaCalculator from './proc/meta.js';
+import MetaCalculator from './proc/meta.ts';
 import { Bundler } from './utils/bundler.js';
 import { buildZipBundle, buildTextBundle, buildTextZipBundle } from './utils/bundler-functions.js';
-import ExcelFileManager from './proc/file-manager-excel.js';
-import IncludeFileManager from './proc/file-manager-includes.js';
+import ExcelFileManager from './proc/file-manager-excel.ts';
+import IncludeFileManager from './proc/file-manager-includes.ts';
 import { createMockProcessor, parseWokbookIntoMocks } from './proc/mock-processings.ts';
 import { fs as memfs, vol as memVol } from 'memfs';
 

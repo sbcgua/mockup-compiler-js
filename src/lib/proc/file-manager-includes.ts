@@ -3,31 +3,32 @@ import fs from 'node:fs';
 import assert from 'node:assert';
 import SimpleSHA1Stream from '../utils/sha1-stream.ts';
 import { slash } from '../utils/fs-utils.ts';
-import { FileManagerBase } from './file-manager-base.js';
-
-/** @typedef {import('../types').FileManagerProcessedItemEvent} FileManagerProcessedItemEvent */
+import { FileManagerBase } from './file-manager-base.ts';
+import type { FileManagerProcessedItemEvent } from '../types';
 
 const ITEM_PROCESSED = 'item-processed';
 
+type WritableFsLike = Pick<typeof fs, 'existsSync' | 'mkdirSync' | 'createWriteStream'>;
+type IncludeFileManagerParams = {
+    destDir: string;
+    includeDir: string;
+    withHashing?: boolean;
+    memfs?: WritableFsLike;
+};
+
 export default class IncludeFileManager extends FileManagerBase {
-    #fileHashMap = new Map();
-    #includeDirs = new Set();
-    #includeRoot;
-    #destDir;
-    #withHashing = false;
-    #destFs;
+    #fileHashMap = new Map<string, string | undefined>();
+    #includeDirs = new Set<string>();
+    #includeRoot: string;
+    #destDir: string;
+    #withHashing: boolean;
+    #destFs: WritableFsLike;
 
-    get fileHashMap() { return this.#fileHashMap }
-    get testObjectList() { return [...this.#fileHashMap.keys()].map(f => f.toLowerCase()) }
-    get srcDirs() { return [...this.#includeDirs] }
+    get fileHashMap(): Map<string, string | undefined> { return this.#fileHashMap; }
+    get testObjectList(): string[] { return [...this.#fileHashMap.keys()].map(file => file.toLowerCase()); }
+    get srcDirs(): string[] { return [...this.#includeDirs]; }
 
-    /**
-     * Create File pipeline
-     * @param {string} includeDir source folder
-     * @param {string} destDir destination folder
-     * @param {boolean} withHashing enable hashing
-     */
-    constructor({destDir, includeDir, withHashing, memfs}) {
+    constructor({ destDir, includeDir, withHashing = false, memfs }: IncludeFileManagerParams) {
         assert(typeof destDir === 'string' && typeof includeDir === 'string');
         super();
         this.#includeRoot = includeDir;
@@ -37,22 +38,17 @@ export default class IncludeFileManager extends FileManagerBase {
         this.#validateParams();
     }
 
-    #validateParams() {
+    #validateParams(): void {
         if (!fs.existsSync(this.#includeRoot)) throw Error('Include dir does not exist');
         if (!this.#destFs.existsSync(this.#destDir)) throw Error('Destination dir does not exist');
     }
 
-    async processAll() {
+    async processAll(): Promise<void> {
         if (this.#fileHashMap.size > 0) throw Error('Cannot processAll twice');
         await this.#copyDir(this.#includeRoot, this.#destDir);
     }
 
-    /**
-     * Should include a file, if it is under includeRoot
-     * update the hash, and include new files too and update the subdirs
-     * @param {string} path to file to include
-     */
-    async processOneFile(filepath) {
+    async processOneFile(filepath: string): Promise<void> {
         assert(typeof filepath === 'string');
         if (!filepath.startsWith(this.#includeRoot)) throw Error(`file path must be relative to includeRoot ${filepath}`);
 
@@ -63,18 +59,18 @@ export default class IncludeFileManager extends FileManagerBase {
         await this.#copyFile(filepath, destPath);
     }
 
-    #proveDestDir(destDir) {
+    #proveDestDir(destDir: string): void {
         if (!this.#destFs.existsSync(destDir)) this.#destFs.mkdirSync(destDir, { recursive: true });
     }
 
-    async #copyDir(srcDir, destDir) {
+    async #copyDir(srcDir: string, destDir: string): Promise<void> {
         this.#proveDestDir(destDir);
         const filesInDir = fs.readdirSync(srcDir);
-        const promises = [];
+        const promises: Promise<void>[] = [];
 
-        for (let f of filesInDir) {
-            const srcPath = path.join(srcDir, f);
-            const dstPath = path.join(destDir, f.toLowerCase());
+        for (const fileName of filesInDir) {
+            const srcPath = path.join(srcDir, fileName);
+            const dstPath = path.join(destDir, fileName.toLowerCase());
             const attrs = fs.lstatSync(srcPath);
             promises.push(attrs.isDirectory()
                 ? this.#copyDir(srcPath, dstPath)
@@ -83,7 +79,7 @@ export default class IncludeFileManager extends FileManagerBase {
         await Promise.all(promises);
     }
 
-    async #copyFile(srcPath, dstPath) {
+    async #copyFile(srcPath: string, dstPath: string): Promise<void> {
         const hash = await this.#doFileCopyAndHash(srcPath, dstPath);
         const relativePath = slash(path.relative(this.#includeRoot, srcPath));
         this.#emitIncludeProcessed({ name: relativePath });
@@ -91,7 +87,7 @@ export default class IncludeFileManager extends FileManagerBase {
         this.#fileHashMap.set(relativePath, hash);
     }
 
-    #doFileCopyAndHash(srcPath, dstPath) {
+    #doFileCopyAndHash(srcPath: string, dstPath: string): Promise<string | undefined> {
         return new Promise((resolve, reject) => {
             const sha1s = this.#withHashing ? new SimpleSHA1Stream() : null;
             const rs = fs.createReadStream(srcPath);
@@ -108,11 +104,7 @@ export default class IncludeFileManager extends FileManagerBase {
         });
     }
 
-    /**
-     * @param {FileManagerProcessedItemEvent} event
-     */
-    #emitIncludeProcessed({ name }) {
-        this.emit(ITEM_PROCESSED, { name });
+    #emitIncludeProcessed(payload: FileManagerProcessedItemEvent): void {
+        this.emit(ITEM_PROCESSED, payload);
     }
-
 }

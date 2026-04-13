@@ -3,19 +3,32 @@ import fs from 'node:fs';
 import { sortBy } from 'lodash-es';
 import { stringifyWithTabs } from '../utils/tabbed.ts';
 import { slash } from '../utils/fs-utils.ts';
+import type { EolMode, FileManagerContract, MetaCalculatorContract } from '../types';
 
-/** @typedef {import('../types').MetaCalculatorContract} MetaCalculatorContract */
+type WritableFsLike = Pick<typeof fs, 'existsSync' | 'mkdirSync' | 'createWriteStream'>;
+type MetaRow = {
+    src_file: string;
+    sha1: string | undefined;
+    type: 'X' | 'M' | 'I';
+};
 
-/** @implements {MetaCalculatorContract} */
-export default class MetaCalculator {
-    #excelFileManager;
-    #includeFileManager;
-    #eol;
-    #metaDir;
-    #metaFilePath;
-    #destFs;
+type MetaCalculatorParams = {
+    excelFileManager: FileManagerContract;
+    includeFileManager?: FileManagerContract;
+    eol: EolMode;
+    destDir: string;
+    memfs?: WritableFsLike;
+};
 
-    constructor({excelFileManager, includeFileManager, eol, destDir, memfs}) {
+export default class MetaCalculator implements MetaCalculatorContract {
+    #excelFileManager: FileManagerContract;
+    #includeFileManager?: FileManagerContract;
+    #eol: EolMode;
+    #metaDir: string;
+    #metaFilePath: string;
+    #destFs: WritableFsLike;
+
+    constructor({ excelFileManager, includeFileManager, eol, destDir, memfs }: MetaCalculatorParams) {
         this.#excelFileManager = excelFileManager;
         this.#includeFileManager = includeFileManager;
         this.#eol = eol;
@@ -25,26 +38,30 @@ export default class MetaCalculator {
         this.#metaDir = path.join(destDir, this.metaDirName);
         this.#metaFilePath = path.join(destDir, this.metaSrcFileName);
     }
-    get metaSrcFileName() { return '.meta/src_files' }
-    get metaDirName() { return '.meta' }
 
-    buildAndSave() {
+    get metaSrcFileName(): string { return '.meta/src_files'; }
+    get metaDirName(): string { return '.meta'; }
+
+    buildAndSave(): Promise<void> {
         if (!this.#destFs.existsSync(this.#metaDir)) this.#destFs.mkdirSync(this.#metaDir);
         const metaData = this.#getSrcFilesMeta();
         return new Promise((resolve, reject) => {
             const stream = this.#destFs.createWriteStream(this.#metaFilePath, { encoding: 'utf8' });
-            stream.on('finish', resolve);
+            stream.on('finish', () => resolve());
             stream.on('error', reject);
             stream.write(metaData);
             stream.end();
         });
     }
 
-    #getSrcFilesMeta() {
-        const convertToArrayAndAddType =
-            (map, type) => [...map.entries()].map(([file, sha1]) => [slash(file), sha1, type]);
+    #getSrcFilesMeta(): string {
+        const convertToArrayAndAddType = (
+            map: Map<string, string | undefined> | null,
+            type: MetaRow['type']
+        ): [string, string | undefined, MetaRow['type']][] => [...(map?.entries() ?? [])]
+            .map(([file, sha1]) => [slash(file), sha1, type]);
 
-        const allFiles = [
+        const allFiles: [string, string | undefined, MetaRow['type']][] = [
             ...convertToArrayAndAddType(this.#excelFileManager.fileHashMap, 'X'),
             ...convertToArrayAndAddType(this.#excelFileManager.mockHashMap, 'M'),
         ];
@@ -53,7 +70,7 @@ export default class MetaCalculator {
         }
 
         const meta = allFiles.map(([src_file, sha1, type]) => ({ src_file, sha1, type }));
-        const sortedMeta = sortBy(meta, ['type', 'src_file']);
+        const sortedMeta = sortBy(meta, ['type', 'src_file']) as MetaRow[];
 
         return stringifyWithTabs(sortedMeta, ['type', 'src_file', 'sha1'], {
             eolChar: this.#eol,

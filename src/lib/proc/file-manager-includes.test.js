@@ -1,6 +1,6 @@
 import { vol } from 'memfs';
 import { vi, test, expect, describe, beforeEach } from 'vitest';
-import IncludeFileManager from './file-manager-includes.js';
+import IncludeFileManager from './file-manager-includes.ts';
 
 vi.mock('node:fs', async () => {
     // https://stackoverflow.com/questions/74841423/how-to-mock-file-system-with-memfs-in-nodejs

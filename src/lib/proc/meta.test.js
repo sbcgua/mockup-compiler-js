@@ -1,6 +1,6 @@
 import { fs, vol } from 'memfs';
 import { vi, test, expect, describe, beforeEach } from 'vitest';
-import MetaCalculator from './meta.js';
+import MetaCalculator from './meta.ts';
 
 vi.mock('node:fs', async () => {
     // https://stackoverflow.com/questions/74841423/how-to-mock-file-system-with-memfs-in-nodejs
