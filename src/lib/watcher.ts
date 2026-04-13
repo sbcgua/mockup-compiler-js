@@ -2,6 +2,7 @@ import fs, { type FSWatcher } from 'node:fs';
 import path from 'node:path';
 import chalk from 'chalk';
 import { slash, findCommonPath } from './utils/fs-utils.ts';
+import { collectOutputFileList } from './utils/output-file-list.ts';
 import type { BundlerContract, FileManagerContract, LoggerContract, MetaCalculatorContract } from './types';
 
 type WatcherParams = {
@@ -110,11 +111,11 @@ export default class Watcher {
             await this.#metaCalculator.buildAndSave();
         }
         if (this.#bundler) {
-            const archSize = await this.#bundler.bundle([
-                ...(this.#excelFileManager.testObjectList ?? []),
-                ...(this.#includeFileManager?.testObjectList ?? []),
-                ...(this.#metaCalculator ? [this.#metaCalculator.metaSrcFileName] : []),
-            ]);
+            const archSize = await this.#bundler.bundle(collectOutputFileList({
+                excelFileManager: this.#excelFileManager,
+                includeFileManager: this.#includeFileManager,
+                metaCalculator: this.#metaCalculator,
+            }));
             this.#logger.log(chalk.green('  [>>]'), `Archiving complete. File size = ${archSize} bytes`);
 
             if (this.#verbose) {

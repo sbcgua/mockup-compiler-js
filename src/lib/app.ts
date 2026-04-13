@@ -9,6 +9,7 @@ import IncludeFileManager from './proc/file-manager-includes.ts';
 import { createMockProcessor, parseWorkbookIntoMocks } from './proc/mock-processings.ts';
 import { Bundler } from './utils/bundler.ts';
 import { buildZipBundle, buildTextBundle, buildTextZipBundle } from './utils/bundler-functions.ts';
+import { collectOutputFileList } from './utils/output-file-list.ts';
 import type { AppRuntimeConfig, BundleFormat, BundlerFunction, ReadableFsLike, WritableFsLike } from './types';
 
 type SetupExcelFileManagerParams = {
@@ -46,20 +47,16 @@ export default class App {
     #withMeta?: boolean;
     #inMemory = false;
     #verbose = false;
-
-    #getMemoryWritableFs(): WritableFsLike {
-        return memfs;
-    }
-
-    #getMemoryReadableFs(): ReadableFsLike {
-        return memfs;
-    }
+    #writeFs?: WritableFsLike;
+    #readFs?: ReadableFsLike;
 
     constructor(config: AppRuntimeConfig, withWatcher: boolean) {
         this.#logger = config.logger;
         this.#withMeta = config.withMeta;
         this.#inMemory = Boolean(config.inMemory);
         this.#verbose = Boolean(config.verbose);
+        this.#writeFs = this.#inMemory ? memfs : undefined;
+        this.#readFs = this.#inMemory ? memfs : undefined;
 
         let destDir = config.destDir;
         if (this.#inMemory) {
@@ -121,7 +118,7 @@ export default class App {
             mockProcessor: createMockProcessor(eol, skipFieldsStartingWith),
             withHashing: this.#withMeta,
             pattern,
-            memfs: this.#inMemory ? this.#getMemoryWritableFs() : undefined,
+            memfs: this.#writeFs,
         });
         fileProcessor.on('start-of-file-processing', ({ name }) => {
             this.#logger.log(chalk.grey('Processing:'), `${name}`);
@@ -142,7 +139,7 @@ export default class App {
             includeDir: includes[0],
             destDir,
             withHashing: this.#withMeta,
-            memfs: this.#inMemory ? this.#getMemoryWritableFs() : undefined,
+            memfs: this.#writeFs,
         });
         includeManager.on('item-processed', ({ name }) => {
             this.#logger.log(chalk.green('  [OK]'), `${name}`);
@@ -157,7 +154,7 @@ export default class App {
             includeFileManager: this.#includeFileManager,
             destDir,
             eol,
-            memfs: this.#inMemory ? this.#getMemoryWritableFs() : undefined,
+            memfs: this.#writeFs,
         });
     }
 
@@ -176,7 +173,7 @@ export default class App {
 
         return new Bundler({
             sourceDir: destDir,
-            memfs: this.#inMemory ? this.#getMemoryReadableFs() : undefined,
+            memfs: this.#readFs,
             bundlePath,
             bundleFn: this.#chooseBundleFormat(bundleFormat),
         });
@@ -236,14 +233,15 @@ export default class App {
     }
 
     async #createBundle(): Promise<void> {
-        const completeFileList = [
-            ...this.#excelFileManager.testObjectList,
-            ...(this.#includeFileManager?.testObjectList ?? []),
-            ...(this.#metaCalculator ? [this.#metaCalculator.metaSrcFileName] : []),
-        ];
-        const archSize = await this.#bundler!.bundle(completeFileList);
+        if (!this.#bundler) return;
+        const completeFileList = collectOutputFileList({
+            excelFileManager: this.#excelFileManager,
+            includeFileManager: this.#includeFileManager,
+            metaCalculator: this.#metaCalculator,
+        });
+        const archSize = await this.#bundler.bundle(completeFileList);
         this.#logger.log(`\nBundle ready. File size = ${archSize} bytes`);
-        this.#logger.log(this.#bundler!.bundlePath);
+        this.#logger.log(this.#bundler.bundlePath);
     }
 
     #printStats(): void {

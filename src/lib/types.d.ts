@@ -173,3 +173,9 @@ export interface MetaCalculatorContract {
     readonly metaSrcFileName: string;
     buildAndSave(): Promise<void>;
 }
+
+export interface BundleFileListSources {
+    excelFileManager: Pick<FileManagerContract, 'testObjectList'>;
+    includeFileManager?: Pick<FileManagerContract, 'testObjectList'>;
+    metaCalculator?: Pick<MetaCalculatorContract, 'metaSrcFileName'>;
+}
