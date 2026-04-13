@@ -1,3 +1,5 @@
+// @ts-check
+
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -6,6 +8,15 @@ const CONFIG_DEFAULT_PATH = './.mock-config.json';
 /** @typedef {import('./types').RawConfig} RawConfig */
 /** @typedef {import('./types').ConfigOverloads} ConfigOverloads */
 /** @typedef {import('./types').AppConfig} AppConfig */
+/**
+ * @typedef {'String' | 'Boolean' | 'Array' | 'ArrayOfStrings' | 'eol' | 'bundleFormat'} ConfigCheckName
+ */
+/**
+ * @typedef {keyof Omit<RawConfig, `#${string}` | 'zipPath' | 'logger'>} ConfigPropertyName
+ */
+/**
+ * @typedef {{ check: ConfigCheckName, mustBe?: string }} ConfigRule
+ */
 
 /**
  * @param {RawConfig} config
@@ -41,7 +52,9 @@ function readConfigFile(confPath, {optional = false} = {}) {
  * @param {string} rootDir
  */
 function postProcessConfig(config, rootDir) {
+    /** @param {string} p */
     const absolutize = p => path.isAbsolute(p) ? p : path.join(rootDir, p);
+    /** @param {'sourceDir' | 'destDir' | 'bundlePath'} dir */
     const absolutizePath = dir => { if (config[dir]) config[dir] = absolutize(config[dir]); };
 
     absolutizePath('sourceDir');
@@ -60,13 +73,20 @@ function postProcessConfig(config, rootDir) {
 }
 
 const CHECKS = {
+    /** @param {unknown} v */
     String: v => typeof v === 'string',
+    /** @param {unknown} v */
     Boolean: v => typeof v === 'boolean',
+    /** @param {unknown} v */
     Array: v => Array.isArray(v),
+    /** @param {unknown} v */
     ArrayOfStrings: v => Array.isArray(v) && (!v.length || v.every(x => typeof x === 'string')),
-    eol: v => ['lf', 'crlf'].includes(v),
-    bundleFormat: v => ['text', 'zip', 'text+zip'].includes(v),
+    /** @param {unknown} v */
+    eol: v => typeof v === 'string' && ['lf', 'crlf'].includes(v),
+    /** @param {unknown} v */
+    bundleFormat: v => typeof v === 'string' && ['text', 'zip', 'text+zip'].includes(v),
 };
+/** @type {{ properties: Record<ConfigPropertyName, ConfigRule>, required: ConfigPropertyName[] }} */
 const configScheme = {
     properties: {
         sourceDir:           { check: 'String' },
@@ -106,10 +126,11 @@ export function validateConfig(config) {
     // Validate complete shape
     for (let [key, val] of Object.entries(config)) {
         if (key.startsWith('#')) continue; // skip comments (it's more for internal use)
-        const rule = configScheme.properties[key];
+        const prop = /** @type {ConfigPropertyName | undefined} */ (key in configScheme.properties ? key : undefined);
+        const rule = prop ? configScheme.properties[prop] : undefined;
         if (!rule) throw Error(`Config validation error: unexpected param "${key}"`);
         if (!rule.check || !CHECKS[rule.check]) throw Error(`Unexpected validation rule: ${key}`); // Really unexpected :)
-        let check = CHECKS[rule.check];
+        const check = CHECKS[rule.check];
         if (!check(val)) {
             throw Error(`Config validation error: ${key} must be ${rule.mustBe || rule.check} (received: ${val})`);
         }

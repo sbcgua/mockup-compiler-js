@@ -1,7 +1,14 @@
+// @ts-check
+
 import fs from 'node:fs';
 import path from 'node:path';
 import { promisify } from 'node:util';
 
+/**
+ * @param {string} src
+ * @param {string} dest
+ * @returns {string[]}
+ */
 export function copyDir(src, dest) {
     if (!fs.existsSync(dest)) fs.mkdirSync(dest);
     const filesInDir = fs.readdirSync(src);
@@ -24,10 +31,18 @@ export function copyDir(src, dest) {
     return addedFiles;
 }
 
+/**
+ * @param {string} p
+ * @returns {string}
+ */
 export function slash(p) {
     return p.replace(/\\/g, '/');
 }
 
+/**
+ * @param {string[]} paths
+ * @returns {string}
+ */
 export function findCommonPath(paths) {
     if (paths.length === 0) return '';
     if (paths.length === 1) return paths[0];

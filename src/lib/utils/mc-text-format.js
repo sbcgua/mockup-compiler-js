@@ -1,3 +1,5 @@
+// @ts-check
+
 /** @typedef {import('../types').BundleOutputStream} BundleOutputStream */
 /** @typedef {import('../types').BundleItem['readStream']} BundleReadStream */
 
@@ -41,11 +43,18 @@ export class TextBundler {
         this.#ostr.write('\n');
         this.#ostr.write(`!!FILE-COUNT ${this.#fileCount}`);
     }
+
+    /**
+     * @param {string} name
+     * @param {BundleReadStream} readStream
+     * @returns {Promise<void>}
+     */
     async #renderOneFile(name, readStream) {
         let data = '';
 
         readStream.setEncoding('utf-8');
         await new Promise((resolve, reject) => {
+            /** @param {string} chunk */
             readStream.on('data', chunk => { data += chunk });
             readStream.on('end', resolve);
             readStream.on('error', reject);
