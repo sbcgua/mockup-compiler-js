@@ -26,7 +26,7 @@ type SeaModule = {
 
 function loadSeaModule(): SeaModule | null {
     try {
-        const require = createRequire(import.meta.url);
+        const require = createRequire(import.meta.url ?? process.cwd());
         return require('node:sea') as SeaModule;
     } catch {
         return null;
