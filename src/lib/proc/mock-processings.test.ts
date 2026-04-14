@@ -9,14 +9,14 @@ describe('parseWorkbookIntoMocks (include/exclude sheets)', () => {
             'Sheet1': {
                 '!ref': 'A1:A3',
                 'A1': { 't': 's', 'v': 'X',     'r': '<t>X</t>',     'h': 'X',     'w': 'X' },
-                'A2': { 't': 's', 'v': 'Vasya', 'r': '<t>Vasya</t>', 'h': 'Vasya', 'w': 'Vasya' },
-                'A3': { 't': 's', 'v': 'Petya', 'r': '<t>Petya</t>', 'h': 'Petya', 'w': 'Petya' },
+                'A2': { 't': 's', 'v': 'Bohdan', 'r': '<t>Bohdan</t>', 'h': 'Bohdan', 'w': 'Bohdan' },
+                'A3': { 't': 's', 'v': 'Olena', 'r': '<t>Olena</t>', 'h': 'Olena', 'w': 'Olena' },
             },
             'Sheet2': {
                 '!ref': 'A1:A3',
                 'A1': { 't': 's', 'v': 'Y',     'r': '<t>Y</t>',     'h': 'Y',     'w': 'Y' },
-                'A2': { 't': 's', 'v': 'Vasya', 'r': '<t>Vasya</t>', 'h': 'Vasya', 'w': 'Vasya' },
-                'A3': { 't': 's', 'v': 'Petya', 'r': '<t>Petya</t>', 'h': 'Petya', 'w': 'Petya' },
+                'A2': { 't': 's', 'v': 'Bohdan', 'r': '<t>Bohdan</t>', 'h': 'Bohdan', 'w': 'Bohdan' },
+                'A3': { 't': 's', 'v': 'Olena', 'r': '<t>Olena</t>', 'h': 'Olena', 'w': 'Olena' },
             }
 
         },
@@ -26,12 +26,12 @@ describe('parseWorkbookIntoMocks (include/exclude sheets)', () => {
         const act = parseWorkbookIntoMocks(basicWb);
         expect(act).toEqual({
             sheet1: [
-                { X: 'Vasya' },
-                { X: 'Petya' },
+                { X: 'Bohdan' },
+                { X: 'Olena' },
             ],
             sheet2: [
-                { Y: 'Vasya' },
-                { Y: 'Petya' },
+                { Y: 'Bohdan' },
+                { Y: 'Olena' },
             ],
         });
     });
@@ -52,8 +52,8 @@ describe('parseWorkbookIntoMocks (include/exclude sheets)', () => {
         });
         expect(act).toEqual({
             sheet1: [
-                { X: 'Vasya' },
-                { X: 'Petya' },
+                { X: 'Bohdan' },
+                { X: 'Olena' },
             ],
         });
     });
@@ -73,8 +73,8 @@ describe('parseWorkbookIntoMocks (include/exclude sheets)', () => {
         });
         expect(act).toEqual({
             sheet1: [
-                { X: 'Vasya' },
-                { X: 'Petya' },
+                { X: 'Bohdan' },
+                { X: 'Olena' },
             ],
         });
     });
@@ -86,19 +86,19 @@ describe('parseWorkbookIntoMocks (include/exclude sheets)', () => {
                 '-Sheet3': {
                     '!ref': 'A1:A3',
                     'A1': { 't': 's', 'v': 'Z',     'r': '<t>Z</t>',     'h': 'Z',     'w': 'Z' },
-                    'A2': { 't': 's', 'v': 'Vasya', 'r': '<t>Vasya</t>', 'h': 'Vasya', 'w': 'Vasya' },
-                    'A3': { 't': 's', 'v': 'Petya', 'r': '<t>Petya</t>', 'h': 'Petya', 'w': 'Petya' },
+                    'A2': { 't': 's', 'v': 'Bohdan', 'r': '<t>Bohdan</t>', 'h': 'Bohdan', 'w': 'Bohdan' },
+                    'A3': { 't': 's', 'v': 'Olena', 'r': '<t>Olena</t>', 'h': 'Olena', 'w': 'Olena' },
                 }
             },
         });
         expect(act).toEqual({
             sheet1: [
-                { X: 'Vasya' },
-                { X: 'Petya' },
+                { X: 'Bohdan' },
+                { X: 'Olena' },
             ],
             sheet2: [
-                { Y: 'Vasya' },
-                { Y: 'Petya' },
+                { Y: 'Bohdan' },
+                { Y: 'Olena' },
             ],
 
         });
@@ -111,27 +111,27 @@ describe('createMockProcessor', () => {
     test('should createMockProcessor', async () => {
         const fp = createMockProcessor('lf');
         const input = Object.assign([
-            { A: 'Vasya', B: '01.09.2018' },
-            { A: 'Petya', B: '02.09.2018' },
+            { A: 'Bohdan', B: '01.09.2018' },
+            { A: 'Olena', B: '02.09.2018' },
         ], { __columns__: ['A', 'B'] });
 
         expect(fp(input)).toEqual({
-            data: 'A\tB\nVasya\t01.09.2018\nPetya\t02.09.2018',
+            data: 'A\tB\nBohdan\t01.09.2018\nOlena\t02.09.2018',
             rowCount: 2,
         });
     });
 
     test('should skip "-/_" marked columns', async () => {
         const input = Object.assign([
-            { A: 'Vasya', B: '01.09.2018', _C: 'X', '-D': 'Y' },
-            { A: 'Petya', B: '02.09.2018', _C: 'X', '-D': 'Y' },
+            { A: 'Bohdan', B: '01.09.2018', _C: 'X', '-D': 'Y' },
+            { A: 'Olena', B: '02.09.2018', _C: 'X', '-D': 'Y' },
         ], { __columns__: ['A', 'B', '_C', '-D'] });
 
         expect(createMockProcessor('lf')(input)).toEqual({
             data: [
                 'A\tB\t_C',
-                'Vasya\t01.09.2018\tX',
-                'Petya\t02.09.2018\tX'
+                'Bohdan\t01.09.2018\tX',
+                'Olena\t02.09.2018\tX'
             ].join('\n'),
             rowCount: 2,
         });
@@ -139,8 +139,8 @@ describe('createMockProcessor', () => {
         expect(createMockProcessor('lf', '_')(input)).toEqual({
             data: [
                 'A\tB\t-D',
-                'Vasya\t01.09.2018\tY',
-                'Petya\t02.09.2018\tY'
+                'Bohdan\t01.09.2018\tY',
+                'Olena\t02.09.2018\tY'
             ].join('\n'),
             rowCount: 2,
         });

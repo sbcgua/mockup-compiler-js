@@ -7,10 +7,10 @@ const MOCK = {
     'A1': { 't': 's', 'v': 'A',     'r': '<t>A</t>', 'h': 'A', 'w': 'A' },
     'B1': { 't': 's', 'v': 'B',     'r': '<t>B</t>', 'h': 'B', 'w': 'B' },
     'C1': { 't': 's', 'v': 'C',     'r': '<t>C</t>', 'h': 'C', 'w': 'C' },
-    'A2': { 't': 's', 'v': 'Vasya', 'r': '<t>Vasya</t>', 'h': 'Vasya', 'w': 'Vasya' },
+    'A2': { 't': 's', 'v': 'Bohdan', 'r': '<t>Bohdan</t>', 'h': 'Bohdan', 'w': 'Bohdan' },
     'B2': { 't': 'n', 'v': 43344,   'w': '9/1/18' },
     'C2': { 't': 'n', 'v': 15,      'w': '15.00' },
-    'A3': { 't': 's', 'v': 'Petya', 'r': '<t>Petya</t>', 'h': 'Petya', 'w': 'Petya' },
+    'A3': { 't': 's', 'v': 'Olena', 'r': '<t>Olena</t>', 'h': 'Olena', 'w': 'Olena' },
     'B3': { 't': 'n', 'v': 43345,   'w': '9/2/18' },
     'C3': { 't': 'n', 'v': 16.37,   'w': '16.37' },
     'D1': { 't': 's', 'v': 'D',     'r': '<t>D</t>', 'h': 'D', 'w': 'D' },
@@ -23,8 +23,8 @@ describe('sheet reader', () => {
     test('basic test', () => {
         const act = sheetToJson(MOCK);
         expect(act).toEqual([
-            { A: 'Vasya', B: new Date('2018-09-01T00:00:00.000Z'), C: 15, D: true },
-            { A: 'Petya', B: new Date('2018-09-02T00:00:00.000Z'), C: 16.37, D: false },
+            { A: 'Bohdan', B: new Date('2018-09-01T00:00:00.000Z'), C: 15, D: true },
+            { A: 'Olena', B: new Date('2018-09-02T00:00:00.000Z'), C: 16.37, D: false },
         ]);
         expect(act.__columns__).toEqual(['A', 'B', 'C', 'D']);
     });
@@ -32,8 +32,8 @@ describe('sheet reader', () => {
     test('renames', () => {
         const act = sheetToJson(MOCK, { renameMap: { 'A': 'X' } });
         expect(act).toEqual([
-            { X: 'Vasya', B: new Date('2018-09-01T00:00:00.000Z'), C: 15, D: true },
-            { X: 'Petya', B: new Date('2018-09-02T00:00:00.000Z'), C: 16.37, D: false },
+            { X: 'Bohdan', B: new Date('2018-09-01T00:00:00.000Z'), C: 15, D: true },
+            { X: 'Olena', B: new Date('2018-09-02T00:00:00.000Z'), C: 16.37, D: false },
         ]);
     });
 
@@ -44,32 +44,32 @@ describe('sheet reader', () => {
             },
         });
         expect(act).toEqual([
-            { A: 'Vasya', B: '2018-09-01', C: 15, D: true },
-            { A: 'Petya', B: '2018-09-02', C: 16.37, D: false },
+            { A: 'Bohdan', B: '2018-09-01', C: 15, D: true },
+            { A: 'Olena', B: '2018-09-02', C: 16.37, D: false },
         ]);
     });
 
     test('numberFormatter', () => {
         const act = sheetToJson(MOCK, { formatters: { number: (n) => n.toFixed(2) } });
         expect(act).toEqual([
-            { A: 'Vasya', B: new Date('2018-09-01T00:00:00.000Z'), C: '15.00', D: true },
-            { A: 'Petya', B: new Date('2018-09-02T00:00:00.000Z'), C: '16.37', D: false },
+            { A: 'Bohdan', B: new Date('2018-09-01T00:00:00.000Z'), C: '15.00', D: true },
+            { A: 'Olena', B: new Date('2018-09-02T00:00:00.000Z'), C: '16.37', D: false },
         ]);
     });
 
     test('numberFormatter 2', () => {
         const act = sheetToJson(MOCK, { formatters: { number: (_n, w) => (w ?? '') as SheetCellValue } });
         expect(act).toEqual([
-            { A: 'Vasya', B: new Date('2018-09-01T00:00:00.000Z'), C: '15.00', D: true },
-            { A: 'Petya', B: new Date('2018-09-02T00:00:00.000Z'), C: '16.37', D: false },
+            { A: 'Bohdan', B: new Date('2018-09-01T00:00:00.000Z'), C: '15.00', D: true },
+            { A: 'Olena', B: new Date('2018-09-02T00:00:00.000Z'), C: '16.37', D: false },
         ]);
     });
 
     test('lowerCaseColumns', () => {
         const act = sheetToJson(MOCK, { lowerCaseColumns: true });
         expect(act).toEqual([
-            { a: 'Vasya', b: new Date('2018-09-01T00:00:00.000Z'), c: 15, d: true },
-            { a: 'Petya', b: new Date('2018-09-02T00:00:00.000Z'), c: 16.37, d: false },
+            { a: 'Bohdan', b: new Date('2018-09-01T00:00:00.000Z'), c: 15, d: true },
+            { a: 'Olena', b: new Date('2018-09-02T00:00:00.000Z'), c: 16.37, d: false },
         ]);
     });
 
