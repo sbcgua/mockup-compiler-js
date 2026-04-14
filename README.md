@@ -40,7 +40,7 @@ BUKRS NAME
 ...
 ```
 
-See [doc/text-bundle-format.md](doc/text-bundle-format.md) for more format details.
+See [docs/text-bundle-format.md](docs/text-bundle-format.md) for more format details.
 
 P.S. One even more experimental features is `text+zip` format - it creates a text bundle file (`bundle.txt`) and packs it into zip. The motivation is to improve performance of `zmockup_loader_switch_source` tool, which redirects mockup source to a local file - the SAP GUI is rather slow in reading files from the desktop, so the text bundle is zip-compressed and them unpacked at the server side (by `zmockup_loader_switch_source` tool). Read more withing [ABAP Mockup compiler](https://github.com/sbcgua/mockup_compiler) documentation.
 
@@ -112,7 +112,7 @@ mockup-compiler -c ./my-mock-config.json
 - `skipFieldsStartingWith` - skips fields which start from the given symbol, by default it is `'-'`
 - **CHANGED** since v1.2.0: `bundleFormat` - defines the format of the budle file:
   - `zip` (the default, if empty)
-  - `text` (see [doc/text-bundle-format.md](doc/text-bundle-format.md))
+  - `text` (see [docs/text-bundle-format.md](docs/text-bundle-format.md))
   - `text+zip` - creates a text bundle and then zips it (decreases travel time to abap backend, use when the bundle becomes large and slow)
 - `pattern` - is a glob pattern for Excel files. By default it is "*.xlsx", however the tool support all formats which are supported by the underlying library [sheetjs](https://www.npmjs.com/package/xlsx). The param can be a string or an array, e.g. `["*.xlsx", "*.xml"]`.
 - `inMemory` - don't create mocks on the disk (in `destDir`), instead stash them in memory and write only the bundle file. Beware of potential memory usage if the data volume is large. (in CLI, use `--in-mem`).
