@@ -1,7 +1,7 @@
-import { parseWokbookIntoMocks, createMockProcessor } from './mock-processings.ts';
+import { parseWorkbookIntoMocks, createMockProcessor } from './mock-processings.ts';
 import { test, expect, describe } from 'vitest';
 
-describe('parseWokbookIntoMocks (include/exclude sheets)', () => {
+describe('parseWorkbookIntoMocks (include/exclude sheets)', () => {
 
     const basicWb = {
         SheetNames: ['Sheet1', 'Sheet2'],
@@ -23,7 +23,7 @@ describe('parseWokbookIntoMocks (include/exclude sheets)', () => {
     };
 
     test('basic test', () => {
-        const act = parseWokbookIntoMocks(basicWb);
+        const act = parseWorkbookIntoMocks(basicWb);
         expect(act).toEqual({
             sheet1: [
                 { X: 'Vasya' },
@@ -37,7 +37,7 @@ describe('parseWokbookIntoMocks (include/exclude sheets)', () => {
     });
 
     test('test with _contents', () => {
-        const act = parseWokbookIntoMocks({
+        const act = parseWorkbookIntoMocks({
             SheetNames: [...basicWb.SheetNames, '_contents'],
             Sheets: { ...basicWb.Sheets,
                 '_contents': {
@@ -59,7 +59,7 @@ describe('parseWokbookIntoMocks (include/exclude sheets)', () => {
     });
 
     test('should skip excludes', () => {
-        const act = parseWokbookIntoMocks({
+        const act = parseWorkbookIntoMocks({
             SheetNames: [...basicWb.SheetNames, '_exclude'],
             Sheets: { ...basicWb.Sheets,
                 '_exclude': {
@@ -80,7 +80,7 @@ describe('parseWokbookIntoMocks (include/exclude sheets)', () => {
     });
 
     test('should skip sheets starting with -', () => {
-        const act = parseWokbookIntoMocks({
+        const act = parseWorkbookIntoMocks({
             SheetNames: [...basicWb.SheetNames, '-Sheet3'],
             Sheets: { ...basicWb.Sheets,
                 '-Sheet3': {

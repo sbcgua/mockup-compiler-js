@@ -143,8 +143,6 @@ Changes already made:
 - `FileManagerBase` is now a real abstract contract
 - filesystem capabilities were separated into `ReadableFsLike` and `WritableFsLike`
 - `App` no longer relies on `memfs as never`
-- watcher internal throttle naming was normalized
-- `parseWorkbookIntoMocks` was added as a correctly spelled alias while keeping the old typo for compatibility
 - duplicated output file-list assembly was extracted to `src/lib/utils/output-file-list.ts`
 
 Why:
@@ -230,7 +228,6 @@ If the next task is about tests, inspect:
 These are intentional and should not be “cleaned up” casually:
 
 - explicit `.ts` import specifiers are allowed by `tsconfig.json`
-- `parseWokbookIntoMocks` still exists for compatibility; `parseWorkbookIntoMocks` is the corrected alias
 - bundler-related tests use `@ts-nocheck`
 - tests remain in Vitest and still use mock-heavy patterns with memfs and Node module mocking
 

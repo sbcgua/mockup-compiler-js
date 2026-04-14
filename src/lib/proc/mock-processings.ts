@@ -37,12 +37,10 @@ function findSheetsToSave(wb: WorkbookLike): string[] {
     return sheetsToSave.filter(sheet => !sheet.startsWith('-'));
 }
 
-export function parseWokbookIntoMocks(wbData: WorkbookLike): WorkbookMocks {
+export function parseWorkbookIntoMocks(wbData: WorkbookLike): WorkbookMocks {
     const sheetsToSave = findSheetsToSave(wbData);
     return extractWorkbookSheets(wbData, sheetsToSave);
 }
-
-export const parseWorkbookIntoMocks = parseWokbookIntoMocks;
 
 export function createMockProcessor(eolChar: string, skipFieldsStartingWith = '-'): MockProcessor {
     return (mockRows: MockTable) => {
