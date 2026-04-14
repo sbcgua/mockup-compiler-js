@@ -23,10 +23,10 @@ export default class IncludeFileManager extends FileManagerBase {
     #withHashing: boolean;
     #destFs: WritableFsLike;
 
-    get fileHashMap(): Map<string, string | undefined> { return this.#fileHashMap; }
-    get mockHashMap(): null { return null; }
-    get testObjectList(): string[] { return [...this.#fileHashMap.keys()].map(file => file.toLowerCase()); }
-    get srcDirs(): string[] { return [...this.#includeDirs]; }
+    get fileHashMap(): Map<string, string | undefined> { return this.#fileHashMap }
+    get mockHashMap(): null { return null }
+    get testObjectList(): string[] { return [...this.#fileHashMap.keys()].map(file => file.toLowerCase()) }
+    get srcDirs(): string[] { return [...this.#includeDirs] }
 
     constructor({ destDir, includeDir, withHashing = false, memfs }: IncludeFileManagerParams) {
         assert(typeof destDir === 'string' && typeof includeDir === 'string');

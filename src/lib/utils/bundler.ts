@@ -58,5 +58,5 @@ export class Bundler implements BundlerContract {
         return await worker;
     }
 
-    get bundlePath(): string { return this.#bundlePath; }
+    get bundlePath(): string { return this.#bundlePath }
 }

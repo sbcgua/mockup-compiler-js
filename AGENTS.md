@@ -22,7 +22,7 @@ Typical logic:
 
 ## Running
 
-Command line params are defined in @src/lib/args.js
+Command line params are defined in @src/lib/args.ts
 Importantly, the tool can also be run in the **watch mode** (`--watch` arg). In this case, after the first build, the tool starts watching the source files - if they change, it re-runs conversion on the changed file again and re-bundles them.
 
 The setting can be given in a config. By default the programs looks for the config in the current directory in file `.mock-config.json`. Optionally, can be referred with `-c` command opt. Example of the file:
@@ -59,6 +59,7 @@ The setting can be given in a config. By default the programs looks for the conf
   - `text+zip` - creates a text bundle and then zips it
 - `pattern` - is a glob pattern for Excel files. By default it is "*.xlsx", however the tool support all formats which are supported by the underlying library [sheetjs](https://www.npmjs.com/package/xlsx). The param can be a string or an array, e.g. `["*.xlsx", "*.xml"]`.
 - `inMemory` - don't create mocks on the disk (in `destDir`), instead stash them in memory and write only the bundle file.
+  - CLI equivalent: `--in-mem`
 
 ## Build
 
@@ -73,8 +74,8 @@ The project uses vitest framework. Exec tests with `npm run test`.
 
 ## File Structure
 
-- the tool is invoke via `src/index.js`
-- there is a standalone sub-tool `src/validator.js` to validate single text bundle format
+- the tool is invoked via `src/index.ts`
+- there is a standalone sub-tool `src/validator.ts` to validate single text bundle format
 - `src/lib/xlreader` contains components related Excel reading
 - `src/lib/utils` contains low level componentsm like bundler, logger, single text bundle format logic, etc
 - `src/lib/proc` contains high level components that reuse utils and process excel files, includes and separate excel sheets

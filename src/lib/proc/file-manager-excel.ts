@@ -47,10 +47,10 @@ export default class ExcelFileManager extends FileManagerBase {
     #pattern: string[];
     #destFs: WritableFsLike;
 
-    get fileHashMap(): Map<string, string | undefined> { return this.#fileHashMap; }
-    get mockHashMap(): Map<string, string | undefined> { return this.#mockHashMap; }
-    get testObjectList(): string[] { return [...this.#mockList]; }
-    get srcDirs(): string[] { return [this.#srcDir]; }
+    get fileHashMap(): Map<string, string | undefined> { return this.#fileHashMap }
+    get mockHashMap(): Map<string, string | undefined> { return this.#mockHashMap }
+    get testObjectList(): string[] { return [...this.#mockList] }
+    get srcDirs(): string[] { return [this.#srcDir] }
 
     constructor({ srcDir, destDir, withHashing = false, mockExtractor, mockProcessor, pattern, memfs }: ExcelFileManagerParams) {
         assert(typeof destDir === 'string' && typeof mockExtractor === 'function' && typeof mockProcessor === 'function');

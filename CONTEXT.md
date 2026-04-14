@@ -156,6 +156,7 @@ Why:
 The repo now includes:
 
 - `typescript`
+- `typescript-eslint`
 - `@types/node`
 - `@types/lodash-es`
 - `@types/picomatch`
@@ -165,6 +166,9 @@ Relevant scripts:
 
 - `npm test`
 - `npm run typecheck`
+- `npm run lint`
+- `npm run verify`
+- `npm run smoke:runtime`
 - `npm run build:bundle`
 - `npm run build:bin`
 
@@ -183,17 +187,21 @@ Why this matters:
 
 - strict checking is enabled for TS
 - JS is still allowed so the repo can be migrated incrementally
-- explicit `.ts` imports are currently part of the staged migration approach
+- explicit `.ts` imports are intentionally retained for the active runtime strategy: direct Node execution from TypeScript sources plus esbuild bundling from the same graph
 
 ## Verification Status
 
 Latest verified commands and outcomes:
 
+- `npm run lint` -> passed
 - `npm run typecheck` -> passed
 - `npm test` -> passed
+- `npm run build:bundle` -> passed
+- `npm run smoke:runtime` -> passed
+- `/home/node/.bun/bin/bun src/index.ts -c test-sample/.mock-config.json` -> passed
 - previous session verification also passed:
   - `node src/index.ts -c test-sample/.mock-config.json`
-  - `npm run build:bundle`
+  - `node src/index.ts -c test-sample/.mock-config.json --bundle-format text --in-mem -d \"\" -z ../_dest/build.txt`
 
 Current known green test count:
 
@@ -227,21 +235,28 @@ If the next task is about tests, inspect:
 
 These are intentional and should not be “cleaned up” casually:
 
-- explicit `.ts` import specifiers are allowed by `tsconfig.json`
+- explicit `.ts` import specifiers are intentionally retained because both direct `node src/index.ts` execution and `esbuild` bundle generation use the same TypeScript source graph
 - bundler-related tests use `@ts-nocheck`
 - tests remain in Vitest and still use mock-heavy patterns with memfs and Node module mocking
+- Bun is installed locally at `/home/node/.bun/bin/bun`, but it is not currently on `PATH`; the basic CLI smoke path has been verified using that absolute path
 
 ## Good Next Steps
 
 The substantive migration is complete. The next work should be cleanup-oriented, not broad conversion.
 
-Recommended next steps:
+Completed in the current follow-through pass:
 
-1. Do a focused Phase 4 pass for Bun/packaging readiness.
-2. Review whether explicit `.ts` import specifiers should remain long-term or be replaced by a cleaner runtime/build strategy.
-3. Decide whether to add lint coverage or TS-specific ESLint rules for the new `.ts` files.
-4. Review remaining transitional compatibility exports and names.
-5. If desired, revisit the two `@ts-nocheck` bundler tests only with a dedicated helper for typed fake streams. Do not push those casts into production code.
+1. Added verification scripts for the TypeScript runtime and bundle path.
+2. Kept explicit `.ts` imports as the current intentional runtime/build strategy.
+3. Added TypeScript-aware ESLint coverage for `src/**/*.ts`.
+4. Cleaned the remaining parser-name transition and refreshed stale docs.
+
+Remaining follow-up ideas:
+
+1. If Bun should become a standard runtime in this workspace or CI, add it to `PATH` and wire a Bun smoke command into the regular verification flow.
+2. Decide later whether the project should stay source-executed from `.ts` or move to an emitted-JS runtime.
+3. Wire `npm run verify` and `npm run lint` into CI if stronger gatekeeping is wanted.
+4. Revisit the bundler test typing separately if stricter test typing becomes worth the boilerplate.
 
 ## Recovery Checklist
 
@@ -259,8 +274,8 @@ If the session breaks, resume with this sequence:
 
 ## Last Completed User-Facing Result
 
-The last completed deliverable before writing this file:
+The last completed deliverables:
 
 - all remaining JS tests in `src/` were converted to TS
-- `npm run typecheck` passed
-- `npm test` passed with 83/83 tests green
+- `--in-mem` was added as the CLI flag for `inMemory`
+- verification scripts and TypeScript-aware lint coverage were added

@@ -42,7 +42,7 @@ export class TextBundler {
 
         readStream.setEncoding('utf-8');
         await new Promise<void>((resolve, reject) => {
-            readStream.on('data', (chunk: string) => { data += chunk; });
+            readStream.on('data', (chunk: string) => { data += chunk });
             readStream.on('end', resolve);
             readStream.on('error', reject);
             readStream.resume();

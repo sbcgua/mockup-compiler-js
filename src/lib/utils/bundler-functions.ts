@@ -24,8 +24,8 @@ function generatorFromArray(array: BundleItem[]): BundleItemGenerator {
 
 export async function buildZipBundle(itemGenerator: BundleItemGenerator, ostr: BundleOutputStream): Promise<void> {
     const archive = archiver('zip', { zlib: { level: 9 } });
-    archive.on('warning', (err: Error) => { throw Object.assign(err, { _loc: 'zipFiles warning' }); });
-    archive.on('error', (err: Error) => { throw Object.assign(err, { _loc: 'zipFiles error' }); });
+    archive.on('warning', (err: Error) => { throw Object.assign(err, { _loc: 'zipFiles warning' }) });
+    archive.on('error', (err: Error) => { throw Object.assign(err, { _loc: 'zipFiles error' }) });
     archive.pipe(ostr);
 
     for (const { name, readStream } of itemGenerator()) {
@@ -53,7 +53,7 @@ export async function buildTextZipBundle(itemGenerator: BundleItemGenerator, ost
     let textBundleSize = 0;
     const passThroughStream = new PassThrough();
 
-    passThroughStream.on('data', (chunk: Buffer) => { textBundleSize += chunk.length; });
+    passThroughStream.on('data', (chunk: Buffer) => { textBundleSize += chunk.length });
     passThroughStream.on('end', () => {
         if (passThroughStream.errored) {
             console.error(passThroughStream.errored);

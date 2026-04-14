@@ -113,4 +113,5 @@ mockup-compiler -c ./my-mock-config.json
   - `text` (see [doc/text-bundle-format.md](doc/text-bundle-format.md))
   - `text+zip` - creates a text bundle and then zips it (decreases travel time to abap backend, use when the bundle becomes large and slow)
 - `pattern` - is a glob pattern for Excel files. By default it is "*.xlsx", however the tool support all formats which are supported by the underlying library [sheetjs](https://www.npmjs.com/package/xlsx). The param can be a string or an array, e.g. `["*.xlsx", "*.xml"]`.
-- `inMemory` - don't create mocks on the disk (in `destDir`), instead stash them in memory and write only the bundle file. Beware of potential memory usage if the data volume is large.
+- `inMemory` - don't create mocks on the disk (in `destDir`), instead stash them in memory and write only the bundle file. Beware of potential memory usage if the data volume is large. (in CLI, use `--in-mem`).
+  - CLI equivalent: `--in-mem`

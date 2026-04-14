@@ -38,8 +38,8 @@ export default class MetaCalculator implements MetaCalculatorContract {
         this.#metaFilePath = path.join(destDir, this.metaSrcFileName);
     }
 
-    get metaSrcFileName(): string { return '.meta/src_files'; }
-    get metaDirName(): string { return '.meta'; }
+    get metaSrcFileName(): string { return '.meta/src_files' }
+    get metaDirName(): string { return '.meta' }
 
     buildAndSave(): Promise<void> {
         if (!this.#destFs.existsSync(this.#metaDir)) this.#destFs.mkdirSync(this.#metaDir);

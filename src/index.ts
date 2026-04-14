@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { getAsset, isSea } from 'node:sea';
 import { Command } from 'commander';
 import chalk from 'chalk';
 
@@ -19,11 +19,26 @@ type AppError = Error & {
     _loc?: string;
 };
 
+type SeaModule = {
+    getAsset(key: string, encoding: string): string;
+    isSea(): boolean;
+};
+
+function loadSeaModule(): SeaModule | null {
+    try {
+        const require = createRequire(import.meta.url);
+        return require('node:sea') as SeaModule;
+    } catch {
+        return null;
+    }
+}
+
 function readVersion(): string {
     try {
         let packageBlob: string | Buffer;
-        if (isSea()) {
-            packageBlob = getAsset('package.json', 'utf-8');
+        const sea = loadSeaModule();
+        if (sea?.isSea()) {
+            packageBlob = sea.getAsset('package.json', 'utf-8');
         } else {
             const indexFileDir = path.dirname(fileURLToPath(import.meta.url));
             try {
