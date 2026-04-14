@@ -48,6 +48,8 @@ P.S. One even more experimental features is `text+zip` format - it creates a tex
 
 The default approach is to install it as an NPM package. It assumes you have [nodejs](https://nodejs.org/) installed.
 
+Important: the current runtime executes directly from `.ts` sources, so Node.js v24+ is required.
+
 ```bash
 npm install -g mockup-compiler-js
 ```

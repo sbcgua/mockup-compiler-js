@@ -254,9 +254,11 @@ Completed in the current follow-through pass:
 Remaining follow-up ideas:
 
 1. If Bun should become a standard runtime in this workspace or CI, add it to `PATH` and wire a Bun smoke command into the regular verification flow.
-2. Decide later whether the project should stay source-executed from `.ts` or move to an emitted-JS runtime.
-3. Wire `npm run verify` and `npm run lint` into CI if stronger gatekeeping is wanted.
-4. Revisit the bundler test typing separately if stricter test typing becomes worth the boilerplate.
+
+Deferred by explicit decision:
+
+- Keep the current direct `.ts` execution model for now. Do not introduce an emitted-JS runtime unless packaging, deployment, or tool compatibility starts requiring it.
+- Do not revisit the bundler test typing for now. The two `@ts-nocheck` bundler suites are an accepted exception because the stricter alternative would add low-value mock boilerplate without improving functional confidence enough to justify the cost.
 
 ## Recovery Checklist
 
