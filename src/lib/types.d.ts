@@ -23,6 +23,7 @@ export interface CliArgs {
     bundlePath?: string;
     bundle?: boolean;
     include?: string;
+    inMem?: boolean;
     eol?: string;
     withMeta?: boolean;
     verbose?: boolean;
@@ -70,14 +71,14 @@ export interface BaseValidatedConfig {
 }
 
 export interface DiskAppConfig extends BaseValidatedConfig {
-    destDir: string;
     inMemory?: false | undefined;
+    destDir: string;
 }
 
 export interface InMemoryAppConfig extends BaseValidatedConfig {
     inMemory: true;
     bundlePath: string;
-    destDir?: undefined;
+    destDir?: undefined; // destDir is not used in inMemory mode, so it must be undefined, but then forced to be root ('/') in the app constructor
 }
 
 export type AppConfig = DiskAppConfig | InMemoryAppConfig;

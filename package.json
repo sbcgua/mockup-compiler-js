@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit",
     "testrun": "node src/index.ts -c test-sample/.mock-config.json",
     "testrun:t": "node src/index.ts -c test-sample/.mock-config.json --bundle-format text -z ../_dest/build.txt",
+    "testrun:tm": "node src/index.ts -c test-sample/.mock-config.json --bundle-format text --in-mem -d \"\" -z ../_dest/build.txt",
     "testrun:tz": "node src/index.ts -c test-sample/.mock-config.json --bundle-format text+zip -z ../_dest/build-tz.zip",
     "lint": "eslint",
     "build:bin": "bash bin/build-sea.sh",

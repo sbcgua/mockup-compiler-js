@@ -251,7 +251,10 @@ If the session breaks, resume with this sequence:
 2. Run `git status --short` to confirm workspace state.
 3. Run `npm run typecheck`.
 4. Run `npm test`.
-5. If runtime validation is needed, run `node src/index.ts -c test-sample/.mock-config.json`.
+5. If runtime validation is needed
+  - delete `_dest/build.zip` and `_dest/build.txt`.
+  - run `node src/index.ts -c test-sample/.mock-config.json` expect `_dest/build.zip` to appear.
+  - run `node src/index.ts -c test-sample/.mock-config.json --bundle-format text --in-mem -d \"\" -z ../_dest/build.txt` expect `_dest/build.txt` to appear.
 6. Continue from the “Good Next Steps” section unless the user gives a more specific task.
 
 ## Last Completed User-Facing Result

@@ -14,6 +14,7 @@ export const argOptions: Array<[string, string]> = [
     ['-e, --eol <eolchar>', 'end-of-line char: lf or crlf'],
     ['-m, --with-meta', 'calculate meta file (with source file hashes)'],
     ['-v, --verbose', 'verbose errors'],
+    ['--in-mem', 'write mocks in memory and emit only the bundle output'],
     ['--bundle-format <format>', 'bundle format: text or zip (default) or text+zip'],
 ];
 
@@ -29,6 +30,7 @@ export function argsToConfig(args: CliArgs): ConfigOverloads {
         bundlePath: args.bundlePath,
         noBundle: args.bundle === false,
         includes: args.include ? [args.include] : undefined,
+        inMemory: args.inMem,
         eol: args.eol,
         quiet: args.quiet,
         withMeta: args.withMeta,
