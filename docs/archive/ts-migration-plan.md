@@ -1,3 +1,11 @@
+# Archived Document
+
+Historical reference for the completed TypeScript migration.
+
+This is not an active plan for ongoing work.
+
+---
+
 # TypeScript Migration Plan
 
 ## Summary

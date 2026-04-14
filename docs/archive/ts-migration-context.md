@@ -1,3 +1,11 @@
+# Archived Document
+
+Historical reference for the completed TypeScript migration.
+
+This is not an active context file for ongoing work.
+
+---
+
 # Context
 
 ## Current Task
@@ -238,7 +246,7 @@ These are intentional and should not be “cleaned up” casually:
 - explicit `.ts` import specifiers are intentionally retained because both direct `node src/index.ts` execution and `esbuild` bundle generation use the same TypeScript source graph
 - bundler-related tests use `@ts-nocheck`
 - tests remain in Vitest and still use mock-heavy patterns with memfs and Node module mocking
-- Bun is installed locally at `/home/node/.bun/bin/bun`, but it is not currently on `PATH`; the basic CLI smoke path has been verified using that absolute path
+- if Bun is not currently on `PATH`, check if it is installed locally at `/home/node/.bun/bin/bun`
 
 ## Good Next Steps
 
@@ -273,11 +281,3 @@ If the session breaks, resume with this sequence:
   - run `node src/index.ts -c test-sample/.mock-config.json` expect `_dest/build.zip` to appear.
   - run `node src/index.ts -c test-sample/.mock-config.json --bundle-format text --in-mem -d \"\" -z ../_dest/build.txt` expect `_dest/build.txt` to appear.
 6. Continue from the “Good Next Steps” section unless the user gives a more specific task.
-
-## Last Completed User-Facing Result
-
-The last completed deliverables:
-
-- all remaining JS tests in `src/` were converted to TS
-- `--in-mem` was added as the CLI flag for `inMemory`
-- verification scripts and TypeScript-aware lint coverage were added
