@@ -1,4 +1,4 @@
-import { test, expect, vi, describe } from 'vitest';
+import { test, expect, vi, describe } from 'bun:test';
 import Logger from './logger.ts';
 
 describe('Logger', () => {

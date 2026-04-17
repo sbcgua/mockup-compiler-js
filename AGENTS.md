@@ -65,12 +65,12 @@ The setting can be given in a config. By default the programs looks for the conf
 
 In addition to regular js execution, the tool can be bundled in a single execution application:
 
-- `npm run build:bundle` - to build single js bundle
-- `npm run build:bin` - to build SEA from it
+- `bun run build:bundle` - to build single js bundle
+- `bun run build:bin` - to build Bun standalone executables
 
 ## Testing
 
-The project uses vitest framework. Exec tests with `npm run test`.
+The project uses Bun test runner. Exec tests with `bun test`.
 
 ## File Structure
 

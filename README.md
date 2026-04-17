@@ -46,15 +46,15 @@ P.S. One even more experimental features is `text+zip` format - it creates a tex
 
 ## Installation
 
-The default approach is to install it as an NPM package. It assumes you have [nodejs](https://nodejs.org/) installed.
+The default approach is to install it as a Bun package. It assumes you have [Bun](https://bun.sh/) installed.
 
-Important: the current runtime executes directly from `.ts` sources, so Node.js v24+ is required.
+Important: the current runtime executes directly from `.ts` sources, so Bun v1.3+ is recommended. Direct source execution under Node is still kept as a compatibility path.
 
 ```bash
-npm install -g mockup-compiler-js
+bun install -g mockup-compiler-js
 ```
 
-Alternatively, you can download a binary from [Releases](https://github.com/sbcgua/mockup-compiler-js/releases). The binary is a [nodejs sea application](https://nodejs.org/api/single-executable-applications.html), thus, a nodejs binary with the embeded source code in it. The releases are not signed, you can review the build script in [bin/build-sea.sh](bin/build-sea.sh) and build it yourself locally if you prefer (`npm run build:bin`). If you have any improvement advises for the binary releases, please post to issues.
+Alternatively, you can download a binary from [Releases](https://github.com/sbcgua/mockup-compiler-js/releases). The active binary build now uses Bun standalone executables, and you can build them locally with `bun run build:bin`. The older Node SEA flow is archived under [docs/archive/node-sea](docs/archive/node-sea) for compatibility reference.
 
 ## Running
 

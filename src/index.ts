@@ -1,9 +1,5 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
-import { readFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
 import { Command } from 'commander';
 import chalk from 'chalk';
 
@@ -11,6 +7,7 @@ import App from './lib/app.ts';
 import { argOptions, argsToConfig } from './lib/args.ts';
 import { readConfig } from './lib/config.ts';
 import type { AppRuntimeConfig, CliArgs } from './lib/types';
+import { readPackageInfo } from './lib/runtime/package-info.ts';
 import Logger from './lib/utils/logger.ts';
 
 type AppError = Error & {
@@ -19,36 +16,9 @@ type AppError = Error & {
     _loc?: string;
 };
 
-type SeaModule = {
-    getAsset(key: string, encoding: string): string;
-    isSea(): boolean;
-};
-
-function loadSeaModule(): SeaModule | null {
+async function readVersion(): Promise<string> {
     try {
-        const require = createRequire(import.meta.url ?? process.cwd());
-        return require('node:sea') as SeaModule;
-    } catch {
-        return null;
-    }
-}
-
-function readVersion(): string {
-    try {
-        let packageBlob: string | Buffer;
-        const sea = loadSeaModule();
-        if (sea?.isSea()) {
-            packageBlob = sea.getAsset('package.json', 'utf-8');
-        } else {
-            const indexFileDir = path.dirname(fileURLToPath(import.meta.url));
-            try {
-                packageBlob = readFileSync(path.join(indexFileDir, './package.json'));
-            } catch {
-                packageBlob = readFileSync(path.join(indexFileDir, '../package.json'));
-            }
-        }
-
-        const packageInfo = JSON.parse(packageBlob.toString()) as { name?: string; version?: string };
+        const packageInfo = await readPackageInfo();
         if (packageInfo.name !== 'mockup-compiler-js' || typeof packageInfo.version !== 'string') {
             throw new Error('Invalid package.json');
         }
@@ -82,18 +52,22 @@ async function main(args: CliArgs): Promise<void> {
     }
 }
 
-const commander = new Command();
-for (const [flags, description] of argOptions) {
-    commander.option(flags, description);
-}
-commander.version(readVersion());
-
-process.on('unhandledRejection', (reason) => {
-    if (!commander.opts().quiet) {
-        console.error('[CRASH] unhandledRejection:', reason);
+async function bootstrap(): Promise<void> {
+    const commander = new Command();
+    for (const [flags, description] of argOptions) {
+        commander.option(flags, description);
     }
-    process.exit(1);
-});
+    commander.version(await readVersion());
 
-commander.parse(process.argv);
-void main(commander.opts<CliArgs>());
+    process.on('unhandledRejection', (reason) => {
+        if (!commander.opts().quiet) {
+            console.error('[CRASH] unhandledRejection:', reason);
+        }
+        process.exit(1);
+    });
+
+    commander.parse(process.argv);
+    await main(commander.opts<CliArgs>());
+}
+
+void bootstrap();

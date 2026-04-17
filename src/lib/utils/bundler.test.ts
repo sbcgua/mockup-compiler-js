@@ -1,29 +1,30 @@
 // @ts-nocheck
-import { test, expect, vi, describe, beforeEach, afterEach } from 'vitest';
-import { Bundler } from './bundler.ts';
+import { test, expect, mock, vi, describe, beforeEach, afterEach } from 'bun:test';
 import { Readable } from 'node:stream';
-import fs from 'node:fs';
-import path from 'node:path';
 
-// Mock fs and path modules
-vi.mock('node:fs');
-vi.mock('node:path');
+const mockFs = {
+    existsSync: vi.fn(),
+    rmSync: vi.fn(),
+    createWriteStream: vi.fn(),
+    createReadStream: vi.fn(),
+};
+const mockPath = {
+    join: vi.fn(),
+};
+
+mock.module('node:fs', () => ({ default: mockFs, ...mockFs }));
+mock.module('node:path', () => ({ default: mockPath, ...mockPath }));
+const { Bundler } = await import('./bundler.ts');
 
 describe('Bundler', () => {
     let mockWriteStream;
     let mockReadStream;
     let mockMemfs;
     let bundlerConfig;
-    let mockFs;
-    let mockPath;
 
     beforeEach(() => {
         // Reset all mocks
         vi.clearAllMocks();
-
-        // Get mocked modules
-        mockFs = vi.mocked(fs);
-        mockPath = vi.mocked(path);
 
         // Setup mockPath to work correctly
         mockPath.join.mockImplementation((...args) => args.join('/'));

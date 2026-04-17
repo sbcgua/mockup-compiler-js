@@ -1,22 +1,17 @@
 // @ts-nocheck
-import { test, expect, vi, describe, beforeEach, afterEach } from 'vitest';
-import { buildZipBundle, buildTextBundle, buildTextZipBundle } from './bundler-functions.ts';
-import { Readable, PassThrough } from 'node:stream';
-import archiver from 'archiver';
-import { TextBundler } from './mc-text-format.ts';
+import { test, expect, mock, vi, describe, beforeEach, afterEach } from 'bun:test';
+import { Readable } from 'node:stream';
 
-// Mock dependencies
-vi.mock('archiver');
-vi.mock('./mc-text-format.ts');
-vi.mock('node:stream', () => ({
-    Readable: vi.fn(),
-    PassThrough: vi.fn()
-}));
+const archiverMock = vi.fn();
+
+mock.module('archiver', () => ({ default: archiverMock }));
+
+const { buildZipBundle, buildTextBundle, buildTextZipBundle } = await import('./bundler-functions.ts');
 
 describe('bundler-functions', () => {
     let mockArchive;
-    let mockTextBundler;
     let mockOutputStream;
+    let outputText;
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -28,21 +23,17 @@ describe('bundler-functions', () => {
             append: vi.fn(),
             finalize: vi.fn().mockResolvedValue(undefined)
         };
-        vi.mocked(archiver).mockReturnValue(mockArchive);
-
-        // Mock TextBundler
-        mockTextBundler = {
-            append: vi.fn().mockResolvedValue(undefined),
-            end: vi.fn()
-        };
-        vi.mocked(TextBundler).mockImplementation(() => mockTextBundler);
+        archiverMock.mockReturnValue(mockArchive);
 
         // Mock output stream
         mockOutputStream = {
-            write: vi.fn(),
+            write: vi.fn((chunk) => {
+                outputText += chunk;
+            }),
             end: vi.fn(),
             destroy: vi.fn()
         };
+        outputText = '';
 
         // Console spy to suppress/test console output
         vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -51,6 +42,7 @@ describe('bundler-functions', () => {
 
     afterEach(() => {
         vi.restoreAllMocks();
+        mock.restore();
     });
 
     describe('buildZipBundle', () => {
@@ -72,7 +64,7 @@ describe('bundler-functions', () => {
 
             await buildZipBundle(itemGenerator, mockOutputStream);
 
-            expect(archiver).toHaveBeenCalledWith('zip', { zlib: { level: 9 } });
+            expect(archiverMock).toHaveBeenCalledWith('zip', { zlib: { level: 9 } });
             expect(mockArchive.pipe).toHaveBeenCalledWith(mockOutputStream);
             expect(mockArchive.append).toHaveBeenCalledWith(mockReadStream, { name: 'test.txt' });
             expect(mockArchive.finalize).toHaveBeenCalled();
@@ -85,7 +77,7 @@ describe('bundler-functions', () => {
 
             await buildZipBundle(itemGenerator, mockOutputStream);
 
-            expect(archiver).toHaveBeenCalledWith('zip', { zlib: { level: 9 } });
+            expect(archiverMock).toHaveBeenCalledWith('zip', { zlib: { level: 9 } });
             expect(mockArchive.append).not.toHaveBeenCalled();
             expect(mockArchive.finalize).toHaveBeenCalled();
         });
@@ -106,9 +98,9 @@ describe('bundler-functions', () => {
 
             await buildTextBundle(itemGenerator, mockOutputStream);
 
-            expect(TextBundler).toHaveBeenCalledWith(mockOutputStream);
-            expect(mockTextBundler.append).toHaveBeenCalledWith('test.txt', mockReadStream);
-            expect(mockTextBundler.end).toHaveBeenCalled();
+            expect(mockOutputStream.end).toHaveBeenCalled();
+            expect(outputText).toContain('!!FILE test.txt text 1');
+            expect(outputText).toContain('test content');
         });
 
         test('should handle empty generator', async () => {
@@ -118,9 +110,8 @@ describe('bundler-functions', () => {
 
             await buildTextBundle(itemGenerator, mockOutputStream);
 
-            expect(TextBundler).toHaveBeenCalledWith(mockOutputStream);
-            expect(mockTextBundler.append).not.toHaveBeenCalled();
-            expect(mockTextBundler.end).toHaveBeenCalled();
+            expect(mockOutputStream.end).toHaveBeenCalled();
+            expect(outputText).toBe('\n!!FILE-COUNT 0');
         });
     });
 
@@ -129,24 +120,6 @@ describe('bundler-functions', () => {
             const itemGenerator = function* () {
                 yield { name: 'test.txt', readStream: new Readable({ read() {} }) };
             };
-
-            // Mock PassThrough constructor
-            const mockPassThrough = {
-                on: vi.fn((event, callback) => {
-                    if (event === 'resume') {
-                        setImmediate(callback);
-                    } else if (event === 'end') {
-                        setImmediate(callback);
-                    }
-                }),
-                pipe: vi.fn(),
-                resume: vi.fn(),
-                write: vi.fn(),
-                end: vi.fn(),
-                emit: vi.fn()
-            };
-
-            vi.mocked(PassThrough).mockImplementation(() => mockPassThrough);
 
             // Mock archiver.append to simulate stream ending
             mockArchive.append.mockImplementation((stream) => {
@@ -157,9 +130,9 @@ describe('bundler-functions', () => {
 
             await buildTextZipBundle(itemGenerator, mockOutputStream);
 
-            expect(archiver).toHaveBeenCalledWith('zip', { zlib: { level: 9 } });
+            expect(archiverMock).toHaveBeenCalledWith('zip', { zlib: { level: 9 } });
             expect(mockArchive.append).toHaveBeenCalledWith(
-                mockPassThrough,
+                expect.anything(),
                 { name: 'bundle.txt' }
             );
         });

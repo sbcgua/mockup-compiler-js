@@ -13,12 +13,12 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "types": ["node"]
+    "types": ["node", "bun"]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.d.ts",
-    "vite.config.ts"
+    "scripts/**/*.ts"
   ],
   "exclude": [
     "_build",

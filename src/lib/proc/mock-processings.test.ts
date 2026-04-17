@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { parseWorkbookIntoMocks, createMockProcessor } from './mock-processings.ts';
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe } from 'bun:test';
 
 describe('parseWorkbookIntoMocks (include/exclude sheets)', () => {
 

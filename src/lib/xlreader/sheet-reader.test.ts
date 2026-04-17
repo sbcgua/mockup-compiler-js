@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { sheetToJson } from './sheet-reader.ts';
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe } from 'bun:test';
 import type { SheetCellValue } from '../types';
 
 const MOCK = {

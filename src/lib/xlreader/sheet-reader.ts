@@ -1,5 +1,8 @@
-import { utils as XLSXUtils, type CellObject, type Range, type WorkSheet } from 'xlsx';
+import * as XLSX from 'xlsx';
+import type { CellObject, Range, WorkSheet } from 'xlsx';
 import type { MockRow, MockTable, SheetCellValue } from '../types';
+
+const XLSXUtils = XLSX.utils;
 
 const EXCEL_DATE_MULT = 24 * 60 * 60 * 1000;
 const EXCEL_DATE_EPOCH = Date.UTC(1899, 11, 30);

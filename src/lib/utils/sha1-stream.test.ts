@@ -1,6 +1,6 @@
 import SimpleSha1Stream from './sha1-stream.ts';
 import { PassThrough } from 'stream';
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe } from 'bun:test';
 
 describe('SimpleSha1Stream', () => {
     test('should calculate sha1', () => {

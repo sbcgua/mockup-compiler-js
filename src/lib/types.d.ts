@@ -2,9 +2,18 @@ import type EventEmitter from 'node:events';
 import type { Readable, Writable } from 'node:stream';
 import type { WorkBook, WorkSheet } from 'xlsx';
 
+declare global {
+    const __BUNDLED_PACKAGE_INFO__: string | undefined;
+}
+
 export type EolMode = 'lf' | 'crlf';
 export type BundleFormat = 'zip' | 'text' | 'text+zip';
 export type HashValue = string | undefined;
+
+export interface PackageInfo {
+    name?: string;
+    version?: string;
+}
 
 export interface LoggerContract {
     quiet?: boolean;
