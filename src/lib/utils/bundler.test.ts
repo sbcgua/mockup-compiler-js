@@ -66,6 +66,7 @@ describe('Bundler', () => {
 
     afterEach(() => {
         vi.clearAllMocks();
+        mock.restore();
     });
 
     describe('constructor', () => {
