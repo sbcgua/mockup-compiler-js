@@ -1,3 +1,7 @@
 [test]
 root = "."
 coverageSkipTestFiles = true
+
+[install]
+# Enforce a 7-day cooldown (in seconds)
+minimumReleaseAge = 604800
