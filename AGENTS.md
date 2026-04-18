@@ -61,6 +61,8 @@ The setting can be given in a config. By default the programs looks for the conf
 - `inMemory` - don't create mocks on the disk (in `destDir`), instead stash them in memory and write only the bundle file.
   - CLI equivalent: `--in-mem`
 
+The main CLI also provides `validate <file>` to check a generated text bundle.
+
 ## Build
 
 In addition to regular js execution, the tool can be bundled in a single execution application:
@@ -75,9 +77,8 @@ The project uses Bun test runner. Exec tests with `bun test`.
 ## File Structure
 
 - the tool is invoked via `src/cli/index.ts`
-- there is a standalone sub-tool `src/cli/validator.ts` to validate single text bundle format
 - `src/excel` contains components related Excel reading
 - `src/common` contains low level shared helpers, like logger and tab formatting
-- `src/bundle` contains bundle creation and single text bundle format logic
+- `src/bundle` contains bundle creation, text bundle format logic, and bundle validation
 - `src/processing` contains high level processing components for excel files, includes and meta handling
 - `src/app` contains runtime orchestration, like the app runner and watcher

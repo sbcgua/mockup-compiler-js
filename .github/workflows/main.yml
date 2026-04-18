@@ -36,6 +36,7 @@ jobs:
           test `cat _dest/.meta/src_files | wc -l` = "6" && echo src_files line count OK
           test -f _dest/build.txt && echo build.txt OK
           test `cat _dest/build.txt | wc -l` = "29" && echo build.txt line count OK
+          bun src/cli/index.ts validate _dest/build.txt
       - name: Testrun with text+zip bundle
         run: |
           bun run testrun:tz
