@@ -3,14 +3,14 @@ import chalk from 'chalk';
 import { fs as memfs, vol as memVol } from 'memfs';
 
 import Watcher from './watcher.ts';
-import MetaCalculator from './proc/meta.ts';
-import ExcelFileManager from './proc/file-manager-excel.ts';
-import IncludeFileManager from './proc/file-manager-includes.ts';
-import { createMockProcessor, parseWorkbookIntoMocks } from './proc/mock-processings.ts';
-import { Bundler } from './utils/bundler.ts';
-import { buildZipBundle, buildTextBundle, buildTextZipBundle } from './utils/bundler-functions.ts';
-import { collectOutputFileList } from './utils/output-file-list.ts';
-import type { AppRuntimeConfig, BundleFormat, BundlerFunction, ReadableFsLike, WritableFsLike } from './types';
+import MetaCalculator from '../processing/meta.ts';
+import ExcelFileManager from '../processing/file-manager-excel.ts';
+import IncludeFileManager from '../processing/file-manager-includes.ts';
+import { createMockProcessor, parseWorkbookIntoMocks } from '../processing/mock-processings.ts';
+import { Bundler } from '../bundle/bundler.ts';
+import { buildZipBundle, buildTextBundle, buildTextZipBundle } from '../bundle/bundler-functions.ts';
+import { collectOutputFileList } from './output-file-list.ts';
+import type { AppRuntimeConfig, BundleFormat, BundlerFunction, ReadableFsLike, WritableFsLike } from '../types/index';
 
 type SetupExcelFileManagerParams = {
     eol: AppRuntimeConfig['eol'];

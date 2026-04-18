@@ -1,9 +1,9 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { sortBy } from 'lodash-es';
-import { stringifyWithTabs } from '../utils/tabbed.ts';
-import { slash } from '../utils/fs-utils.ts';
-import type { EolMode, FileManagerContract, MetaCalculatorContract, WritableFsLike } from '../types';
+import { stringifyWithTabs } from '../common/tabbed.ts';
+import { slash } from '../common/fs-utils.ts';
+import type { EolMode, FileManagerContract, MetaCalculatorContract, WritableFsLike } from '../types/index';
 
 type MetaRow = {
     src_file: string;

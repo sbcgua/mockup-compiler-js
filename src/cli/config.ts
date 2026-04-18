@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { AppConfig, ConfigOverloads, RawConfig } from './types';
+import type { AppConfig, ConfigOverloads, RawConfig } from '../types/index';
 
 const CONFIG_DEFAULT_PATH = './.mock-config.json';
 

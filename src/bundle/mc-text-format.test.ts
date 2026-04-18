@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'bun:test';
 import { Readable } from 'node:stream';
 import { TextBundler } from './mc-text-format.ts';
-import type { BundleOutputStream } from '../types';
+import type { BundleOutputStream } from '../types/index';
 
 describe('mc-text-format: buildTextBundle', () => {
     test('should bundle files into one output file', async () => {

@@ -1,9 +1,9 @@
 import fs, { type FSWatcher } from 'node:fs';
 import path from 'node:path';
 import chalk from 'chalk';
-import { slash, findCommonPath } from './utils/fs-utils.ts';
-import { collectOutputFileList } from './utils/output-file-list.ts';
-import type { BundlerContract, FileManagerContract, LoggerContract, MetaCalculatorContract } from './types';
+import { slash, findCommonPath } from '../common/fs-utils.ts';
+import { collectOutputFileList } from './output-file-list.ts';
+import type { BundlerContract, FileManagerContract, LoggerContract, MetaCalculatorContract } from '../types/index';
 
 type WatcherParams = {
     logger: LoggerContract;

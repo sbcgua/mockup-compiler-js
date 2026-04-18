@@ -1,6 +1,6 @@
 import { fs, vol } from 'memfs';
 import { mock, vi, test, expect, describe, beforeEach } from 'bun:test';
-import type { MockExtractor, MockProcessor, WorkbookMocks } from '../types';
+import type { MockExtractor, MockProcessor, WorkbookMocks } from '../types/index';
 
 const actualXlsx = await import('xlsx');
 

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import type { PackageInfo } from '../types';
+import type { PackageInfo } from '../types/index';
 
 type SeaModule = {
     getAsset(key: string, encoding: string): string;
@@ -30,9 +30,9 @@ function readBundledPackageInfo(): PackageInfo | null {
 function readDiskPackageInfo(): PackageInfo {
     const runtimeFileDir = path.dirname(fileURLToPath(import.meta.url));
     try {
-        return parsePackageInfo(readFileSync(path.join(runtimeFileDir, '../../../package.json')));
+        return parsePackageInfo(readFileSync(path.join(runtimeFileDir, '../../package.json')));
     } catch {
-        return parsePackageInfo(readFileSync(path.join(runtimeFileDir, '../../../../package.json')));
+        return parsePackageInfo(readFileSync(path.join(runtimeFileDir, '../../../package.json')));
     }
 }
 

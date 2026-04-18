@@ -1,6 +1,6 @@
 import * as XLSX from 'xlsx';
 import type { CellObject, Range, WorkSheet } from 'xlsx';
-import type { MockRow, MockTable, SheetCellValue } from '../types';
+import type { MockRow, MockTable, SheetCellValue } from '../types/index';
 
 const XLSXUtils = XLSX.utils;
 

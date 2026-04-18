@@ -1,7 +1,7 @@
 import archiver from 'archiver';
 import { PassThrough } from 'node:stream';
 import { TextBundler } from './mc-text-format.ts';
-import type { BundleItem, BundleItemGenerator, BundleOutputStream } from '../types';
+import type { BundleItem, BundleItemGenerator, BundleOutputStream } from '../types/index';
 
 const DEFAULT_TEXT_BUNDLE_NAME = 'bundle.txt';
 

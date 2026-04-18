@@ -6,7 +6,7 @@ export async function buildBundle(): Promise<void> {
     prepareBuildDir();
 
     const result = await Bun.build({
-        entrypoints: ['src/index.ts'],
+        entrypoints: ['src/cli/index.ts'],
         outdir: buildDir,
         naming: 'bundle.js',
         target: 'bun',

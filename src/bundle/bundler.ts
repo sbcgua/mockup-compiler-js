@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { BundleItemGenerator, BundlerContract, BundlerFunction, ReadableFsLike } from '../types';
+import type { BundleItemGenerator, BundlerContract, BundlerFunction, ReadableFsLike } from '../types/index';
 
 type BundlerParams = {
     sourceDir: string;

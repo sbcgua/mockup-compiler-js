@@ -74,7 +74,7 @@ See also `mockup-compiler --help` for the full list of options.
 If you need to execute the sources directly under Node for compatibility reasons, the validated smoke path is:
 
 ```bash
-node src/index.ts -c test-sample/.mock-config.json
+node src/cli/index.ts -c test-sample/.mock-config.json
 ```
 
 ## Watch mode

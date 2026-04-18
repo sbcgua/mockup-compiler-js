@@ -1,7 +1,7 @@
 import { describe, test, expect, vi, beforeEach } from 'bun:test';
 import fs from 'node:fs';
 import { readConfig, validateConfig } from './config.ts';
-import type { RawConfig } from './types';
+import type { RawConfig } from '../types/index';
 
 describe('Config Module', () => {
     beforeEach(() => {

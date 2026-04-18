@@ -1,4 +1,4 @@
-import type { CliArgs, ConfigOverloads } from './types';
+import type { CliArgs, ConfigOverloads } from '../types/index';
 
 export const argOptions: Array<[string, string]> = [
     ['-b, --no-color', 'suppress colors'],

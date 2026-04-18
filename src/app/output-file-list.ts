@@ -1,4 +1,4 @@
-import type { BundleFileListSources } from '../types';
+import type { BundleFileListSources } from '../types/index';
 
 export function collectOutputFileList({
     excelFileManager,

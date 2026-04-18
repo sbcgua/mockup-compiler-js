@@ -1,4 +1,4 @@
-import type { EolMode, MockRow, MockTable } from '../types';
+import type { EolMode, MockRow, MockTable } from '../types/index';
 
 type TabbedStringifyOptions = {
     eolChar?: EolMode;

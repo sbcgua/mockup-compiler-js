@@ -3,12 +3,12 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 
-import App from './lib/app.ts';
-import { argOptions, argsToConfig } from './lib/args.ts';
-import { readConfig } from './lib/config.ts';
-import type { AppRuntimeConfig, CliArgs } from './lib/types';
-import { readPackageInfo } from './lib/runtime/package-info.ts';
-import Logger from './lib/utils/logger.ts';
+import App from '../app/app.ts';
+import { argOptions, argsToConfig } from './args.ts';
+import { readConfig } from './config.ts';
+import type { AppRuntimeConfig, CliArgs } from '../types/index';
+import { readPackageInfo } from './package-info.ts';
+import Logger from '../common/logger.ts';
 
 type AppError = Error & {
     _file?: string;
