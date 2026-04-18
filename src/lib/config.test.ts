@@ -1,9 +1,7 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, test, expect, vi, beforeEach } from 'bun:test';
 import fs from 'node:fs';
 import { readConfig, validateConfig } from './config.ts';
 import type { RawConfig } from './types';
-
-vi.mock('node:fs');
 
 describe('Config Module', () => {
     beforeEach(() => {
@@ -11,7 +9,6 @@ describe('Config Module', () => {
     });
 
     describe('readConfig', () => {
-        const readFileSyncMock = vi.mocked(fs.readFileSync);
         const mockConfig = {
             sourceDir: '/mock/source',
             destDir: '/mock/dest',
@@ -19,6 +16,7 @@ describe('Config Module', () => {
 
         test('should read and parse config file', () => {
             const configPath = '/mock/config.json';
+            const readFileSyncMock = vi.spyOn(fs, 'readFileSync');
             readFileSyncMock.mockReturnValue(JSON.stringify(mockConfig));
             const config = readConfig(configPath);
             expect(config).toEqual({
@@ -31,6 +29,7 @@ describe('Config Module', () => {
 
         test('should merge overloads with config', () => {
             const configPath = '/mock/config.json';
+            const readFileSyncMock = vi.spyOn(fs, 'readFileSync');
             readFileSyncMock.mockReturnValue(JSON.stringify(mockConfig));
             const overloads = { quiet: true };
             const config = readConfig(configPath, overloads);
@@ -45,6 +44,7 @@ describe('Config Module', () => {
 
         test('should throw error if config file cannot be read', () => {
             const configPath = '/mock/config.json';
+            const readFileSyncMock = vi.spyOn(fs, 'readFileSync');
             readFileSyncMock.mockImplementation(() => { throw new Error('File not found') });
             expect(() => readConfig(configPath)).toThrowError(/Could not read the config file:.*config\.json/);
         });

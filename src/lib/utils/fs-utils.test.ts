@@ -1,5 +1,5 @@
 import { slash, findCommonPath } from './fs-utils.ts';
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe } from 'bun:test';
 
 describe('fs-utils', () => {
 

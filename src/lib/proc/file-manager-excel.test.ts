@@ -1,19 +1,13 @@
-import ExcelFileManager from './file-manager-excel.ts';
-import { vol } from 'memfs';
-import { vi, test, expect, describe, beforeEach } from 'vitest';
+import { fs, vol } from 'memfs';
+import { mock, vi, test, expect, describe, beforeEach } from 'bun:test';
 import type { MockExtractor, MockProcessor, WorkbookMocks } from '../types';
 
-vi.mock('node:fs', async () => {
-    const memfs = await vi.importActual<typeof import('memfs')>('memfs');
-    return { default: memfs.fs, ...memfs.fs };
-});
+const actualXlsx = await import('xlsx');
 
-vi.mock('node:fs/promises', async () => {
-    const memfs = await vi.importActual<typeof import('memfs')>('memfs');
-    return { default: memfs.fs.promises, ...memfs.fs.promises };
-});
-
-vi.mock('xlsx', () => ({ read: (blob: unknown) => blob }));
+mock.module('node:fs', () => ({ default: fs, ...fs }));
+mock.module('node:fs/promises', () => ({ default: fs.promises, ...fs.promises }));
+mock.module('xlsx', () => ({ ...actualXlsx, read: (blob: unknown) => blob }));
+const { default: ExcelFileManager } = await import('./file-manager-excel.ts');
 
 // import { readdirSync } from 'node:fs';
 // import { readFile } from 'node:fs/promises';

@@ -1,4 +1,5 @@
-import { test, expect, describe } from 'vitest';
+// @ts-nocheck
+import { test, expect, describe } from 'bun:test';
 import { extractWorkbookSheets } from './workbook-reader.ts';
 
 describe('extractWorkbookSheets', () => {

@@ -10,7 +10,7 @@ export default [
     ignores: ['_build/*'],
   },
   {
-    files: ['src/**/*.{js,ts}', 'vite.config.ts'],
+    files: ['src/**/*.ts', 'scripts/**/*.ts'],
     plugins: {
         '@stylistic': stylistic,
     },
@@ -33,14 +33,21 @@ export default [
     }
   },
   {
-    files: ['src/**/*.ts', 'vite.config.ts'],
+    files: ['src/**/*.ts', 'scripts/**/*.ts'],
     rules: {
       'no-undef': 'off',
       'no-unused-vars': 'off',
     },
   },
   {
-    files: ['src/lib/utils/bundler.test.ts', 'src/lib/utils/bundler-functions.test.ts'],
+    files: [
+      'src/lib/config.test.ts',
+      'src/lib/proc/mock-processings.test.ts',
+      'src/lib/utils/bundler.test.ts',
+      'src/lib/utils/bundler-functions.test.ts',
+      'src/lib/xlreader/sheet-reader.test.ts',
+      'src/lib/xlreader/workbook-reader.test.ts',
+    ],
     rules: {
       '@typescript-eslint/ban-ts-comment': 'off',
     },

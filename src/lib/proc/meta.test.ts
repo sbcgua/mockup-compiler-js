@@ -1,14 +1,9 @@
 import { fs, vol } from 'memfs';
-import { vi, test, expect, describe, beforeEach } from 'vitest';
-import MetaCalculator from './meta.ts';
+import { mock, test, expect, describe, beforeEach } from 'bun:test';
 import type { FileManagerContract } from '../types';
 
-vi.mock('node:fs', async () => {
-    // https://stackoverflow.com/questions/74841423/how-to-mock-file-system-with-memfs-in-nodejs
-    // https://kschaul.com/til/2024/06/26/mock-fs-with-vitest-and-memfs/
-    const memfs = await vi.importActual<typeof import('memfs')>('memfs');
-    return { default: memfs.fs, ...memfs.fs };
-});
+mock.module('node:fs', () => ({ default: fs, ...fs }));
+const { default: MetaCalculator } = await import('./meta.ts');
 
 describe('MetaCalculator', () => {
     const asFileManager = (value: Partial<FileManagerContract>): FileManagerContract => value as FileManagerContract;

@@ -1,29 +1,84 @@
 // @ts-nocheck
-import { test, expect, vi, describe, beforeEach, afterEach } from 'vitest';
-import { Bundler } from './bundler.ts';
+import { test, expect, mock, vi, describe, beforeEach, afterEach } from 'bun:test';
 import { Readable } from 'node:stream';
-import fs from 'node:fs';
-import path from 'node:path';
 
-// Mock fs and path modules
-vi.mock('node:fs');
-vi.mock('node:path');
+/**
+ * Due to an issue with Bun (https://github.com/oven-sh/bun/issues/7823), we need to manually restore mocked modules
+ * after we're done. We do this by setting the mocked value to the original module.
+ *
+ * Also WAITING for --isolate flag to be implemented in Bun: https://github.com/oven-sh/bun/issues/12823
+ * TO REPRODUCE RUN `bun test --seed 1 and 2` so that bundler test is before file-manager-includes test, which also uses node:path
+ *
+ * When setting up a test that will mock a module, the block should add this:
+ * const moduleMocker = new ModuleMocker()
+ *
+ * afterEach(() => {
+ *   moduleMocker.clear()
+ * })
+ *
+ * When a test mocks a module, it should do it this way:
+ *
+ * await moduleMocker.mock('@/services/token.ts', () => ({
+ *   getBucketToken: mock(() => {
+ *     throw new Error('Unexpected error')
+ *   })
+ * }))
+ *
+ */
+export class ModuleMocker {
+    private mocks: MockResult[] = [];
+
+    async mock(modulePath: string, renderMocks: () => Record<string, unknown>) {
+        const original = {
+            ...(await import(modulePath))
+        };
+        const mocks = renderMocks();
+        const result = {
+            ...original,
+            ...mocks
+        };
+        mock.module(modulePath, () => result);
+
+        this.mocks.push({
+            clear: () => {
+                mock.module(modulePath, () => original);
+            }
+        });
+    }
+
+    clear() {
+        this.mocks.forEach(mockResult => mockResult.clear());
+        this.mocks = [];
+    }
+}
+const moduleMocker = new ModuleMocker();
+
+const mockFs = {
+    existsSync: vi.fn(),
+    rmSync: vi.fn(),
+    createWriteStream: vi.fn(),
+    createReadStream: vi.fn(),
+};
+const mockPath = {
+    join: vi.fn(),
+};
+
+// mock.module('node:fs', () => ({ default: mockFs, ...mockFs }));
+// mock.module('node:path', () => ({ default: mockPath, ...mockPath }));
+const { Bundler } = await import('./bundler.ts');
 
 describe('Bundler', () => {
     let mockWriteStream;
     let mockReadStream;
     let mockMemfs;
     let bundlerConfig;
-    let mockFs;
-    let mockPath;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         // Reset all mocks
         vi.clearAllMocks();
 
-        // Get mocked modules
-        mockFs = vi.mocked(fs);
-        mockPath = vi.mocked(path);
+        await moduleMocker.mock('node:path', () => ({ default: mockPath, ...mockPath }));
+        await moduleMocker.mock('node:fs', () => ({ default: mockFs, ...mockFs }));
 
         // Setup mockPath to work correctly
         mockPath.join.mockImplementation((...args) => args.join('/'));
@@ -65,6 +120,8 @@ describe('Bundler', () => {
 
     afterEach(() => {
         vi.clearAllMocks();
+        mock.restore();
+        moduleMocker.clear();
     });
 
     describe('constructor', () => {

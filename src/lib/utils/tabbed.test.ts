@@ -1,5 +1,5 @@
 import { stringifyWithTabs } from './tabbed.ts';
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe } from 'bun:test';
 
 const MOCK = [
     { A: 'Bohdan', B: '01.09.2018', c: '15.00' },

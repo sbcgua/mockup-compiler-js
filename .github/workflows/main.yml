@@ -14,19 +14,21 @@ concurrency:
 
 jobs:
   verify:
-    name: Verify Node workflow
+    name: Verify Bun workflow
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run verify
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bun run verify
       - name: Smoke runtime outputs
         run: |
-          npm run smoke:runtime
+          bun run smoke:runtime
           test -d _dest && echo dest OK
           test -f _dest/build.zip && echo build.zip OK
           test `find _dest | wc -l` = "11" && echo file count OK
@@ -36,46 +38,48 @@ jobs:
           test `cat _dest/build.txt | wc -l` = "29" && echo build.txt line count OK
       - name: Testrun with text+zip bundle
         run: |
-          npm run testrun:tz
+          bun run testrun:tz
           test -f _dest/build-tz.zip && echo build-tz.zip OK
           unzip -l _dest/build-tz.zip | grep 'bundle.txt' && echo bundle.txt in zip OK
 
-  bun-smoke:
-    name: Bun smoke test
+  node-compat:
+    name: Node compatibility smoke
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
-          cache: 'npm'
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - run: npm ci
-      - run: bun --version
-      - run: bun src/index.ts -c test-sample/.mock-config.json
+      - run: bun install --frozen-lockfile
+      - run: node src/index.ts -c test-sample/.mock-config.json
 
-  test-sea:
-    name: Test SEA build
+  node-sea-archive:
+    name: Node SEA archive check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 'lts/*'
-          cache: 'npm'
-      - run: npm ci
-      - name: Build SEA bundle
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Check archived Node SEA assets
         run: |
-          npm run build:bundle
-          node --experimental-sea-config sea-config.json
+          test -f docs/archive/node-sea/build-sea.sh
+          test -f docs/archive/node-sea/sea-config.json
+          bun run build:bundle
+          node --experimental-sea-config docs/archive/node-sea/sea-config.json
 
   auto-tag:
     name: Add a tag on new version
     needs:
       - verify
-      - bun-smoke
+      - node-compat
     runs-on: ubuntu-latest
     if: github.repository == 'sbcgua/mockup-compiler-js'
     permissions:
