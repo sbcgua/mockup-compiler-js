@@ -76,7 +76,10 @@ async function runValidate(file: string): Promise<void> {
 async function bootstrap(): Promise<void> {
     const commander = new Command();
     const compileCommand = new Command('compile')
-        .description('Compile mockup bundle data (the default, runs even if unspecified)');
+        .description('Compile mockup bundle data (the default, runs even if unspecified)')
+        .action(() => {
+            // No-op, main logic is still initiated after parse.
+        });
     const validateCommand = new Command('validate')
         .argument('<file>')
         .description('Validate text bundle file')
@@ -102,7 +105,7 @@ async function bootstrap(): Promise<void> {
 
     await commander.parseAsync(process.argv);
 
-    if (actualCommand !== 'validate') {
+    if (actualCommand === 'compile') {
         await main(commander.opts<CliArgs>());
     }
 }
