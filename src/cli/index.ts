@@ -63,7 +63,7 @@ async function runValidate(file: string): Promise<void> {
     try {
         const warning = validateBundleFile(file);
         if (warning) {
-            console.warn(`WARNING: ${warning}`);
+            console.warn(`${chalk.yellowBright('WARNING')}: ${warning}`);
         }
         console.log('Validation successful. File is a valid mockup text bundle.');
     } catch (error) {
