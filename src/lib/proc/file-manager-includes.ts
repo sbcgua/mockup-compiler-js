@@ -15,8 +15,6 @@ type IncludeFileManagerParams = {
     memfs?: WritableFsLike;
 };
 
-console.log(path);
-
 export default class IncludeFileManager extends FileManagerBase {
     #fileHashMap = new Map<string, string | undefined>();
     #includeDirs = new Set<string>();
