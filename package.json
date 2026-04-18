@@ -1,6 +1,6 @@
 {
   "name": "mockup-compiler-js",
-  "version": "1.2.1",
+  "version": "1.3.0-beta",
   "description": "Tool to convert Excel unit test data to text and archive it",
   "type": "module",
   "packageManager": "bun@1.3.12",
