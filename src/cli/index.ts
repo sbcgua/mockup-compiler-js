@@ -54,6 +54,16 @@ async function main(args: CliArgs): Promise<void> {
 
 async function bootstrap(): Promise<void> {
     const commander = new Command();
+
+    let actualCommand: string | undefined;
+    commander.addCommand(new Command('validate').argument('<file>').description('Validate text bundle file').action(() => {
+        console.log('Validate command executed'); // placeholder, actual validation logic is in src/cli/validator.ts
+    }));
+    commander.addCommand(new Command('compile').description('Compile (the default, runs even if unspecified)').action(() => {
+        // No-op, main logic is in the default action below
+    }), { isDefault: true });
+    commander.hook('preAction', (thisCommand, actionCommand) => { actualCommand = actionCommand.name() });
+
     for (const [flags, description] of argOptions) {
         commander.option(flags, description);
     }
@@ -67,7 +77,10 @@ async function bootstrap(): Promise<void> {
     });
 
     commander.parse(process.argv);
-    await main(commander.opts<CliArgs>());
+
+    if (actualCommand === 'compile') {
+        await main(commander.opts<CliArgs>());
+    }
 }
 
 void bootstrap();
