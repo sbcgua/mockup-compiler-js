@@ -49,7 +49,7 @@
     "@types/picomatch": "^4.0.2",
     "deep-freeze": "0.0.1",
     "eslint": "^9.29.0",
-    "globals": "^16.2.0",
+    "globals": "^17.5.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.58.2"
   }
