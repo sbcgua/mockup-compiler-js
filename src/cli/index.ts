@@ -102,7 +102,7 @@ async function bootstrap(): Promise<void> {
 
     await commander.parseAsync(process.argv);
 
-    if (actualCommand === 'compile') {
+    if (actualCommand !== 'validate') {
         await main(commander.opts<CliArgs>());
     }
 }
