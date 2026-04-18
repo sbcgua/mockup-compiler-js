@@ -54,7 +54,7 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
-      - run: node src/index.ts -c test-sample/.mock-config.json
+      - run: node src/cli/index.ts -c test-sample/.mock-config.json
 
   node-sea-archive:
     name: Node SEA archive check
