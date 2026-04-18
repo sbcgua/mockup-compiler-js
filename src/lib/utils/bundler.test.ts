@@ -7,7 +7,7 @@ import { Readable } from 'node:stream';
  * after we're done. We do this by setting the mocked value to the original module.
  *
  * Also WAITING for --isolate flag to be implemented in Bun: https://github.com/oven-sh/bun/issues/12823
- * TO REPRODUCE RUN `bun test --seed 1` so that bundler test is before file-manager-includes test, which also uses node:path
+ * TO REPRODUCE RUN `bun test --seed 1 and 2` so that bundler test is before file-manager-includes test, which also uses node:path
  *
  * When setting up a test that will mock a module, the block should add this:
  * const moduleMocker = new ModuleMocker()
