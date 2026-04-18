@@ -26,7 +26,7 @@ jobs:
           bun-version: latest
       - run: bun install --frozen-lockfile
       # - run: bun run verify
-      - run: bun test file-manager-includes
+      - run: bun test
       - name: Smoke runtime outputs
         run: |
           bun run smoke:runtime
