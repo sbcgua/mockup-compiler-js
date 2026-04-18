@@ -63,7 +63,7 @@ const mockPath = {
     join: vi.fn(),
 };
 
-mock.module('node:fs', () => ({ default: mockFs, ...mockFs }));
+// mock.module('node:fs', () => ({ default: mockFs, ...mockFs }));
 // mock.module('node:path', () => ({ default: mockPath, ...mockPath }));
 const { Bundler } = await import('./bundler.ts');
 
@@ -73,9 +73,12 @@ describe('Bundler', () => {
     let mockMemfs;
     let bundlerConfig;
 
-    beforeEach(() => {
+    beforeEach(async () => {
         // Reset all mocks
         vi.clearAllMocks();
+
+        await moduleMocker.mock('node:path', () => ({ default: mockPath, ...mockPath }));
+        await moduleMocker.mock('node:fs', () => ({ default: mockFs, ...mockFs }));
 
         // Setup mockPath to work correctly
         mockPath.join.mockImplementation((...args) => args.join('/'));
@@ -352,7 +355,6 @@ describe('Bundler', () => {
         });
 
         test('should join source directory with file names correctly', async () => {
-            await moduleMocker.mock('node:path', () => ({ default: mockPath, ...mockPath }));
             const bundler = new Bundler(bundlerConfig);
 
             // Mock successful bundling
