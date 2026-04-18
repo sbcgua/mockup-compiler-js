@@ -1,5 +1,5 @@
 import { mkdirSync, rmSync } from 'node:fs';
-import type { PackageInfo } from '../src/lib/types';
+import type { PackageInfo } from '../src/types';
 
 export const buildDir = '_build';
 export const bundlePath = `${buildDir}/bundle.js`;

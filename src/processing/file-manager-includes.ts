@@ -1,10 +1,10 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import assert from 'node:assert';
-import SimpleSHA1Stream from '../utils/sha1-stream.ts';
-import { slash } from '../utils/fs-utils.ts';
+import SimpleSHA1Stream from '../common/sha1-stream.ts';
+import { slash } from '../common/fs-utils.ts';
 import { FileManagerBase } from './file-manager-base.ts';
-import type { FileManagerProcessedItemEvent, WritableFsLike } from '../types';
+import type { FileManagerProcessedItemEvent, WritableFsLike } from '../types/index';
 
 const ITEM_PROCESSED = 'item-processed';
 

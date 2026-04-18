@@ -41,12 +41,12 @@ export default [
   },
   {
     files: [
-      'src/lib/config.test.ts',
-      'src/lib/proc/mock-processings.test.ts',
-      'src/lib/utils/bundler.test.ts',
-      'src/lib/utils/bundler-functions.test.ts',
-      'src/lib/xlreader/sheet-reader.test.ts',
-      'src/lib/xlreader/workbook-reader.test.ts',
+      'src/cli/config.test.ts',
+      'src/processing/mock-processings.test.ts',
+      'src/bundle/bundler.test.ts',
+      'src/bundle/bundler-functions.test.ts',
+      'src/excel/sheet-reader.test.ts',
+      'src/excel/workbook-reader.test.ts',
     ],
     rules: {
       '@typescript-eslint/ban-ts-comment': 'off',

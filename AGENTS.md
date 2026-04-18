@@ -22,7 +22,7 @@ Typical logic:
 
 ## Running
 
-Command line params are defined in @src/lib/args.ts
+Command line params are defined in @src/cli/args.ts
 Importantly, the tool can also be run in the **watch mode** (`--watch` arg). In this case, after the first build, the tool starts watching the source files - if they change, it re-runs conversion on the changed file again and re-bundles them.
 
 The setting can be given in a config. By default the programs looks for the config in the current directory in file `.mock-config.json`. Optionally, can be referred with `-c` command opt. Example of the file:
@@ -74,9 +74,10 @@ The project uses Bun test runner. Exec tests with `bun test`.
 
 ## File Structure
 
-- the tool is invoked via `src/index.ts`
-- there is a standalone sub-tool `src/validator.ts` to validate single text bundle format
-- `src/lib/xlreader` contains components related Excel reading
-- `src/lib/utils` contains low level componentsm like bundler, logger, single text bundle format logic, etc
-- `src/lib/proc` contains high level components that reuse utils and process excel files, includes and separate excel sheets
-- `src/lib` root contains runtime components, like config reader, args parser and watcher
+- the tool is invoked via `src/cli/index.ts`
+- there is a standalone sub-tool `src/cli/validator.ts` to validate single text bundle format
+- `src/excel` contains components related Excel reading
+- `src/common` contains low level shared helpers, like logger and tab formatting
+- `src/bundle` contains bundle creation and single text bundle format logic
+- `src/processing` contains high level processing components for excel files, includes and meta handling
+- `src/app` contains runtime orchestration, like the app runner and watcher

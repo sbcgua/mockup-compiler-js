@@ -5,8 +5,8 @@
   "type": "module",
   "packageManager": "bun@1.3.12",
   "bin": {
-    "mockup-compiler": "./src/index.ts",
-    "mockup-validator": "./src/validator.ts"
+    "mockup-compiler": "./src/cli/index.ts",
+    "mockup-validator": "./src/cli/validator.ts"
   },
   "scripts": {
     "test": "bun test",
@@ -14,11 +14,11 @@
     "typecheck": "tsc --noEmit",
     "verify": "bun run lint && bun run typecheck && bun test && bun run build:bundle",
     "smoke:runtime": "bun run testrun && bun run testrun:tm",
-    "testrun": "bun src/index.ts -c test-sample/.mock-config.json",
+    "testrun": "bun src/cli/index.ts -c test-sample/.mock-config.json",
     "testrun:clean": "rm -rf _dest/* _dest/.meta",
-    "testrun:t": "bun src/index.ts -c test-sample/.mock-config.json --bundle-format text -z ../_dest/build.txt",
-    "testrun:tm": "bun src/index.ts -c test-sample/.mock-config.json --bundle-format text --in-mem -d \"\" -z ../_dest/build.txt",
-    "testrun:tz": "bun src/index.ts -c test-sample/.mock-config.json --bundle-format text+zip -z ../_dest/build-tz.zip",
+    "testrun:t": "bun src/cli/index.ts -c test-sample/.mock-config.json --bundle-format text -z ../_dest/build.txt",
+    "testrun:tm": "bun src/cli/index.ts -c test-sample/.mock-config.json --bundle-format text --in-mem -d \"\" -z ../_dest/build.txt",
+    "testrun:tz": "bun src/cli/index.ts -c test-sample/.mock-config.json --bundle-format text+zip -z ../_dest/build-tz.zip",
     "lint": "eslint \"src/**/*.ts\" \"scripts/**/*.ts\"",
     "build:bin": "bun scripts/build-bin.ts",
     "build:bundle": "bun scripts/build-bundle.ts"

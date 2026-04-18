@@ -1,4 +1,4 @@
-import type { LoggerContract } from '../types';
+import type { LoggerContract } from '../types/index';
 
 export default class Logger implements LoggerContract {
     quiet: boolean;

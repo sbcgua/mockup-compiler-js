@@ -6,8 +6,8 @@ import { readFile as readFileAsync } from 'node:fs/promises';
 import picomatch from 'picomatch';
 import { read as readXLSX } from 'xlsx';
 
-import { slash } from '../utils/fs-utils.ts';
-import SimpleSHA1Stream from '../utils/sha1-stream.ts';
+import { slash } from '../common/fs-utils.ts';
+import SimpleSHA1Stream from '../common/sha1-stream.ts';
 import { FileManagerBase } from './file-manager-base.ts';
 import type {
     FileManagerProcessedItemEvent,
@@ -18,7 +18,7 @@ import type {
     WritableFsLike,
     WorkbookLike,
     WorkbookMocks,
-} from '../types';
+} from '../types/index';
 
 const START_OF_FILE_PROCESSING = 'start-of-file-processing';
 const ITEM_PROCESSED = 'item-processed';

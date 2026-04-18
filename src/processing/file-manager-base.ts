@@ -1,5 +1,5 @@
 import EventEmitter from 'node:events';
-import type { FileManagerContract, HashValue } from '../types';
+import type { FileManagerContract, HashValue } from '../types/index';
 
 export abstract class FileManagerBase extends EventEmitter implements FileManagerContract {
     abstract get fileHashMap(): Map<string, HashValue> | null;

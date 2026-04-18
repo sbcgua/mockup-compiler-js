@@ -1,4 +1,4 @@
-import type { BundleItem, BundleOutputStream } from '../types';
+import type { BundleItem, BundleOutputStream } from '../types/index';
 
 type BundleReadStream = BundleItem['readStream'];
 

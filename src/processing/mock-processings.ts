@@ -1,7 +1,7 @@
-import { extractWorkbookSheets } from '../xlreader/workbook-reader.ts';
-import { sheetToJson } from '../xlreader/sheet-reader.ts';
-import { stringifyWithTabs } from '../utils/tabbed.ts';
-import type { MockProcessor, MockTable, WorkbookLike, WorkbookMocks } from '../types';
+import { extractWorkbookSheets } from '../excel/workbook-reader.ts';
+import { sheetToJson } from '../excel/sheet-reader.ts';
+import { stringifyWithTabs } from '../common/tabbed.ts';
+import type { MockProcessor, MockTable, WorkbookLike, WorkbookMocks } from '../types/index';
 
 const CONTENT_SHEET_NAME = '_contents';
 const EXCLUDE_SHEET_NAME = '_exclude';

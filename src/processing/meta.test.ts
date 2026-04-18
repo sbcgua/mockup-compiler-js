@@ -1,6 +1,6 @@
 import { fs, vol } from 'memfs';
 import { mock, test, expect, describe, beforeEach } from 'bun:test';
-import type { FileManagerContract } from '../types';
+import type { FileManagerContract } from '../types/index';
 
 mock.module('node:fs', () => ({ default: fs, ...fs }));
 const { default: MetaCalculator } = await import('./meta.ts');

@@ -1,5 +1,5 @@
 import { sheetToJson } from './sheet-reader.ts';
-import type { WorkbookLike, WorkbookMocks } from '../types';
+import type { WorkbookLike, WorkbookMocks } from '../types/index';
 
 type WorkbookReadError = Error & { _sheet?: string };
 
