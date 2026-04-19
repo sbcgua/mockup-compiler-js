@@ -1,4 +1,7 @@
 import { afterEach, describe, expect, mock, test, vi } from 'bun:test';
+import { ModuleMocker } from '../common/bun-test-module-mocker.ts';
+
+const moduleMocker = new ModuleMocker();
 
 const mockFs = {
     existsSync: vi.fn(),
@@ -8,10 +11,12 @@ const mockFs = {
 afterEach(() => {
     vi.clearAllMocks();
     mock.restore();
+    moduleMocker.clear();
 });
 
 async function loadValidator() {
-    mock.module('node:fs', () => ({ default: mockFs, ...mockFs }));
+    // mock.module('node:fs', () => ({ default: mockFs, ...mockFs }));
+    await moduleMocker.mock('node:fs', () => ({ default: mockFs, ...mockFs }));
     return import('./validator.ts');
 }
 
