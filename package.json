@@ -1,6 +1,6 @@
 {
   "name": "mockup-compiler-js",
-  "version": "1.3.0-beta",
+  "version": "1.3.0",
   "description": "Tool to convert Excel unit test data to text and archive it",
   "type": "module",
   "packageManager": "bun@1.3.12",
@@ -20,6 +20,7 @@
     "testrun:tz": "bun src/cli/index.ts -c test-sample/.mock-config.json --bundle-format text+zip -z ../_dest/build-tz.zip",
     "testrun:tm:validate": "bun run testrun:tm && bun src/cli/index.ts validate _dest/build.txt",
     "lint": "eslint \"src/**/*.ts\" \"scripts/**/*.ts\"",
+    "build": "bun run build:bundle && bun run build:bin",
     "build:bin": "bun scripts/build-bin.ts",
     "build:bundle": "bun scripts/build-bundle.ts"
   },
