@@ -72,6 +72,13 @@ jobs:
           test `find _dest | wc -l` = "11" && echo file count OK
           test -f _dest/.meta/src_files && echo src_files OK
           test `cat _dest/.meta/src_files | wc -l` = "6" && echo src_files line count OK
+      - name: Smoke packaged binary outputs (text bundler)
+        run: |
+          rm -rf _dest
+          mkdir _dest
+          ./_build/mockup-compiler-linux-x64 -c test-sample/.mock-config-text.json
+          test -f _dest/build.txt && echo build.txt OK
+          ./_build/mockup-compiler-linux-x64 validate _dest/build.txt
 
   node-compat:
     name: Node compatibility smoke
