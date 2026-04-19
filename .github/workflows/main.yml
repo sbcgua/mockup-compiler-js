@@ -43,6 +43,36 @@ jobs:
           test -f _dest/build-tz.zip && echo build-tz.zip OK
           unzip -l _dest/build-tz.zip | grep 'bundle.txt' && echo bundle.txt in zip OK
 
+  bun-binary:
+    name: Bun binary smoke
+    needs:
+      - verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - name: Build Bun bundle and executable
+        run: |
+          bun run build:bundle
+          bun run build:bin
+          test -f _build/bundle.js && echo bundle.js OK
+          test -x _build/mockup-compiler-linux-x64 && echo linux binary OK
+      - name: Smoke packaged binary outputs
+        run: |
+          rm -rf _dest
+          ./_build/mockup-compiler-linux-x64 -c test-sample/.mock-config.json
+          test -d _dest && echo dest OK
+          test -f _dest/build.zip && echo build.zip OK
+          test `find _dest | wc -l` = "11" && echo file count OK
+          test -f _dest/.meta/src_files && echo src_files OK
+          test `cat _dest/.meta/src_files | wc -l` = "6" && echo src_files line count OK
+
   node-compat:
     name: Node compatibility smoke
     runs-on: ubuntu-latest
@@ -80,6 +110,7 @@ jobs:
     name: Add a tag on new version
     needs:
       - verify
+      - bun-binary
       - node-compat
     runs-on: ubuntu-latest
     if: github.repository == 'sbcgua/mockup-compiler-js'
