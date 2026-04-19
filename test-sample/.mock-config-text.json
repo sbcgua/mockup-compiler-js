@@ -1,0 +1,12 @@
+{
+    "sourceDir": ".",
+    "pattern": ["*.xlsx", "*.xml"],
+    "eol": "lf",
+    "bundlePath": "../_dest/build.txt",
+    "bundleFormat": "text",
+    "includes": [
+        "./includes"
+    ],
+    "withMeta": true,
+    "inMemory": true
+}

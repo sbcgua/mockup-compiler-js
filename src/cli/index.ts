@@ -9,6 +9,7 @@ import { readConfig } from './config.ts';
 import type { AppRuntimeConfig, CliArgs } from '../types/index';
 import { readPackageInfo } from './package-info.ts';
 import Logger from '../common/logger.ts';
+import { validateBundleFile } from '../bundle/validator.ts';
 
 type AppError = Error & {
     _file?: string;
@@ -52,12 +53,48 @@ async function main(args: CliArgs): Promise<void> {
     }
 }
 
+function addCompileOptions(command: Command): void {
+    for (const [flags, description] of argOptions) {
+        command.option(flags, description);
+    }
+}
+
+async function runValidate(file: string): Promise<void> {
+    try {
+        const warning = validateBundleFile(file);
+        if (warning) {
+            console.warn(`${chalk.yellowBright('WARNING')}: ${warning}`);
+        }
+        console.log('Validation successful. File is a valid mockup text bundle.');
+    } catch (error) {
+        const validationError = error as Error;
+        console.error(chalk.redBright(validationError.message));
+        process.exit(1);
+    }
+}
+
 async function bootstrap(): Promise<void> {
     const commander = new Command();
-    for (const [flags, description] of argOptions) {
-        commander.option(flags, description);
-    }
+    const compileCommand = new Command('compile')
+        .description('Compile mockup bundle data (the default, runs even if unspecified)')
+        .action(() => {
+            // No-op, main logic is still initiated after parse.
+        });
+    const validateCommand = new Command('validate')
+        .argument('<file>')
+        .description('Validate text bundle file')
+        .action(async (file: string) => {
+            await runValidate(file);
+        });
+    let actualCommand: string | undefined;
+
+    addCompileOptions(commander);
     commander.version(await readVersion());
+    commander.hook('preAction', (_thisCommand, actionCommand) => {
+        actualCommand = actionCommand.name();
+    });
+    commander.addCommand(validateCommand);
+    commander.addCommand(compileCommand, { isDefault: true });
 
     process.on('unhandledRejection', (reason) => {
         if (!commander.opts().quiet) {
@@ -66,8 +103,11 @@ async function bootstrap(): Promise<void> {
         process.exit(1);
     });
 
-    commander.parse(process.argv);
-    await main(commander.opts<CliArgs>());
+    await commander.parseAsync(process.argv);
+
+    if (actualCommand === 'compile') {
+        await main(commander.opts<CliArgs>());
+    }
 }
 
 void bootstrap();

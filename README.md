@@ -71,6 +71,14 @@ The best long-term approach is to use a [config file](#config).
 
 See also `mockup-compiler --help` for the full list of options.
 
+The help output also shows a `compile` subcommand. This is the default command, so `mockup-compiler ...` and `mockup-compiler compile ...` are equivalent.
+
+The CLI also supports validating a text bundle:
+
+```bash
+mockup-compiler validate ./build.txt
+```
+
 If you need to execute the sources directly under Node for compatibility reasons, the validated smoke path is:
 
 ```bash
@@ -125,7 +133,7 @@ mockup-compiler -c ./my-mock-config.json
 - `skipFieldsStartingWith` - skips fields which start from the given symbol, by default it is `'-'`
 - **CHANGED** since v1.2.0: `bundleFormat` - defines the format of the bundle file:
   - `zip` (the default, if empty)
-  - `text` (see [docs/text-bundle-format.md](docs/text-bundle-format.md))
+- `text` (see [docs/text-bundle-format.md](docs/text-bundle-format.md)); the resulting file can be checked with `mockup-compiler validate <file>`
   - `text+zip` - creates a text bundle and then zips it (decreases travel time to the ABAP backend; use when the bundle becomes large and slow)
 - `pattern` - is a glob pattern for Excel files. By default it is `"*.xlsx"`, however the tool supports all formats supported by the underlying library [sheetjs](https://www.npmjs.com/package/xlsx). The param can be a string or an array, e.g. `["*.xlsx", "*.xml"]`.
 - `inMemory` - don't create mocks on the disk (in `destDir`), instead stash them in memory and write only the bundle file. Beware of potential memory usage if the data volume is large. (in CLI, use `--in-mem`).
