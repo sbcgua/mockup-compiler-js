@@ -1,6 +1,12 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { binaryTargets, bundlePath, readRootPackageInfo } from './build-config.ts';
 import { buildBundle } from './build-bundle.ts';
+
+function resolveTargets() {
+    if (!existsSync('build-only')) return binaryTargets;
+    const allowed = new Set(readFileSync('build-only', 'utf8').split(/\r?\n/).map(l => l.trim()).filter(Boolean));
+    return binaryTargets.filter(t => allowed.has(t.target));
+}
 
 async function buildExecutables(): Promise<void> {
     if (!existsSync(bundlePath)) {
@@ -8,8 +14,9 @@ async function buildExecutables(): Promise<void> {
     }
 
     const packageInfo = await readRootPackageInfo();
+    const buildTargets = resolveTargets();
 
-    for (const targetConfig of binaryTargets) {
+    for (const targetConfig of buildTargets) {
         const result = await Bun.build({
             entrypoints: [`./${bundlePath}`],
             compile: {

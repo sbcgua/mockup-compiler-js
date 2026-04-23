@@ -39,7 +39,7 @@ type SetupBundlerParams = {
 
 export default class App {
     #logger: AppRuntimeConfig['logger'];
-    #excelFileManager: ExcelFileManager;
+    #excelFileManager!: ExcelFileManager; // initialized in #init
     #includeFileManager?: IncludeFileManager;
     #metaCalculator?: MetaCalculator;
     #bundler?: Bundler;
@@ -49,6 +49,8 @@ export default class App {
     #verbose = false;
     #writeFs?: WritableFsLike;
     #readFs?: ReadableFsLike;
+    #destDir!: string; // initialized in constructor
+    #cleanDestDirOnStart?: boolean;
 
     constructor(config: AppRuntimeConfig, withWatcher: boolean) {
         this.#logger = config.logger;
@@ -65,6 +67,12 @@ export default class App {
         }
         if (!destDir) throw new Error('Destination dir is required');
 
+        this.#destDir = destDir;
+        this.#cleanDestDirOnStart = config.cleanDestDirOnStart;
+        this.#init(destDir, config, withWatcher);
+    }
+
+    #init(destDir: string, config: AppRuntimeConfig, withWatcher: boolean) {
         this.#initDestDir(destDir, { cleanDestDirOnStart: config.cleanDestDirOnStart });
         this.#excelFileManager = this.#setupExcelFileManager({
             srcDir: config.sourceDir,
@@ -188,7 +196,23 @@ export default class App {
             metaCalculator: this.#metaCalculator,
             bundler: this.#bundler,
             verbose,
+            onForceRebuild: () => this.rebuild(),
         });
+    }
+
+    async rebuild(): Promise<void> {
+        this.#logger.log(chalk.yellowBright('\nForce rebuilding...'));
+        this.#initDestDir(this.#destDir, { cleanDestDirOnStart: this.#cleanDestDirOnStart });
+        this.#excelFileManager.reset();
+        this.#includeFileManager?.reset();
+        await this.#processFiles();
+        this.#printStats();
+        if (this.#metaCalculator) {
+            await this.#metaCalculator.buildAndSave();
+        }
+        if (this.#bundler) {
+            await this.#createBundle();
+        }
     }
 
     async run(): Promise<void> {

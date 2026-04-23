@@ -75,6 +75,12 @@ export default class ExcelFileManager extends FileManagerBase {
         return picomatch.isMatch(filepath, this.#pattern) && !filepath.startsWith('~');
     }
 
+    reset(): void {
+        this.#fileHashMap.clear();
+        this.#mockHashMap.clear();
+        this.#mockList.clear();
+    }
+
     async processAll(): Promise<void> {
         if (this.#fileHashMap.size > 0) throw Error('Cannot processAll twice');
 
