@@ -12,6 +12,7 @@ v1.3.1, 2026-04-??
 -------------------
 * Fix: excel issues `rename` event not `change` when watching files
 + Added the key to rebuild all in watch mode (and also option to show help banner again)
++ Possibility to limit build targets via local `build-only` file in the root of the repo (e.g. `bun-windows-x64`)
 
 v1.3.0, 2026-04-19
 -------------------
