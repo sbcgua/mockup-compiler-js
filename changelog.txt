@@ -8,6 +8,11 @@ Legend
 + : added
 - : removed
 
+v1.3.1, 2026-04-??
+-------------------
+* Fix: excel issues `rename` event not `change` when watching files
++ Added the key to rebuild all in watch mode (and also option to show help banner again)
+
 v1.3.0, 2026-04-19
 -------------------
 ! migrated to Typescript (#176)
