@@ -12,6 +12,7 @@ type WatcherParams = {
     bundler?: BundlerContract;
     metaCalculator?: MetaCalculatorContract;
     verbose?: boolean;
+    onForceRebuild?: () => Promise<void>;
 };
 
 export default class Watcher {
@@ -24,14 +25,17 @@ export default class Watcher {
     #bundler?: BundlerContract;
     #metaCalculator?: MetaCalculatorContract;
     #verbose: boolean;
+    #onForceRebuild?: () => Promise<void>;
+    #rebuilding = false;
 
-    constructor({ logger, excelFileManager, includeFileManager, bundler, metaCalculator, verbose = false }: WatcherParams) {
+    constructor({ logger, excelFileManager, includeFileManager, bundler, metaCalculator, verbose = false, onForceRebuild }: WatcherParams) {
         this.#logger = logger;
         this.#verbose = verbose;
         this.#excelFileManager = excelFileManager;
         this.#includeFileManager = includeFileManager;
         this.#metaCalculator = metaCalculator;
         this.#bundler = bundler;
+        this.#onForceRebuild = onForceRebuild;
         this.#throttleLimit = 1000;
     }
 
@@ -145,7 +149,9 @@ export default class Watcher {
         }
 
         if (process.stdout.isTTY) {
-            this.#logger.log('To exit - press q, ctrl-d or ctrl-c');
+            this.#logger.log(`To exit watch mode - press ${chalk.cyanBright('q')}, ${chalk.cyanBright('ctrl-d')} or ${chalk.cyanBright('ctrl-c')}`);
+            this.#logger.log(`To force rebuild   - press ${chalk.cyanBright('r')}`);
+            this.#logger.log(`To show this help  - press ${chalk.cyanBright('?')}`);
         } else {
             this.#logger.log('To exit - press ctrl-c');
         }
@@ -162,6 +168,16 @@ export default class Watcher {
                 this.#logger.log('Exiting...');
                 this.close();
                 process.exit(0);
+            } else if (chunk === 'r') {
+                if (this.#rebuilding) {
+                    this.#logger.log(chalk.grey('Rebuild already in progress...'));
+                    return;
+                }
+                if (!this.#onForceRebuild) return;
+                this.#rebuilding = true;
+                this.#onForceRebuild().finally(() => { this.#rebuilding = false });
+            } else if (chunk === '?') {
+                this.#printStartBanner();
             }
         });
     }

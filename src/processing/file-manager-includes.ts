@@ -43,6 +43,11 @@ export default class IncludeFileManager extends FileManagerBase {
         if (!this.#destFs.existsSync(this.#destDir)) throw Error('Destination dir does not exist');
     }
 
+    reset(): void {
+        this.#fileHashMap.clear();
+        this.#includeDirs.clear();
+    }
+
     async processAll(): Promise<void> {
         if (this.#fileHashMap.size > 0) throw Error('Cannot processAll twice');
         await this.#copyDir(this.#includeRoot, this.#destDir);
