@@ -66,27 +66,25 @@ export default class Watcher {
             ? (filePath: string) => fileManager.isFileRelevant?.(filePath) ?? true
             : () => true;
 
-        return (eventType, filename) => {
+        return async (eventType, filename) => {
             const normalizedFilename = filename ?? '';
-            if (eventType !== 'change') return;
+            if (!['change', 'rename'].includes(eventType)) return; // some editors trigger 'rename' on file save, some trigger 'change', we want to handle both
             if (!isFileRelevant(normalizedFilename)) return;
 
-            void (async () => {
-                try {
-                    if (fs.lstatSync(path.join(dir, normalizedFilename)).isDirectory()) return;
-                } catch {
-                    return;
-                }
+            try {
+                if (fs.lstatSync(path.join(dir, normalizedFilename)).isDirectory()) return;
+            } catch {
+                return;
+            }
 
-                const now = Date.now();
-                if ((now - lastChange) > this.#throttleLimit && lastHandlerComplete) {
-                    lastHandlerComplete = false;
-                    lastChange = now;
-                    this.#reportChange(now, normalizedFilename);
-                    await this.#handleChange(dir, normalizedFilename, fileManager);
-                    lastHandlerComplete = true;
-                }
-            })();
+            const now = Date.now();
+            if ((now - lastChange) > this.#throttleLimit && lastHandlerComplete) {
+                lastHandlerComplete = false;
+                lastChange = now;
+                this.#reportChange(now, normalizedFilename);
+                await this.#handleChange(dir, normalizedFilename, fileManager);
+                lastHandlerComplete = true;
+            }
         };
     }
 
